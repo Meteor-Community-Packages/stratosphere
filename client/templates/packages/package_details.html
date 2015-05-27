@@ -1,0 +1,11 @@
+<template name="packageDetails">
+  <div class="package-details page">
+    {{> packageItem}}
+  
+    <ul class="versions">
+      {{#each versions}}
+        {{> versionItem}}
+      {{/each}}
+    </ul>
+  </div>
+</template>
