@@ -1,0 +1,11 @@
+<template name="packageItem">
+  <div class="package">
+    <div class="package-content">
+      <h3><a href="{{pathFor 'packageDetails'}}">{{name}}</a><span>{{ latestVersion.description }}</span></h3>
+        <p>
+          {{maintainers}}
+        </p>
+    </div>
+    <a href="{{pathFor 'packageDetails'}}" class="details btn btn-default">Details</a>
+  </div>
+</template>
