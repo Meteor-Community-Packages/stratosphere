@@ -1,6 +1,10 @@
 Stratosphere = {UpstreamConn:''};
 
+/**
+ * Connect to upstream package server
+ */
 function connectToPackageServer(){
+  if(!Meteor.settings.upstreamURL) return;
   Stratosphere.UpstreamConn = DDP.connect(Meteor.settings.upstreamURL);
   Tracker.autorun(function() {
     var status = Stratosphere.UpstreamConn.status();

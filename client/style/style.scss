@@ -5,7 +5,7 @@
           animation: #{$str};
 }
 
-.grid-block, .main, .post, .comments li, .comment-form {
+.grid-block, .main, .package, .versions li {
   background: #fff;
   border-radius: 3px;
   padding: 10px;
@@ -91,7 +91,7 @@ body {
       margin: 0;
     }
   }
-  .discuss {
+  .details {
     display: block;
     float: right;
     margin-top: 7px;

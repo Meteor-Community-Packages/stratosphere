@@ -22,5 +22,9 @@ percolate:find-from-publication
 accounts-meteor-developer
 tomi:upload-server
 tmeasday:publish-counts
-meteorhacks:npm
 mrt:q
+meteorhacks:async
+meteorhacks:npm
+
+
+npm-container

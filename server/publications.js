@@ -29,7 +29,7 @@ Meteor.publish('versions', function(packageId) {
   check(packageId, String);
   var pack = Packages.findOne(packageId);
   if(pack){
-    return Versions.find({packageName:pack.name},{sort:{versionInt:-1}});
+    return Versions.find({packageName:pack.name});
   }
 });
 

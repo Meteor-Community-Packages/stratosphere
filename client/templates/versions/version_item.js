@@ -1,5 +1,6 @@
 Template.versionItem.helpers({
-  submittedText: function() {
-    return this.submitted.toString();
+  date: function() {
+    var date = new Date(this.published);
+    return date.toUTCString();
   }
 });
