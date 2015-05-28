@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "semver-loose": {
-      "version": "http://kndedu01.barco.com:4873/semver-loose/-/semver-loose-0.2.0.tgz"
-    }
-  }
-}

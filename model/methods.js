@@ -1,6 +1,0 @@
-
-Meteor.methods({
-
-
-});
-
