@@ -5,12 +5,19 @@ Next thing to figure out is how to handle logins from Meteor tool
 Stratosphere is a private package server for Meteor.
 
 ## Installation
+### 1) create a Meteor developer app
+First create an  app that can use the meteor developer account services:
+[https://www.meteor.com/account-settings/apps](https://www.meteor.com/account-settings/apps) (be sure to set a correct redirect url)
+Fill in the app id and app secret in the settings.json.template file and rename the template file to settings.json
+
+### 2) Run the app
 This is a Meteor project, so you can deploy and run it the same way as any other Meteor project.
 First start-up can take long, since it needs to import all packages from the official package repo.
 
 After this, you need to create the database file.
 First you need to find the existing database file (packages.data.db) here:
 
+### 3) Create the package database
 On Linux
 ```
 ~/.meteor/package-metadata/v2.0.1
