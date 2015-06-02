@@ -8,6 +8,10 @@
   "public":{
     "loginRequired":false
   },
+  "meteorDeveloperAccount":{
+    "clientId":"K9fytXkLbmaHyjSXZ",
+    "secret":"nXiT9zRwZuo6PsHnWC2EfCkpfyunA6DwQB"
+  },
   "auth":{
     "url":"",
     "username":"",

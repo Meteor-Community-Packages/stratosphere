@@ -20,14 +20,32 @@ function connectToPackageServer(){
 Meteor.startup(function () {
   console.log('Server startup checks');
 
-  console.log('-Make sure an upstream syncToken exists');
-  var syncToken = SyncTokens.findOne({});
+  console.log('-Make sure metadata exists');
+  var syncToken = Metadata.findOne({key:'syncToken'});
   if(!syncToken){
     syncToken = {
       format:"1.1"
     }
-    SyncTokens.insert(syncToken);
+    Metadata.insert({key:'syncToken',value:syncToken});
   }
+
+  var lastDeletion = Metadata.findOne({key:'lastDeletion'});
+  if(!lastDeletion){
+    Metadata.insert({key:'lastDeletion',value:0});
+  }
+
+  if(Meteor.settings.meteorDeveloperAccount){
+    ServiceConfiguration.configurations.upsert({
+      service:"meteor-developer"
+    }, {
+      $set: {
+        clientId:Meteor.settings.meteorDeveloperAccount.clientId,
+        secret:Meteor.settings.meteorDeveloperAccount.secret,
+        service:"meteor-developer"
+      }
+    });
+  }
+
 
   console.log('-Connect with upstream server');
   connectToPackageServer();

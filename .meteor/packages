@@ -9,6 +9,7 @@ underscore
 sacha:spin
 ian:accounts-ui-bootstrap-3
 accounts-password
+accounts-oauth
 twbs:bootstrap
 fourseven:scss
 fortawesome:fontawesome
@@ -28,3 +29,4 @@ meteorhacks:npm
 
 
 npm-container
+service-configuration

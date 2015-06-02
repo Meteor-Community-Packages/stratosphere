@@ -37,19 +37,19 @@ Synchronizer.prototype.collections = {
 Synchronizer.prototype.synchronize = function(){
   //If there is no connection to an upstream server, we cannot synchronize
   if(!Stratosphere.UpstreamConn || !Stratosphere.UpstreamConn.status().connected)
-    return SyncTokens.findOne({});
+    return Metadata.findOne({key:"syncToken"}).value;
 
   console.log('Start syncing with upstream');
 
   //Initialize data
-  this._reset();
+  this._init();
 
   while(!this.remoteData.upToDate) {
     try {
         this._synchronizeChunk();
     }catch(e){
       console.log("Error while syncing with upstream package server: "+e);
-      break;
+      throw "Error while syncing with upstream package server: "+e;
     }
   }
 
@@ -61,11 +61,22 @@ Synchronizer.prototype.synchronize = function(){
  * Initialize or reset synchronization data
  * @private
  */
-Synchronizer.prototype._reset = function(){
+Synchronizer.prototype._init = function(){
   this.chunk =  0;
   this.remoteData = {upToDate:false,collections:{}};
-  this.syncToken = SyncTokens.findOne({});
-  delete this.syncToken._id;
+  this.syncToken = Metadata.findOne({key:'syncToken'}).value;
+  //delete this.syncToken._id;
+}
+
+/**
+ * Initialize or reset synchronization data
+ * @private
+ */
+Synchronizer.prototype._reset = function() {
+  for (collectionName in this.collections) {
+    if (!this.collections.hasOwnProperty(collectionName))continue;
+    this.collections[collectionName].remove({private:false});
+  }
 }
 
 /**
@@ -88,10 +99,19 @@ Synchronizer.prototype._synchronizeChunk = function(){
    }
    */
 
+  if(this.remoteData.resetData){
+    this._reset();
+  }
+
   this._upsertChunk();
 
   this.syncToken = this.remoteData.syncToken;
-  SyncTokens.update({},{$set:this.syncToken});
+  Metadata.update({key:'syncToken'},{$set:{value:this.syncToken}});
+
+  var lastDeletion = Metadata.findOne({key:'lastDeletion'}).value;
+  if(lastDeletion < this.syncToken.lastDeletion){
+    Metadata.update({key:'lastDeletion'},{$set:{value:this.syncToken.lastDeletion}});
+  }
 }
 
 /**
@@ -106,7 +126,7 @@ Synchronizer.prototype._upsertChunk = function(){
     collection = this.remoteData.collections[collectionName];
     for(i = 0; i < collection.length; i++){
       element = collection[i];
-      //If a custom package already exist, then modify the upstream one to reflect this
+      //If a private package already exist, then modify the upstream one to reflect this
       this._checkName(element,collectionName);
       /*
        XXX Cache latest version information (for front-end performance)
@@ -132,7 +152,7 @@ Synchronizer.prototype._upsertChunk = function(){
 }
 
 /**
- * Check if a custom package with given name already exist, then modify the upstream one to reflect this
+ * Check if a private package with given name already exist, then modify the upstream one to reflect this
  * @param element
  * @private
  */
@@ -159,7 +179,7 @@ Synchronizer.prototype._checkName = function(element,collectionName){
       break;
   }
   if(checkName){
-    query = {custom:true};
+    query = {private:true};
     query[nameKey] = element[nameKey];
     var pack = Packages.findOne(query);
     if(pack){
@@ -185,7 +205,7 @@ Synchronizer.prototype._addCustomFields = function(element){
 
   //Add other custom fields
   element.hidden = false;
-  element.custom = false;
+  element.private = false;
 }
 
 /**
@@ -194,7 +214,7 @@ Synchronizer.prototype._addCustomFields = function(element){
 function publishPackage(name){
   check(name,String);
 
-  var pack = Packages.findOne({name:name,custom:true});
+  var pack = Packages.findOne({name:name,private:true});
 
   if(pack){
     Packages.upsert(pack._id,{$set:{hidden:false, lastUpdated: new Date()}});
@@ -229,12 +249,12 @@ Meteor.methods({
     var insert;
 
     //We only allow to overwrite upstream packages
-    if(pack && pack.custom){
-      return;
+    if(pack && pack.private){
+      throw "Private package already exists. To create a new version of an existing package, do not use the --create flag!";
     }
 
     var date = new Date();
-    insert = {name:name, hidden:true, custom:true, lastUpdated: date};
+    insert = {name:name, hidden:true, private:true, lastUpdated: date};
 
     //If an upstream package already exist, rename it with an "@UPSTREAM"-suffix
     if(pack){
@@ -263,8 +283,8 @@ Meteor.methods({
     check(name,String);
     if(Meteor.settings.loginRequired && !Meteor.user()) return;
 
-    var pack = Packages.findOne({name:packageName,custom:true});
-    if(!pack)return true;
+    var pack = Packages.findOne({name:packageName,private:true});
+    if(!pack)throw Error('No such package, stratosphere can only unpublish private packages');
 
     Packages.remove(pack._id);
     Versions.remove({packageName:pack.name});
@@ -274,7 +294,7 @@ Meteor.methods({
       Packages.update({_id:pack.upstream},{$set:{name:pack.name,lastUpdated:date}})
       Versions.update({packageName:pack.name+"@UPSTREAM"},{$set:{packageName:pack.name,lastUpdated:date}});
     }
-
+    Metadata.update({key:'lastDeletion'},{$set:{value:date.getTime()}});
   },
 
   /**
@@ -300,7 +320,7 @@ Meteor.methods({
     check(versionIdentifier.version,String);
     if(Meteor.settings.loginRequired && !Meteor.user()) return;
 
-    var pack = Packages.findOne({name:versionIdentifier.packageName,custom:true});
+    var pack = Packages.findOne({name:versionIdentifier.packageName,private:true});
     if(!pack)return false;
 
     var version = Versions.findOne({packageName:versionIdentifier.packageName,version:versionIdentifier.version});
@@ -393,21 +413,26 @@ Meteor.methods({
       "releaseTracks":ReleaseTracks
     };
 
-    //XXX If the syncToken is from a non-stratosphere package server, reset everything??
-    /*if(!syncToken.hasOwnProperty("stratosphere")){
+    var lastDeletion = Metadata.findOne({key:'lastDeletion'}).value;
+
+    //If the syncToken is from a non-stratosphere package server, reset everything??
+    if(!syncToken.hasOwnProperty("stratosphere") || lastDeletion > syncToken.lastDeletion){
       result.resetData = true;
       syncToken.stratosphere = true;
+      syncToken.lastDeletion = lastDeletion;
       for(var collectionName in collections)
         syncToken[collectionName] = 0;
-    }*/
+    }
 
     result.syncToken = syncToken;
 
 
     for(var collectionName in collections){
-      var cursor = collections[collectionName].rawCollection().find({hidden:false,lastUpdated:{$gte:new Date(syncToken[collectionName])}},{sort:{lastUpdated:1},fields:{latestVersion:0,upstream:0,custom:0,hidden:0,buildPackageName:0,versionInt:0}});
+      var cursor = collections[collectionName].rawCollection().find({hidden:false,lastUpdated:{$gt:new Date(syncToken[collectionName])}},{sort:{lastUpdated:1},fields:{latestVersion:0,upstream:0,private:0,hidden:0,buildPackageName:0,versionInt:0}});
 
       var count = Async.runSync(function(done) {cursor.count(true,done);}).result;
+      if(!count)continue;
+
       if(count > perPage){
         result.upToDate = false;
       }
@@ -442,7 +467,7 @@ Meteor.methods({
   createPackageBuild: function(data){
     if(Meteor.settings.loginRequired && !Meteor.user()) return;
 
-    var pack = Packages.findOne({name:data.packageName,custom:true});
+    var pack = Packages.findOne({name:data.packageName,private:true});
     var version = Versions.findOne({packageName:data.packageName,version:data.version});
     if(pack && version){
       var build = Builds.findOne({versionId:version._id,buildArchitectures:data.buildArchitectures});
@@ -454,7 +479,7 @@ Meteor.methods({
           versionId: version._id,
           lastUpdated: date,
           hidden:true,
-          custom: true,
+          private: true,
           buildPackageName:data.packageName
         };
 
@@ -524,7 +549,7 @@ Meteor.methods({
     //XXX Validation
     if(Meteor.settings.loginRequired && !Meteor.user()) return;
 
-    var pack = Packages.findOne({name:versionIdentifier.packageName,custom:true});
+    var pack = Packages.findOne({name:versionIdentifier.packageName,private:true});
     var version = Versions.findOne({packageName:versionIdentifier.packageName,version:versionIdentifier.version});
     var result = {uploadToken:''};
     if(version && pack){
@@ -600,7 +625,7 @@ Meteor.methods({
     //XXX Validation
     if(Meteor.settings.loginRequired && !Meteor.user()) return;
 
-    var pack = Packages.findOne({name:versionIdentifier.packageName,custom:true});
+    var pack = Packages.findOne({name:versionIdentifier.packageName,private:true});
     var version = Versions.findOne({packageName:record.packageName,version:record.version});
     if(!pack || version)return false;
 
@@ -609,7 +634,7 @@ Meteor.methods({
     _.extend(record,{
       versionInt:getVersionInt(record.version),
       lastUpdated: new Date(),
-      custom:true,
+      private:true,
       hidden:true
     });
 
