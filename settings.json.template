@@ -1,0 +1,20 @@
+{
+  "upstreamURL": "https://packages.meteor.com",
+  "directories":
+  {
+    "readme": "public/uploads/readmes",
+    "package": "public/uploads/packages"
+  },
+  "public":{
+    "loginRequired":false
+  },
+  "meteorDeveloperAccount":{
+    "clientId":"",
+    "secret":""
+  },
+  "auth":{
+    "url":"",
+    "username":"",
+    "password":""
+  }
+}
