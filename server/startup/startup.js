@@ -1,3 +1,8 @@
+var path = Meteor.npmRequire('path');
+var fs = Meteor.npmRequire('fs');
+var wrench = Meteor.npmRequire('wrench');
+var fsExtra = Meteor.npmRequire('fs-extra');
+
 Stratosphere = {UpstreamConn:''};
 
 /**
@@ -18,63 +23,71 @@ function connectToPackageServer(){
 
 
 Meteor.startup(function () {
-  console.log('Server startup checks');
-
-  console.log('-Make sure metadata exists');
-  var syncToken = Metadata.findOne({key:'syncToken'});
-  if(!syncToken){
-    syncToken = {
-      format:"1.1"
-    }
-    Metadata.insert({key:'syncToken',value:syncToken});
-  }
-
-  var lastDeletion = Metadata.findOne({key:'lastDeletion'});
-  if(!lastDeletion){
-    Metadata.insert({key:'lastDeletion',value:0});
-  }
-
-  if(Meteor.settings.meteorDeveloperAccount){
-    ServiceConfiguration.configurations.upsert({
-      service:"meteor-developer"
-    }, {
-      $set: {
-        clientId:Meteor.settings.meteorDeveloperAccount.clientId,
-        secret:Meteor.settings.meteorDeveloperAccount.secret,
-        service:"meteor-developer"
-      }
-    });
-  }
-
 
   console.log('-Connect with upstream server');
   connectToPackageServer();
 
   console.log('-Start upload server');
 
+  var meteor_root = fs.realpathSync( process.cwd() + '/../' );
+  var application_root = fs.realpathSync( meteor_root + '/../' );
+
+// if running on dev mode
+  if( path.basename( fs.realpathSync( meteor_root + '/../../../' ) ) == '.meteor' ){
+    application_root =  fs.realpathSync( meteor_root + '/../../../../' );
+  }
+
+  Meteor.settings.application_root = application_root;
+
+  function isRelative(dir){
+    return path.resolve(dir) !== path.normalize(dir);
+  }
+
+  if(isRelative(Meteor.settings.directories.tmp)){
+    Meteor.settings.directories.tmp =  path.join(application_root,Meteor.settings.directories.tmp);
+  }
+
+  if(isRelative(Meteor.settings.directories.uploads)){
+    Meteor.settings.directories.uploads =  path.join(application_root,Meteor.settings.directories.uploads);
+  }
+
   UploadServer.init({
-    tmpDir: process.env.PWD + '/uploads/tmp',
-    uploadDir: process.env.PWD + '/uploads/',
+    tmpDir: Meteor.settings.directories.tmp,
+    uploadDir: Meteor.settings.directories.uploads,
+    uploadUrl: '/upload/',
     checkCreateDirectories: true,
-    getDirectory: function(fileInfo, formData) {
-      if (formData && formData.directoryName != null) {
-        return formData.directoryName;
-      }
-      return "";
-    },
-    getFileName: function(fileInfo, formData) {
-      if (formData && formData.prefix != null) {
-        return formData.prefix + '_' + fileInfo.name;
-      }
-      return fileInfo.name;
-    },
     validateRequest: function(req, res){
-      console.log(req,res);
+     // console.log(req,res);
+      return;
     },
-    finished: function(fileInfo, formData) {
-      if (formData && formData._id != null) {
-        Items.update({_id: formData._id}, { $push: { uploads: fileInfo }});
+    finished: function(fileInfo, query) {
+      var tokenData = UploadTokens.findOne({_id:query.token});
+
+      if(!tokenData || !tokenData.paths.hasOwnProperty(query.type))
+        throw new Error("Unmatched upload type");
+
+      var destination = path.join(Meteor.settings.directories.uploads,tokenData.type);
+
+      if(!fs.existsSync(fileInfo.destination))
+        wrench.mkdirSyncRecursive(fileInfo.destination);
+
+
+      var filename = tokenData.typeId;
+
+      if(query.type === 'readme'){
+        filename += '_readme.md';
+      }else{
+        filename += '.tgz';
       }
+
+      destination = path.join(destination,filename);
+
+      fsExtra.copySync(fileInfo.path, destination);
+      fs.unlinkSync(fileInfo.path);
+
+      tokenData.paths[query.type] = destination;
+
+      UploadTokens.upsert(tokenData._id,tokenData);
     }
   });
 });

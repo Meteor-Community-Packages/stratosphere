@@ -1,5 +1,9 @@
+function hasAccess(){
+  return Meteor.settings.loginRequired && Meteor.user();
+}
+
 FindFromPublication.publish('packageList', function(options) {
-  if(Meteor.settings.loginRequired && !Meteor.user()) return;
+  if(!hasAccess()) return;
 
   check(options, {
     sort: Object,
@@ -8,20 +12,19 @@ FindFromPublication.publish('packageList', function(options) {
   return Packages.find({private:true},options);
 });
 
-
 Meteor.publish('nbPackages', function() {
-  if(Meteor.settings.loginRequired && !Meteor.user()) return;
+  if(!hasAccess()) return;
   Counts.publish(this, 'nbPackages', Packages.find({private:true}));
 });
 
 Meteor.publish('packageDetails', function(packageId) {
-  if(Meteor.settings.loginRequired && !Meteor.user()) return;
+  if(!hasAccess()) return;
   check(packageId,String);
   return Packages.find({_id:packageId});
 });
 
 Meteor.publish('versions', function(packageId) {
-  if(Meteor.settings.loginRequired && !Meteor.user()) return;
+  if(!hasAccess()) return;
   check(packageId, String);
   var pack = Packages.findOne(packageId);
   if(pack){

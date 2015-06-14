@@ -1,4 +1,33 @@
 var SemVer = Meteor.npmRequire("semver-loose");
+var fs = Meteor.npmRequire("fs");
+var path = Meteor.npmRequire('path');
+var crypto = Meteor.npmRequire('crypto');
+
+_.mixin({
+  toArrayFromObj: function (object, keyName)
+  {
+    return _.values(_.map(Object.keys(object),function (item)
+    {
+      object[item][keyName] = item;
+      return object[item];
+    }));
+  }
+});
+
+/*
+ * XXX nicer lodash alternative, see http://stackoverflow.com/questions/26155219/opposite-of-indexby-in-lodash-underscore
+
+ _.mixin({
+ disorder: function(collection, path) {
+ return _.transform(collection, function(result, item, key) {
+ if (path)
+ _.set(item, path, key);
+
+ result.push(item);
+ }, []);
+ }
+ });
+ */
 
 /**
  * Create an integer representation of a semver, for mongo query sorting
@@ -9,6 +38,27 @@ function getVersionInt(semv){
   semv = SemVer.parse(semv);
 
   return semv.major*100 + semv.minor*10 + semv.patch;
+}
+
+function verifyHashes(files){
+  for(var file in files){
+    if(!files.hasOwnProperty(file))continue;
+    if(!verifyHash(file,files[file])) return false;
+  }
+  return true;
+}
+function verifyHash(file,hash){
+  var crypto = require('crypto');
+  var hasher = crypto.createHash('sha256');
+  hash.setEncoding('base64');
+  //file = files.convertToOSPath(args[0]);
+
+  var rs = fs.createReadStream(file)
+
+  Async.runSync(function(done){ rs.on('end',done);rs.pipe(hasher, { end: false });});
+
+  rs.close();
+  return hasher.digest('base64') === hash;
 }
 
 /**
@@ -48,8 +98,7 @@ Synchronizer.prototype.synchronize = function(){
     try {
         this._synchronizeChunk();
     }catch(e){
-      console.log("Error while syncing with upstream package server: "+e);
-      throw "Error while syncing with upstream package server: "+e;
+      throw new Meteor.Error("Error while syncing with upstream package server: "+e);
     }
   }
 
@@ -84,7 +133,7 @@ Synchronizer.prototype._reset = function() {
  * @returns new upstream sync token
  */
 Synchronizer.prototype._synchronizeChunk = function(){
-  console.log('Import upstream chunk '+ ++this.chunk);
+  console.log('Fetch upstream chunk '+ ++this.chunk);
   //Fetch a chunk of data
   this.remoteData = Stratosphere.UpstreamConn.call('syncNewPackageData', this.syncToken, {});
   /*
@@ -100,10 +149,13 @@ Synchronizer.prototype._synchronizeChunk = function(){
    */
 
   if(this.remoteData.resetData){
+    console.log('Reset datastore as per upstream command');
     this._reset();
   }
 
-  this._upsertChunk();
+  if(_.size(this.remoteData.collections)){
+    this._upsertChunk();
+  }
 
   this.syncToken = this.remoteData.syncToken;
   Metadata.update({key:'syncToken'},{$set:{value:this.syncToken}});
@@ -119,6 +171,8 @@ Synchronizer.prototype._synchronizeChunk = function(){
  * @private
  */
 Synchronizer.prototype._upsertChunk = function(){
+  console.log('Import upstream chunk '+ this.chunk);
+
   var collectionName,collection,element,i;
   for(collectionName in this.collections){
     if(!this.collections.hasOwnProperty(collectionName) || !this.remoteData.collections.hasOwnProperty(collectionName))continue;
@@ -128,6 +182,7 @@ Synchronizer.prototype._upsertChunk = function(){
       element = collection[i];
       //If a private package already exist, then modify the upstream one to reflect this
       this._checkName(element,collectionName);
+
       /*
        XXX Cache latest version information (for front-end performance)
        if(collectionName === "versions"
@@ -171,10 +226,14 @@ Synchronizer.prototype._checkName = function(element,collectionName){
       nameKey = 'packageName';
       //Sanitize for MongoDB
       if(element.hasOwnProperty("dependencies")){
+        //Make dependencies MONGO-safe (remove dots from key names by transforming into array)
+        element.dependencies = _.toArrayFromObj(element.dependencies, 'packageName');
+        /*
+        XXX Alternative: replace key with unicode variant, better or not?
         for(dependency in element.dependencies){
           element.dependencies[dependency.replace(/\./g,'\uff0e')] = element.dependencies[dependency];
           delete element.dependencies[dependency];
-        }
+        }*/
       }
       break;
   }
@@ -223,12 +282,187 @@ function publishPackage(name){
   return false;
 }
 
+
+/**
+ * Method parameter schemas
+ */
+var CreatePackageParameters = new SimpleSchema({
+  'name': {
+    type: String,
+    label: "Name of the package to create"
+  }
+});
+
+var ChangeVersionMetaDataParameters = new SimpleSchema({
+  'versionIdentifier': {
+    type: Object
+  },
+  'versionIdentifier.packageName': {
+    type: String
+  },
+  'versionIdentifier.version': {
+    type: String
+  },
+  'dataToUpdate': {
+    type: Object
+  },
+  'dataToUpdate.git': {
+    type: String
+  },
+  'dataToUpdate.description': {
+    type: String
+  },
+  'dataToUpdate.longDescription': {
+    type: String
+  }
+});
+
+var SyncTokenSchema = new SimpleSchema({
+  'lastDeletion': {
+    type: Number
+  },
+  'format': {
+    type: String
+  },
+  'packages': {
+    type: Number
+  },
+  'versions': {
+    type: Number
+  },
+  'builds': {
+    type: Number
+  },
+  'releaseTracks': {
+    type: Number
+  },
+  'releaseVersions': {
+    type: Number
+  },
+  'stratosphere': {
+    type: Boolean,
+    optional:true,
+    defaultValue:false
+  },
+  '_id': {
+    type: String,
+    optional:true
+  }
+});
+
+var SyncOptionsSchema = new SimpleSchema({
+      'compressCollections':{
+        type: Boolean,
+        optional:true,
+        defaultValue:false
+      },
+      'useShortPages':{
+        type: Boolean,
+        optional:true,
+        defaultValue:false
+      }
+    });
+
+var CreatePackageBuildParameters = new SimpleSchema({
+  'packageName':{
+    type: String
+  },
+  'version':{
+    type: String
+  },
+  'buildArchitectures':{
+    type:String
+  }
+});
+
+var CreatePackageVersionParameters = new SimpleSchema({
+  'packageName':{
+    type:String
+  },
+  'version':{
+    type:String
+  },
+  'description':{
+    type:String,
+    optional:true
+  },
+  'longDescription':{
+    type:String,
+    optional:true
+  },
+  'git':{
+    type:String,
+    optional:true
+  },
+  'compilerVersion':{
+    type:String
+  },
+  'containsPlugins':{
+    type:Boolean
+  },
+  'debugOnly':{
+    type:Boolean
+  },
+  'exports':{
+    type:[Object],
+    optional:true
+  },
+  'exports.$.name':{
+    type:String
+  },
+  'exports.$.architectures':{
+    type:[String]
+  },
+  'releaseName':{
+    type:String
+  },
+  'dependencies':{
+    type:[Object],
+    optional:true
+  },
+  'dependencies.$.packageName':{
+    type:String,
+    optional:true
+  },
+  'dependencies.$.constraint':{
+    type:String,
+    optional:true
+  },
+  'dependencies.$.references':{
+    type:[Object]
+  },
+  'dependencies.$.references.$.arch':{
+    type:String
+  }
+});
+
+/**
+ * XXX: test with documentaiton false, no exports, no releasename and no deps
+ */
+
+var PackageVersionHashes = new SimpleSchema({
+  'tarballHash':{
+    type:String
+  },
+  'treeHash':{
+    type:String
+  },
+  'readmeHash':{
+    type:String
+  }
+});
+
+function ensureLogin(){
+  if(Meteor.settings.loginRequired && !Meteor.user()) throw new Meteor.Error("Action not authenticated");
+}
+
 /**
  * Methods - exposes package server API to ddp clients (meteor tool)
  */
 Meteor.methods({
 
   refresh:function(){
+    ensureLogin();
     var synchronizer = new Synchronizer();
     synchronizer.synchronize();
   },
@@ -237,24 +471,25 @@ Meteor.methods({
    * Create a package
    * Current behavior when a package already exists upstream is to rename the upstream package
    * by adding the "@UPSTREAM"-suffix
-   *
-   * @param name
    */
-  createPackage: function(name){
-    //XXX better validation
-    check(name,String);
-    if(Meteor.settings.loginRequired && !Meteor.user()) return;
+  createPackage: function(data){
+    ensureLogin();
 
-    var pack = Packages.findOne({name:name});
+    CreatePackageParameters.clean(data);
+    check(data,CreatePackageParameters);
+
+    var pack = Packages.findOne(data);
     var insert;
 
     //We only allow to overwrite upstream packages
     if(pack && pack.private){
-      throw "Private package already exists. To create a new version of an existing package, do not use the --create flag!";
+      Packages.remove(pack._id);
+      Versions.remove({packageName:pack.name});
+      //throw new Meteor.Error("Private package already exists. To create a new version of an existing package, do not use the --create flag!");
     }
 
     var date = new Date();
-    insert = {name:name, hidden:true, private:true, lastUpdated: date};
+    insert = {name:data.name, hidden:true, private:true, lastUpdated: date};
 
     //If an upstream package already exist, rename it with an "@UPSTREAM"-suffix
     if(pack){
@@ -284,7 +519,7 @@ Meteor.methods({
     if(Meteor.settings.loginRequired && !Meteor.user()) return;
 
     var pack = Packages.findOne({name:packageName,private:true});
-    if(!pack)throw Error('No such package, stratosphere can only unpublish private packages');
+    if(!pack) throw new Meteor.Error('No such package, stratosphere can only unpublish private packages');
 
     Packages.remove(pack._id);
     Versions.remove({packageName:pack.name});
@@ -300,24 +535,12 @@ Meteor.methods({
   /**
    * Update metadata of a package version
    *
-   * @param versionIdentifier - required
-   * {
- *   packageName (string) - required
- *   version (semver string) - required
- * }
-   * @param dataToUpdate - required
-   * {
- *   git(string) - optional
- *   description(string) - required
- *   longDescription(string) - optional
- * }
-   *
    * @return success(boolean)?
    */
-  changeVersionMetaData: function(versionIdentifier,dataToUpdate){
-    //XXX Better validation
-    check(versionIdentifier.packageName,String);
-    check(versionIdentifier.version,String);
+  changeVersionMetaData: function(data){
+    ChangeVersionMetaDataParametes.clean(data);
+    check(data,ChangeVersionMetaDataParametes);
+
     if(Meteor.settings.loginRequired && !Meteor.user()) return;
 
     var pack = Packages.findOne({name:versionIdentifier.packageName,private:true});
@@ -338,24 +561,6 @@ Meteor.methods({
   /**
    * Return all changes to the package DB since data provided in syncToken
    *
-   * @param syncToken - contains data when last synced
-   * {
-   *    lastDeletion(Long)
-   *    format(String)
-   *    packages(Long)
-   *    versions(Long)
-   *    builds(Long)
-   *    releaseTracks(Long)
-   *    releaseVersions(Long)
-   *    stratosphere(Boolean)
-   *    _id(integer)
-   * }
-   *
-   * @param syncOptions - some tions that I don't really know how to handle yet
-   * {
-   *  compressCollections(Boolean) - XXX no idea what this does
-   *  useShortPages(Boolean) - XXX no idea what this does
-   * }
    *
    * @returns
    * {
@@ -388,8 +593,12 @@ Meteor.methods({
    * }
    */
   syncNewPackageData: function(syncToken, syncOptions){
-    //XXX Better validation
-    if(Meteor.settings.loginRequired && !Meteor.user()) return;
+    ensureLogin();
+
+    SyncTokenSchema.clean(syncToken);
+    SyncOptionsSchema.clean(syncOptions);
+    check(syncToken,SyncTokenSchema);
+    check(syncOptions,SyncOptionsSchema);
 
     //XXX: check format version and do something with it
 
@@ -416,7 +625,7 @@ Meteor.methods({
     var lastDeletion = Metadata.findOne({key:'lastDeletion'}).value;
 
     //If the syncToken is from a non-stratosphere package server, reset everything??
-    if(!syncToken.hasOwnProperty("stratosphere") || lastDeletion > syncToken.lastDeletion){
+    if(!syncToken.stratosphere || lastDeletion > syncToken.lastDeletion){
       result.resetData = true;
       syncToken.stratosphere = true;
       syncToken.lastDeletion = lastDeletion;
@@ -437,6 +646,12 @@ Meteor.methods({
         result.upToDate = false;
       }
       result.collections[collectionName] = Async.runSync(function(done){cursor.limit(perPage).toArray(done)}).result;
+
+      //REVERT mongo-safe dependencies to the way meteor wants it.
+      if(collectionName === 'versions'){
+        _.map(result.collections[collectionName],function(elem){elem.dependencies = _.indexBy(elem.dependencies,'packageName')});
+      }
+
       result.syncToken[collectionName] = new Date(result.collections[collectionName][result.collections[collectionName].length - 1].lastUpdated).getTime();
     }
 
@@ -452,20 +667,17 @@ Meteor.methods({
   /**
    * Create a certain build of a package?
    *
-   * @param data
-   * {
- *   packageName (string) - required
- *   version (semver string) - required
- *   buildArchitectures (XXX array?) -
- * }
    * @returns
    * {
- *   uploadToken(String)
- *   uploadUrl(String)
- * }
+   *   uploadToken(String)
+   *   uploadUrl(String)
+   * }
    */
   createPackageBuild: function(data){
-    if(Meteor.settings.loginRequired && !Meteor.user()) return;
+    ensureLogin();
+
+    CreatePackageBuildParameters.clean(data);
+    check(data,CreatePackageBuildParameters);
 
     var pack = Packages.findOne({name:data.packageName,private:true});
     var version = Versions.findOne({packageName:data.packageName,version:data.version});
@@ -502,7 +714,7 @@ Meteor.methods({
    * @param treeHash
    */
   publishPackageBuild: function(uploadToken,tarballHash,treeHash){
-    if(Meteor.settings.loginRequired && !Meteor.user()) return;
+    ensureLogin();
 
     var tokenData = UploadTokens.findOne({_id:uploadToken});
     if(tokenData && tokenData.type === 'build'){
@@ -547,7 +759,7 @@ Meteor.methods({
    */
   createReadme: function(versionIdentifier){
     //XXX Validation
-    if(Meteor.settings.loginRequired && !Meteor.user()) return;
+    ensureLogin();
 
     var pack = Packages.findOne({name:versionIdentifier.packageName,private:true});
     var version = Versions.findOne({packageName:versionIdentifier.packageName,version:versionIdentifier.version});
@@ -573,7 +785,7 @@ Meteor.methods({
    */
   publishReadme: function(uploadToken,options) {
     ///XXX Validation
-    if(Meteor.settings.loginRequired && !Meteor.user()) return;
+    ensureLogin();
 
     var tokenData = UploadTokens.findOne({_id:uploadToken});
     if(tokenData && tokenData.type === 'readme' && tokenData.url.length){
@@ -599,35 +811,24 @@ Meteor.methods({
   /**
    * Create a new package version
    *
-   * @param record
-   * {
- *    packageName(String)
- *    version(Semver String)
- *    description(String)
- *    longDescription(String)
- *    git(String)
- *    compilerVersion(String)
- *    containsPlugins(XXX Arrray?)
- *    debugOnly(XXX Boolean?)
- *    exports(XXX Exports?)
- *    releaseName(String),
- *    dependencies(XXX Array?)
- * }
-   *
    * @return
    * {
- *    uploadToken(String)
- *    readmeUrl(String)
- *    uploadUrl(String)
- * }
+   *    uploadToken(String)
+   *    readmeUrl(String)
+   *    uploadUrl(String)
+   * }
    */
   createPackageVersion: function(record){
-    //XXX Validation
-    if(Meteor.settings.loginRequired && !Meteor.user()) return;
 
-    var pack = Packages.findOne({name:versionIdentifier.packageName,private:true});
+    record.dependencies = _.toArrayFromObj(record.dependencies,'packageName')
+
+    ensureLogin();
+    CreatePackageVersionParameters.clean(record,{autoConvert:false,removeEmptyStrings:false});
+    check(record,CreatePackageVersionParameters);
+
+    var pack = Packages.findOne({name:record.packageName,private:true});
     var version = Versions.findOne({packageName:record.packageName,version:record.version});
-    if(!pack || version)return false;
+    if(!pack || version) throw new Meteor.error("Version already exists");
 
     var d = new Date();
 
@@ -640,33 +841,31 @@ Meteor.methods({
 
     record._id = Versions.insert(record);
 
-    var token = {type:'version', typeId:record._id, url:'', createdAt: d};
+    var token = {
+      type:'version',
+      typeId:record._id,
+      paths:{sources:'',readme:''},
+      createdAt: d
+    };
 
     token._id = UploadTokens.insert(token);
 
     return {
       uploadToken: token._id,
-      uploadUrl: '',
-      readmeUrl: ''
+      uploadUrl: Meteor.absoluteUrl() + 'upload/?token='+token._id+'&type=sources',
+      readmeUrl: Meteor.absoluteUrl() + 'upload/?token='+token._id+'&type=readme'
     }
   },
 
   /**
    * Publish version of a package
    *
-   * @param uploadToken (String)
-   * XXX The token that identifies the uploaded tarball?
-   *
-   * @param hashes
-   * {
- *   tarballHash(String)
- *   treeHash(String)
- *   readmeHash(String)
- * }
    * XXX to verify the tarball?
    */
   publishPackageVersion: function(uploadToken, hashes){
-    if(Meteor.settings.loginRequired && !Meteor.user()) return;
+    ensureLogin();
+    check(uploadToken,String);
+    check(hashes,PackageVersionHashes);
 
     var tokenData = UploadTokens.findOne({_id:uploadToken});
     if(tokenData && tokenData.type === 'version' && tokenData.url.length){
@@ -679,6 +878,7 @@ Meteor.methods({
       }
 
       //XXX verify hashes?
+
 
       var publishedBy = {};
 

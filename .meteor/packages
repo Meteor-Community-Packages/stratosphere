@@ -9,10 +9,16 @@ underscore
 sacha:spin
 ian:accounts-ui-bootstrap-3
 accounts-password
-accounts-oauth
+#accounts-oauth
+#accounts-meteor-developer
+uploadserver
 twbs:bootstrap
 fourseven:scss
 fortawesome:fontawesome
+aldeed:simple-schema
+jagi:astronomy
+jagi:astronomy-behaviors
+jagi:astronomy-validators
 msavin:mongol
 http
 webapp
@@ -20,13 +26,14 @@ livedata
 meteor-platform
 meteorhacks:search-source
 percolate:find-from-publication
-accounts-meteor-developer
-tomi:upload-server
 tmeasday:publish-counts
 mrt:q
 meteorhacks:async
 meteorhacks:npm
 
 
-npm-container
+
 service-configuration
+
+
+npm-container

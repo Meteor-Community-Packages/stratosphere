@@ -12,6 +12,10 @@ Fill in the app id and app secret in the settings.json.template file and rename 
 
 ### 2) Run the app
 This is a Meteor project, so you can deploy and run it the same way as any other Meteor project.
+You need to tell meteor it needs to use the settings.json file with the --settings option:
+```
+meteor --settings settings.json
+```
 First start-up can take long, since it needs to import all packages from the official package repo.
 
 After this, you need to create the database file.
@@ -32,18 +36,12 @@ Note that Meteor does not currently support package servers running on another p
 
 ## Usage
 To publish and sync with Stratosphere, you have to set the package server URL to your stratosphere URL.
-This can be achieved by setting the environment variable: METEOR_PACKAGE_SERVER to your package server url
-On Linux:
+This can be achieved by setting the environment variable: METEOR_PACKAGE_SERVER to your package server url:
 ```
-export METEOR_PACKAGE_SERVER_URL=[YOUR URL]
-```
-
-On Windows:
-```
-SET METEOR_PACKAGE_SERVER_URL=[YOUR URL]
+METEOR_PACKAGE_SERVER_URL=[YOUR URL]
 ```
 
-You should be able to switch package servers back and forth.
+Meteor splits package database and files according to this URL, so you should be able to switch package servers back and forth by changing this variable.
 
 ## Settings
 * upstreamURL: The URL to the of

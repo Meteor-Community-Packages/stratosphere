@@ -1,10 +1,10 @@
 {
   "upstreamURL": "https://packages.meteor.com",
   "directories":
-  {
-    "readme": "public/uploads/readmes",
-    "package": "public/uploads/packages"
-  },
+    {
+      "tmp": ".tmp",
+      "uploads": ".uploads"
+    },
   "public":{
     "loginRequired":false
   },
@@ -12,9 +12,5 @@
     "clientId":"",
     "secret":""
   },
-  "auth":{
-    "url":"",
-    "username":"",
-    "password":""
-  }
+  "allowedUsers":[]
 }
