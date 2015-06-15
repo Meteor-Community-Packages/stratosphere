@@ -1,4 +1,11 @@
 # THIS IS A WIP
+Working so far, with changes to the auth-client of meteor-tool:
+
+* Synchronization with upstream server
+* Synchronization with meteor-tool
+* Publishing of packages, versions, builds, metadata changes
+* Uploading and downloading of files
+
 Next thing to figure out is how to handle logins from Meteor tool
 
 # Stratosphere
@@ -44,21 +51,25 @@ METEOR_PACKAGE_SERVER_URL=[YOUR URL]
 Meteor splits package database and files according to this URL, so you should be able to switch package servers back and forth by changing this variable.
 
 ## Settings
-* upstreamURL: The URL to the of
-ficial package manager, you probably don't want to change this
-* readmeDirectory: Where readme files are saved to, for now, this must be publicly accessible.
-* packageDirectory: Where package zips are saved to, for now, this must be publicly accessible.
-* loginRequired: Whether a login is required, not yet implemented.
+* upstreamURL: The URL to the official package server. Default value is packages.meteor.com, you probably don't want to change this.
+* directories.tmp: Directory where file uploads are temporarily uploaded to
+* directories.uploads: Directory where files are moved to and downloaded from after they have been verified
+* public.loginRequired: Whether a login is required. Default is false, true will result in errors for now.
+* allowedUsers: Which user accounts are allowed on this server
+* meteorDeveloperAccount.clientId: Client id of your meteor accounts app
+* meteorDeveloperAccount.secret: Secret key of your meteor accounts app
 
 ## Security remarks
-Note that currently no effort has been made towards security.
+Note that currently little effort has been made towards security.
 This means that to protect your stratosphere install, you probably want to run it inside a firewall protected part of your organization.
-Anyone can view all packages and add new ones. No checks are made towards the input variables or uploaded files!
 
 ## Contribute
 We're open for contributions.
-Here are some ideas:
-- Add security (user accounts, check input parameters, uploaded files, ...)
+Top priority now is fixing the OAuth flow from meteor tool to the package server.
+
+Here are some other ideas:
 - Look into the 'XXX'-es inside the code, these serve as TODOS
-- Tests
+- Add Tests
+- Add better security (e.g. check upload tokens before upload starts)
+- Convert raw object manipulation to a more clean solution (using Astronomy, some code for this is already present and commented out in model/models.js)
 - Whatever front-end functionality you consider useful
