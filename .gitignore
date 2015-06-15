@@ -1,7 +1,7 @@
 .idea
 public
 tmp
-/packages/
+/packages/npm-container
 settings.json
 .uploads
 .tmp
