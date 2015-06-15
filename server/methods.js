@@ -293,27 +293,19 @@ var CreatePackageParameters = new SimpleSchema({
   }
 });
 
-var ChangeVersionMetaDataParameters = new SimpleSchema({
-  'versionIdentifier': {
-    type: Object
+var ChangeVersionMetadataParameters = new SimpleSchema({
+  'git': {
+    type: String,
+    optional:true
   },
-  'versionIdentifier.packageName': {
-    type: String
+  'description': {
+    type: String,
+    max:100
   },
-  'versionIdentifier.version': {
-    type: String
-  },
-  'dataToUpdate': {
-    type: Object
-  },
-  'dataToUpdate.git': {
-    type: String
-  },
-  'dataToUpdate.description': {
-    type: String
-  },
-  'dataToUpdate.longDescription': {
-    type: String
+  'longDescription': {
+    type: String,
+    max:1500,
+    optional:true
   }
 });
 
@@ -363,6 +355,15 @@ var SyncOptionsSchema = new SimpleSchema({
       }
     });
 
+var VersionIdentifierSchema = new SimpleSchema({
+  'packageName':{
+    type: String
+  },
+  'version':{
+    type: String
+  }
+});
+
 var CreatePackageBuildParameters = new SimpleSchema({
   'packageName':{
     type: String
@@ -384,11 +385,12 @@ var CreatePackageVersionParameters = new SimpleSchema({
   },
   'description':{
     type:String,
-    optional:true
+    max:100
   },
   'longDescription':{
     type:String,
-    optional:true
+    optional:true,
+    max:1500
   },
   'git':{
     type:String,
@@ -417,8 +419,7 @@ var CreatePackageVersionParameters = new SimpleSchema({
     type:String
   },
   'dependencies':{
-    type:[Object],
-    optional:true
+    type:[Object]
   },
   'dependencies.$.packageName':{
     type:String,
@@ -505,6 +506,8 @@ Meteor.methods({
 
     insert._id = Packages.insert(insert);
 
+    console.log("Created package " + insert.name);
+
     return insert._id;
   },
 
@@ -514,11 +517,13 @@ Meteor.methods({
    * @param name
    * @returns {boolean}
    */
-  unPublishPackage:function(name){
-    check(name,String);
+  unPublishPackage:function(data){
+    CreatePackageParameters.clean(data);
+    check(data,CreatePackageParameters);
+
     if(Meteor.settings.loginRequired && !Meteor.user()) return;
 
-    var pack = Packages.findOne({name:packageName,private:true});
+    var pack = Packages.findOne({name:data.name,private:true});
     if(!pack) throw new Meteor.Error('No such package, stratosphere can only unpublish private packages');
 
     Packages.remove(pack._id);
@@ -530,6 +535,9 @@ Meteor.methods({
       Versions.update({packageName:pack.name+"@UPSTREAM"},{$set:{packageName:pack.name,lastUpdated:date}});
     }
     Metadata.update({key:'lastDeletion'},{$set:{value:date.getTime()}});
+
+    console.log("Unpublished package " + pack.name);
+    return true;
   },
 
   /**
@@ -537,25 +545,27 @@ Meteor.methods({
    *
    * @return success(boolean)?
    */
-  changeVersionMetaData: function(data){
-    ChangeVersionMetaDataParametes.clean(data);
-    check(data,ChangeVersionMetaDataParametes);
+  changeVersionMetadata: function(versionIdentifier, data){
+    ensureLogin();
+    VersionIdentifierSchema.clean(versionIdentifier);
+    check(versionIdentifier,VersionIdentifierSchema);
 
-    if(Meteor.settings.loginRequired && !Meteor.user()) return;
+    ChangeVersionMetadataParameters.clean(data);
+    check(data,ChangeVersionMetadataParameters);
 
     var pack = Packages.findOne({name:versionIdentifier.packageName,private:true});
-    if(!pack)return false;
-
     var version = Versions.findOne({packageName:versionIdentifier.packageName,version:versionIdentifier.version});
+    if(!pack || !version) throw new Meteor.Error("Unknown private package or version");
 
-    if(version){
-      Versions.update(version._id,{$set:dataToUpdate});
-      if(pack.latestVersion && pack.latestVersion.id === version._id){
-        Packages.update(pack._id,{$set:{"latestVersion.description":version.description}});
-      }
-      return true;
+
+    Versions.update(version._id,{$set:data});
+    if(pack.latestVersion && pack.latestVersion.id === version._id){
+      Packages.update(pack._id,{$set:{"latestVersion.description":version.description}});
     }
-    return false;
+
+    console.log("Changed version metadata for version " + version._id);
+    return true;
+
   },
 
   /**
@@ -681,28 +691,36 @@ Meteor.methods({
 
     var pack = Packages.findOne({name:data.packageName,private:true});
     var version = Versions.findOne({packageName:data.packageName,version:data.version});
-    if(pack && version){
-      var build = Builds.findOne({versionId:version._id,buildArchitectures:data.buildArchitectures});
-      if(build)return false;
+    if(!pack || !version) throw new Meteor.Error("Unknown private package or version");
 
-      var date = new Date();
-      var insert = {
-          buildArchitectures: data.buildArchitectures,
-          versionId: version._id,
-          lastUpdated: date,
-          hidden:true,
-          private: true,
-          buildPackageName:data.packageName
-        };
+    var build = Builds.findOne({versionId:version._id,buildArchitectures:data.buildArchitectures});
+    if(build) throw new Meteor.Error("Build already exists");
 
-      insert._id = Builds.insert(insert);
-      var token = {typeId:insert._id, type:'build', url:'', createdAt: date};
-      token._id = UploadTokens.insert(token);
+    var date = new Date();
 
-      return {
-        uploadToken: token._id,
-        uploadUrl: ''
-      }
+    var insert = {
+      buildArchitectures: data.buildArchitectures,
+      versionId: version._id,
+      lastUpdated: date,
+      hidden:true,
+      private: true,
+      buildPackageName:data.packageName
+    };
+    insert._id = Builds.insert(insert);
+
+    var token = {
+      type:'build',
+      typeId:insert._id,
+      paths:{build:''},
+      createdAt: date
+    };
+    token._id = UploadTokens.insert(token);
+
+    console.log("Create package build " + insert._id);
+
+    return {
+      uploadToken: token._id,
+      uploadUrl: Meteor.absoluteUrl() + 'upload/?token='+token._id+'&type=build'
     }
   },
 
@@ -716,35 +734,42 @@ Meteor.methods({
   publishPackageBuild: function(uploadToken,tarballHash,treeHash){
     ensureLogin();
 
+    check(uploadToken,String);
+    check(tarballHash,String);
+    check(treeHash,String);
+
     var tokenData = UploadTokens.findOne({_id:uploadToken});
-    if(tokenData && tokenData.type === 'build'){
-      UploadTokens.remove(uploadToken);
-      var build = Builds.findOne({_id:tokenData.typeId});
+    if(!tokenData || tokenData.type !== 'build')
+      throw new Meteor.Error("Invalid upload token");
 
-      if(!build)
-        return false;
 
-      var builtBy = {};
-      if(Meteor.user()){
-        builtBy = {username:Meteor.user().username,id:Meteor.userId()};
-      }
+    UploadTokens.remove({_id:uploadToken});
+    var build = Builds.findOne({_id:tokenData.typeId});
+    if(!build)
+      throw new Meteor.Error("Invalid upload token");
 
-      var date = new Date();
 
-      var update = {
-        build:{
-          treeHash: treeHash,
-          tarballHash: tarballHash,
-          url: tokenData.url
-        },
-        builtBy:builtBy,
-        hidden:false,
-        lastUpdated:date,
-        buildPublished:date
-      };
-
-      Builds.update(tokenData.typeId,{$set:update});
+    var builtBy = {};
+    if(Meteor.user()){
+      builtBy = {username:Meteor.user().username,id:Meteor.userId()};
     }
+    var date = new Date();
+
+    var update = {
+      build:{
+        treeHash: treeHash,
+        tarballHash: tarballHash,
+        url: Meteor.absoluteUrl() + 'upload/build/' + tokenData.typeId + '.tgz'
+      },
+      builtBy:builtBy,
+      hidden:false,
+      lastUpdated:date,
+      buildPublished:date
+    };
+    Builds.update(tokenData.typeId,{$set:update});
+
+    console.log("Published package build " + build._id);
+    return true;
   },
 
   /**
@@ -758,17 +783,28 @@ Meteor.methods({
  * }
    */
   createReadme: function(versionIdentifier){
-    //XXX Validation
+    VersionIdentifierSchema.clean(versionIdentifier);
+    check(versionIdentifier,VersionIdentifierSchema);
+
     ensureLogin();
 
     var pack = Packages.findOne({name:versionIdentifier.packageName,private:true});
     var version = Versions.findOne({packageName:versionIdentifier.packageName,version:versionIdentifier.version});
-    var result = {uploadToken:''};
-    if(version && pack){
-      var token = {type:'readme', typeId:version._id, url:'', createdAt:new Date()};
-      token._id = UploadTokens.insert(token);
-      result.uploadToken = token._id;
-    }
+    if(!pack || !version) throw new Meteor.Error("Unknown private package or version");
+
+    var result = {uploadToken:'',url:''};
+
+    var token = {
+      type:'version',
+      typeId:version._id,
+      paths:{readme:''},
+      createdAt: new Date()
+    };
+
+    token._id = UploadTokens.insert(token);
+    result.uploadToken = token._id;
+    result.url = Meteor.absoluteUrl() + 'upload/?token='+token._id+'&type=readme';
+    console.log("Allow publication of readme for version "+version._id);
     return result;
   },
 
@@ -784,28 +820,26 @@ Meteor.methods({
    *
    */
   publishReadme: function(uploadToken,options) {
-    ///XXX Validation
     ensureLogin();
+    check(uploadToken,String);
+    check(options.hash,String);
 
     var tokenData = UploadTokens.findOne({_id:uploadToken});
-    if(tokenData && tokenData.type === 'readme' && tokenData.url.length){
-      UploadTokens.remove({_id:uploadToken});
-      var version = Versions.findOne({_id:tokenData.typeId});
-      if(!version){
-        //XXX delete readme file
-        return false;
-      }
-      //XXX verify hash?
-      Versions.update({_id:version._id},{$set:{
-        readme:{
-          hash: options.hash,
-          url: tokenData.url
-        },
-        lastUpdated: new Date()
-      }});
-      return true;
-    }
-    return false;
+
+    if(!tokenData || tokenData.type !== 'version') throw new Meteor.Error("Unknown upload token");
+
+    var version = Versions.findOne({_id:tokenData.typeId});
+    if(!version) throw new Meteor.Error("Unknown version data");
+
+    //XXX: verify hash
+    Versions.update({_id:version._id},{$set:{
+      readme:{
+        hash: options.hash,
+        url: Meteor.absoluteUrl() + 'upload/version/' + tokenData.typeId + '_readme.md'
+      },
+      lastUpdated: new Date()
+    }});
+    console.log("Published readme for version "+version._id);
   },
 
   /**
@@ -819,10 +853,8 @@ Meteor.methods({
    * }
    */
   createPackageVersion: function(record){
-
-    record.dependencies = _.toArrayFromObj(record.dependencies,'packageName')
-
     ensureLogin();
+    record.dependencies = _.toArrayFromObj(record.dependencies,'packageName')
     CreatePackageVersionParameters.clean(record,{autoConvert:false,removeEmptyStrings:false});
     check(record,CreatePackageVersionParameters);
 
@@ -850,6 +882,7 @@ Meteor.methods({
 
     token._id = UploadTokens.insert(token);
 
+    console.log("Created package version "+record._id);
     return {
       uploadToken: token._id,
       uploadUrl: Meteor.absoluteUrl() + 'upload/?token='+token._id+'&type=sources',
@@ -859,8 +892,6 @@ Meteor.methods({
 
   /**
    * Publish version of a package
-   *
-   * XXX to verify the tarball?
    */
   publishPackageVersion: function(uploadToken, hashes){
     ensureLogin();
@@ -868,23 +899,24 @@ Meteor.methods({
     check(hashes,PackageVersionHashes);
 
     var tokenData = UploadTokens.findOne({_id:uploadToken});
-    if(tokenData && tokenData.type === 'version' && tokenData.url.length){
+    if(!tokenData || tokenData.type !== 'version'){
+      throw new Meteor.Error("Invalid upload token");
+    }
 
-      UploadTokens.remove({_id:uploadToken});
-      var version = Versions.findOne({_id:tokenData.typeId});
-      if(!version){
-        //XXX delete uploaded file
-        return false;
-      }
+    UploadTokens.remove({_id:uploadToken});
+    var version = Versions.findOne({_id:tokenData.typeId});
+    if(!version){
+      throw new Meteor.Error("Invalid upload token");
+    }
 
-      //XXX verify hashes?
+    //XXX verify hashes?
+    var publishedBy = {};
 
+    var uploadUrlBase = Meteor.absoluteUrl();
 
-      var publishedBy = {};
+    var pack = Packages.findOne({name:version.packageName});
 
-      var pack = Packages.findOne({name:version.packageName});
-
-      if(Meteor.user()){
+    if(Meteor.user()){
         publishedBy = {username:Meteor.user().username,id:Meteor.userId()};
 
         var maintainer = {username:Meteor.user().username,id:Meteor.userId()};
@@ -899,29 +931,33 @@ Meteor.methods({
         insert.maintainers = [];
       }
 
-      var date = new Date();
-      //Cache latest version
-      Packages.update({name:version.packageName},{$set:{latestVersion:{id:version._id,description:version.description,version:version.version,published:date}}});
-      //Publish version
-      Versions.update(version._id,{$set:{
+    var date = new Date();
+    //Cache latest version
+    Packages.update({name:version.packageName},{$set:{latestVersion:{id:version._id,description:version.description,version:version.version,published:date}}});
+    //Publish version
+    Versions.update(version._id,{$set:{
         lastUpdated: date,
         published: date,
         publishedBy:publishedBy,
         hidden: false,
         source:{
-          url:tokenData.url,
+          url: uploadUrlBase + 'upload/version/' + tokenData.typeId + '.tgz',
           tarballHash:hashes.tarballHash,
           treeHash:hashes.treeHash
+        },
+        readme:{
+          url: uploadUrlBase + '/upload/version/' + tokenData.typeId + '_readme.md',
+          hash:hashes.readmeHash
         }
       }});
-      //If this is the first version published, publish the package
-      if(pack.hidden){
+
+    //If this is the first version published, publish the package
+    if(pack.hidden){
         publishPackage(pack.name);
       }
 
-      return true;
-    }
-    return false;
+    console.log("Published package version "+version._id);
+    return true;
   }
 
 });
