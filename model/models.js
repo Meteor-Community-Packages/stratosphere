@@ -316,22 +316,29 @@ Version = Astro.Class({
             Validators.minLength(3)
         ],
         'earliestCompatibleVersion':[
+            Validators.required(),
             Validators.string(),
             Validators.minLength(1)
         ],
         'containsPlugins':[
-            Validators.boolean(),
             Validators.required(),
+            Validators.boolean(),
+            Validators.required()
         ],
         'debugOnly':[
+            Validators.required(),
             Validators.boolean(),
             Validators.required()
         ],
         'description':[
+            Validators.required(),
             Validators.string(),
+            Validators.minLength(1),
+            Validators.maxLength(100)
         ],
         'longDescription':[
             Validators.string(),
+            Validators.maxLength(1500)
         ],
         'publishedBy':[
             Validators.object(),
@@ -423,10 +430,10 @@ Version = Astro.Class({
             Validators.minLength(1)
         ],
         'git':[
-            Validators.string(),
-            Validators.minLength(1)
+            Validators.string()
         ],
         'releaseName':[
+            Validators.required(),
             Validators.string(),
             Validators.minLength(1)
         ],

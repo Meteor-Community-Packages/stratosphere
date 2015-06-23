@@ -3,29 +3,8 @@ var fs = Meteor.npmRequire('fs');
 var wrench = Meteor.npmRequire('wrench');
 var fsExtra = Meteor.npmRequire('fs-extra');
 
-Stratosphere = {UpstreamConn:''};
-
-/**
- * Connect to upstream package server
- */
-function connectToPackageServer(){
-  if(!Meteor.settings.upstreamURL) return;
-  Stratosphere.UpstreamConn = DDP.connect(Meteor.settings.upstreamURL);
-  Tracker.autorun(function() {
-    var status = Stratosphere.UpstreamConn.status();
-    if(status.connected) {
-      console.log("Upstream connected: " + Meteor.settings.upstreamURL);
-    } else {
-      console.log("Upstream disconnected: " + Meteor.settings.upstreamURL);
-    }
-  });
-}
 
 Meteor.startup(function () {
-
-  console.log('-Connect with upstream server');
-  connectToPackageServer();
-
   console.log('-Start upload server');
 
   var meteor_root = fs.realpathSync( process.cwd() + '/../' );
@@ -62,14 +41,15 @@ Meteor.startup(function () {
     finished: function(fileInfo, query) {
       var tokenData = UploadTokens.findOne({_id:query.token});
 
-      if(!tokenData || !tokenData.paths.hasOwnProperty(query.type))
+      if(!tokenData || !tokenData.paths.hasOwnProperty(query.type)){
+        fs.unlinkSync(fileInfo.path);
         throw new Error("Unmatched upload type");
+      }
 
       var destination = path.join(Meteor.settings.directories.uploads,tokenData.type);
 
       if(!fs.existsSync(fileInfo.destination))
         wrench.mkdirSyncRecursive(fileInfo.destination);
-
 
       var filename = tokenData.typeId;
 
