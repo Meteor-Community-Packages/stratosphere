@@ -1,7 +1,11 @@
-var SemVer = Meteor.npmRequire("semver-loose");
 var fs = Meteor.npmRequire("fs");
 var path = Meteor.npmRequire('path');
 var crypto = Meteor.npmRequire('crypto');
+var semver = Meteor.npmRequire('semver-loose');
+
+/**
+ * XXX split this up in smaller files
+ */
 
 _.mixin({
   toArrayFromObj: function (object, keyName)
@@ -29,16 +33,6 @@ _.mixin({
  });
  */
 
-/**
- * Create an integer representation of a semver, for mongo query sorting
- * @param semv SemVer
- * @returns Integer representation of semv
- */
-function getVersionInt(semv){
-  semv = SemVer.parse(semv);
-
-  return semv.major*100 + semv.minor*10 + semv.patch;
-}
 
 function verifyHashes(files){
   for(var file in files){
@@ -259,7 +253,7 @@ Synchronizer.prototype._checkName = function(element,collectionName){
 Synchronizer.prototype._addCustomFields = function(element){
   //To easily query versions, add an integer representation of the semver version
   if(element.hasOwnProperty("version")){
-    element.versionInt = getVersionInt(element.version);
+    element.versionMagnitude = versionMagnitude(element.version);
   }
 
   //Add other custom fields
@@ -267,6 +261,17 @@ Synchronizer.prototype._addCustomFields = function(element){
   element.private = false;
 }
 
+function versionMagnitude(version){
+
+  try{
+    return versionMagnitude(PackageVersion.versionMagnitude(element.version));
+  }catch(e){
+    var v = SemVer.parse(semv);
+    return v.major * 100 * 100 +
+        v.minor * 100 +
+        v.patch;
+  }
+}
 /**
  * Set a package as published, this is after at least one version is published
  */
@@ -282,6 +287,22 @@ function publishPackage(name){
   return false;
 }
 
+var validatePackageName = function(){
+  try{
+    PackageVersion.validatePackageName(this.value);
+    return true;
+  }catch(e){
+    return false;
+  }
+}
+var validateVersion = function(){
+  try{
+    PackageVersion.getValidServerVersion(this.value);
+    return true;
+  }catch(e){
+    return false;
+  }
+}
 
 /**
  * Method parameter schemas
@@ -289,19 +310,20 @@ function publishPackage(name){
 var CreatePackageParameters = new SimpleSchema({
   'name': {
     type: String,
-    label: "Name of the package to create"
+    custom:validatePackageName
   }
 });
-
-var ChangeVersionMetaDataParameters = new SimpleSchema({
+var ChangeVersionMetadataParameters = new SimpleSchema({
   'versionIdentifier': {
     type: Object
   },
   'versionIdentifier.packageName': {
-    type: String
+    type: String,
+    custom:validatePackageName
   },
   'versionIdentifier.version': {
-    type: String
+    type: String,
+    custom:validateVersion
   },
   'dataToUpdate': {
     type: Object
@@ -316,7 +338,6 @@ var ChangeVersionMetaDataParameters = new SimpleSchema({
     type: String
   }
 });
-
 var SyncTokenSchema = new SimpleSchema({
   'lastDeletion': {
     type: Number
@@ -349,7 +370,6 @@ var SyncTokenSchema = new SimpleSchema({
     optional:true
   }
 });
-
 var SyncOptionsSchema = new SimpleSchema({
       'compressCollections':{
         type: Boolean,
@@ -362,25 +382,27 @@ var SyncOptionsSchema = new SimpleSchema({
         defaultValue:false
       }
     });
-
 var CreatePackageBuildParameters = new SimpleSchema({
   'packageName':{
-    type: String
+    type: String,
+    custom:validatePackageName
   },
   'version':{
-    type: String
+    type: String,
+    custom:validateVersion
   },
   'buildArchitectures':{
     type:String
   }
 });
-
 var CreatePackageVersionParameters = new SimpleSchema({
   'packageName':{
-    type:String
+    type:String,
+    custom:validatePackageName
   },
   'version':{
-    type:String
+    type:String,
+    custom:validateVersion
   },
   'description':{
     type:String,
@@ -435,11 +457,6 @@ var CreatePackageVersionParameters = new SimpleSchema({
     type:String
   }
 });
-
-/**
- * XXX: test with documentaiton false, no exports, no releasename and no deps
- */
-
 var PackageVersionHashes = new SimpleSchema({
   'tarballHash':{
     type:String
@@ -453,7 +470,40 @@ var PackageVersionHashes = new SimpleSchema({
 });
 
 function ensureLogin(){
-  if(Meteor.settings.loginRequired && !Meteor.user()) throw new Meteor.Error("Action not authenticated");
+  if(Meteor.settings.public.loginRequired && !Meteor.user()) throw new Meteor.Error("Action not authenticated");
+}
+
+function makePrivatePackage(data){
+  CreatePackageParameters.clean(data);
+  check(data,CreatePackageParameters);
+
+  var pack = Packages.findOne(data);
+  var insert;
+
+  //We only allow to overwrite upstream packages
+  if(pack && pack.private){
+    throw new Meteor.Error("Private package already exists. To create a new version of an existing package, do not use the --create flag!");
+  }
+
+  var date = new Date();
+  insert = {name:data.name, hidden:true, private:true, lastUpdated: date};
+
+  //If an upstream package already exist, rename it with an "@UPSTREAM"-suffix
+  if(pack){
+    insert.upstream = pack._id;
+    Packages.update(pack._id,{$set:{name:pack.name+"@UPSTREAM",lastUpdated:date}});
+    Versions.update({packageName:pack.name},{$set:{packageName:pack.name+"@UPSTREAM",lastUpdated:date}});
+  }
+
+  insert.maintainers = [];
+  if(Meteor.user()){
+    insert.maintainers.push({username:Meteor.user().username,id:Meteor.userId()});
+  }
+
+  insert._id = Packages.insert(insert);
+
+  return insert._id;
+
 }
 
 /**
@@ -474,38 +524,7 @@ Meteor.methods({
    */
   createPackage: function(data){
     ensureLogin();
-
-    CreatePackageParameters.clean(data);
-    check(data,CreatePackageParameters);
-
-    var pack = Packages.findOne(data);
-    var insert;
-
-    //We only allow to overwrite upstream packages
-    if(pack && pack.private){
-      Packages.remove(pack._id);
-      Versions.remove({packageName:pack.name});
-      //throw new Meteor.Error("Private package already exists. To create a new version of an existing package, do not use the --create flag!");
-    }
-
-    var date = new Date();
-    insert = {name:data.name, hidden:true, private:true, lastUpdated: date};
-
-    //If an upstream package already exist, rename it with an "@UPSTREAM"-suffix
-    if(pack){
-      insert.upstream = pack._id;
-      Packages.update(pack._id,{$set:{name:pack.name+"@UPSTREAM",lastUpdated:date}});
-      Versions.update({packageName:pack.name},{$set:{packageName:pack.name+"@UPSTREAM",lastUpdated:date}});
-    }
-
-    insert.maintainers = [];
-    if(Meteor.user()){
-      insert.maintainers.push({username:Meteor.user().username,id:Meteor.userId()});
-    }
-
-    insert._id = Packages.insert(insert);
-
-    return insert._id;
+    return makePrivatePackage(data);
   },
 
   /**
@@ -537,9 +556,9 @@ Meteor.methods({
    *
    * @return success(boolean)?
    */
-  changeVersionMetaData: function(data){
-    ChangeVersionMetaDataParametes.clean(data);
-    check(data,ChangeVersionMetaDataParametes);
+  changeVersionMetadata: function(data){
+    ChangeVersionMetaDataParameters.clean(data);
+    check(data,ChangeVersionMetaDataParameters);
 
     if(Meteor.settings.loginRequired && !Meteor.user()) return;
 
@@ -637,7 +656,7 @@ Meteor.methods({
 
 
     for(var collectionName in collections){
-      var cursor = collections[collectionName].rawCollection().find({hidden:false,lastUpdated:{$gt:new Date(syncToken[collectionName])}},{sort:{lastUpdated:1},fields:{latestVersion:0,upstream:0,private:0,hidden:0,buildPackageName:0,versionInt:0}});
+      var cursor = collections[collectionName].rawCollection().find({hidden:false,lastUpdated:{$gt:new Date(syncToken[collectionName])}},{sort:{lastUpdated:1},fields:{latestVersion:0,upstream:0,private:0,hidden:0,buildPackageName:0,versionMagnitude:0}});
 
       var count = Async.runSync(function(done) {cursor.count(true,done);}).result;
       if(!count)continue;
@@ -679,9 +698,10 @@ Meteor.methods({
     CreatePackageBuildParameters.clean(data);
     check(data,CreatePackageBuildParameters);
 
-    var pack = Packages.findOne({name:data.packageName,private:true});
+    var pack = Packages.findOne({name:data.packageName, private:true});
     var version = Versions.findOne({packageName:data.packageName,version:data.version});
     if(pack && version){
+
       var build = Builds.findOne({versionId:version._id,buildArchitectures:data.buildArchitectures});
       if(build)return false;
 
@@ -819,21 +839,30 @@ Meteor.methods({
    * }
    */
   createPackageVersion: function(record){
-
-    record.dependencies = _.toArrayFromObj(record.dependencies,'packageName')
-
     ensureLogin();
+    record.dependencies = _.toArrayFromObj(record.dependencies,'packageName');
+
     CreatePackageVersionParameters.clean(record,{autoConvert:false,removeEmptyStrings:false});
     check(record,CreatePackageVersionParameters);
 
-    var pack = Packages.findOne({name:record.packageName,private:true});
+    var pack = Packages.findOne({name:record.packageName});
     var version = Versions.findOne({packageName:record.packageName,version:record.version});
-    if(!pack || version) throw new Meteor.error("Version already exists");
+
+    if(pack && !pack.private){
+      console.log("Making package "+pack.name+" private");
+      makePrivatePackage({name:pack.name});
+    }
+
+    if(!pack){
+      throw new Meteor.error("Package does not exist");
+    }
+
+    if(version) throw new Meteor.error("Version already exists");
 
     var d = new Date();
 
     _.extend(record,{
-      versionInt:getVersionInt(record.version),
+      versionMagnitude:versionMagnitude(record.version),
       lastUpdated: new Date(),
       private:true,
       hidden:true
@@ -878,7 +907,6 @@ Meteor.methods({
       }
 
       //XXX verify hashes?
-
 
       var publishedBy = {};
 

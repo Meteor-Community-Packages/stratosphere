@@ -21,7 +21,6 @@ function connectToPackageServer(){
   });
 }
 
-
 Meteor.startup(function () {
 
   console.log('-Connect with upstream server');
