@@ -860,7 +860,12 @@ Meteor.methods({
 
     var pack = Packages.findOne({name:record.packageName,private:true});
     var version = Versions.findOne({packageName:record.packageName,version:record.version});
-    if(!pack || version) throw new Meteor.error("Version already exists");
+    if(!pack){
+      throw new Meteor.error("Private package "+record.packageName+" doesn't exists");
+    }
+    if(version){
+      throw new Meteor.error("Version "+record.version+" for package "+record.packageName+" already exists");
+    }
 
     var d = new Date();
 
