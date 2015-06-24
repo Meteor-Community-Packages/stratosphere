@@ -19,7 +19,6 @@ aldeed:simple-schema
 jagi:astronomy
 jagi:astronomy-behaviors
 jagi:astronomy-validators
-msavin:mongol
 http
 webapp
 livedata
@@ -30,6 +29,7 @@ tmeasday:publish-counts
 mrt:q
 meteorhacks:async
 meteorhacks:npm
+package-version-parser
 
 
 
