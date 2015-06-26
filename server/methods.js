@@ -267,7 +267,7 @@ function versionMagnitude(version){
   try{
     return versionMagnitude(PackageVersion.versionMagnitude(element.version));
   }catch(e){
-    var v = SemVer.parse(semv);
+    var v = SemVer.parse(version);
     return v.major * 100 * 100 +
         v.minor * 100 +
         v.patch;
@@ -881,16 +881,18 @@ Meteor.methods({
     var pack = Packages.findOne({name:record.packageName});
     var version = Versions.findOne({packageName:record.packageName,version:record.version});
 
-    if(pack && !pack.private){
+    if(!pack){
+      throw new Meteor.Error("Package does not exist");
+    }
+
+    if(pack.private){
+      if(version){
+        throw new Meteor.Error("Version already exists");
+      }
+    }else{
       console.log("Making package "+pack.name+" private");
       makePrivatePackage({name:pack.name});
     }
-
-    if(!pack){
-      throw new Meteor.error("Package does not exist");
-    }
-
-    if(version) throw new Meteor.error("Version already exists");
 
     var d = new Date();
 
