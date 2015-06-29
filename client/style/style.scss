@@ -18,6 +18,10 @@ body {
   background: #eee;
   color: #666666; }
 
+.hidden{
+  display:none;
+}
+
 #main {
   position: relative;
 }
@@ -91,7 +95,7 @@ body {
       margin: 0;
     }
   }
-  .details {
+  .details,.unpublish {
     display: block;
     float: right;
     margin-top: 7px;

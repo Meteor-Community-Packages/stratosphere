@@ -237,7 +237,7 @@ Synchronizer.prototype._checkName = function(element,collectionName){
     query[nameKey] = element[nameKey];
     var pack = Packages.findOne(query);
     if(pack){
-      element[nameKey] = element[nameKey] + "@UPSTREAM";
+      element[nameKey] = element[nameKey] + "-UPSTREAM";
       element.lastUpdated = date;
       if(collectionName === "packages"){
         Packages.update(pack._id,{$set:{upstream:element._id}});
@@ -492,11 +492,11 @@ function makePrivatePackage(data){
   var date = new Date();
   insert = {name:data.name, hidden:true, private:true, lastUpdated: date};
 
-  //If an upstream package already exist, rename it with an "@UPSTREAM"-suffix
+  //If an upstream package already exist, rename it with an "-UPSTREAM"-suffix
   if(pack){
     insert.upstream = pack._id;
-    Packages.update(pack._id,{$set:{name:pack.name+"@UPSTREAM",lastUpdated:date}});
-    Versions.update({packageName:pack.name},{$set:{packageName:pack.name+"@UPSTREAM",lastUpdated:date}});
+    Packages.update(pack._id,{$set:{name:pack.name+"-UPSTREAM",lastUpdated:date}});
+    Versions.update({packageName:pack.name},{$set:{packageName:pack.name+"-UPSTREAM",lastUpdated:date}});
   }
 
   insert.maintainers = [];
@@ -524,7 +524,7 @@ Meteor.methods({
   /**
    * Create a package
    * Current behavior when a package already exists upstream is to rename the upstream package
-   * by adding the "@UPSTREAM"-suffix
+   * by adding the "-UPSTREAM"-suffix
    */
   createPackage: function(data){
     ensureLogin();
@@ -533,17 +533,14 @@ Meteor.methods({
 
   /**
    * Unpublish a package
-   * XXX: WIP
-   * @param name
+   * @param id
    * @returns {boolean}
    */
-  unPublishPackage:function(data){
-    CreatePackageParameters.clean(data);
-    check(data,CreatePackageParameters);
+  unPublishPackage:function(id){
+    ensureLogin();
+    check(id,String);
 
-    if(Meteor.settings.loginRequired && !Meteor.user()) return;
-
-    var pack = Packages.findOne({name:data.name,private:true});
+    var pack = Packages.findOne({_id:id,private:true});
     if(!pack) throw new Meteor.Error('No such package, stratosphere can only unpublish private packages');
 
     Packages.remove(pack._id);
@@ -551,8 +548,8 @@ Meteor.methods({
     Builds.remove({buildPackageName:pack.name});
     if(pack.upstream){
       var date = new Date();
-      Packages.update({_id:pack.upstream},{$set:{name:pack.name,lastUpdated:date}})
-      Versions.update({packageName:pack.name+"@UPSTREAM"},{$set:{packageName:pack.name,lastUpdated:date}});
+      Packages.update({_id:pack.upstream},{$set:{name:pack.name}});
+      Versions.update({packageName:pack.name+"-UPSTREAM"},{$set:{packageName:pack.name}});
     }
     Metadata.update({key:'lastDeletion'},{$set:{value:date.getTime()}});
 
@@ -667,7 +664,7 @@ Meteor.methods({
 
 
     for(var collectionName in collections){
-      var cursor = collections[collectionName].rawCollection().find({hidden:false,lastUpdated:{$gt:new Date(syncToken[collectionName])}},{sort:{lastUpdated:1},fields:{latestVersion:0,upstream:0,private:0,hidden:0,buildPackageName:0,versionMagnitude:0}});
+      var cursor = collections[collectionName].rawCollection().find({/*hidden:false,*/lastUpdated:{$gt:new Date(syncToken[collectionName])}},{sort:{lastUpdated:1},fields:{latestVersion:0,upstream:0,private:0,hidden:0,buildPackageName:0,versionMagnitude:0}});
 
       var count = Async.runSync(function(done) {cursor.count(true,done);}).result;
       if(!count)continue;

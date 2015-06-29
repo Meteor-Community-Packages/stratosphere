@@ -3,3 +3,7 @@ Template.packageDetails.helpers({
     return Versions.find({packageName: this.name},{sort:{versionMagnitude:-1}});
   }
 });
+
+Template.packageDetails.events({
+
+});

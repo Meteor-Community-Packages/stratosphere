@@ -1,9 +1,11 @@
+# V1.0.0-alpha1
+
 # THIS IS A WIP
 Working so far, with changes to the auth-client of meteor-tool:
 
 * Synchronization with upstream server
 * Synchronization with meteor-tool
-* Publishing of packages, versions, builds, metadata changes
+* Publishing and unpublishing of packages, versions, builds, metadata changes
 * Uploading and downloading of files
 
 Next thing to figure out is how to handle logins from Meteor tool
@@ -12,12 +14,35 @@ Next thing to figure out is how to handle logins from Meteor tool
 Stratosphere is a private package server for Meteor.
 
 ## Installation
-### 1) create a Meteor developer app
+### 1) Change files to meteor tool
+These changes are a temporary fix to make the package server work. In the future these changes shouldn't be necessary.
+
+Replace the files in meteor tool with these files:
+https://gist.github.com/sebakerckhof/d4cd1f41ba0e1ecaa8ae
+
+Note that these files are for meteor tool 1.1.3.
+
+On Linux/Mac
+```
+~/.meteor/packages/meteor-tool/1.1.3/mt-os.(linux|osx).x86_(32|64)/tools
+```
+
+On Windows:
+```
+%appdata%\..\Local\.meteor\meteor-tool\mt-os.windows.x86_32\tools
+
+This is currently necessary because of:
+config.js - remove illegal character on windows - solved in next release, see: https://github.com/meteor/meteor/pull/4460
+auth-client.js - problems with meteor oAuth flow - tracked here: https://github.com/meteor/meteor/issues/4497
+
+The config.js problem is solved in the next release, but any help to solve the problem with auth-client.js would be highly appreciated.
+
+### 2) create a Meteor developer app
 First create an  app that can use the meteor developer account services:
 [https://www.meteor.com/account-settings/apps](https://www.meteor.com/account-settings/apps) (be sure to set a correct redirect url)
 Fill in the app id and app secret in the settings.json.template file and rename the template file to settings.json
 
-### 2) Run the app
+### 3) Run the app
 This is a Meteor project, so you can deploy and run it the same way as any other Meteor project.
 You need to tell meteor it needs to use the settings.json file with the --settings option:
 ```
@@ -28,7 +53,7 @@ First start-up can take long, since it needs to import all packages from the off
 After this, you need to create the database file.
 First you need to find the existing database file (packages.data.db) here:
 
-### 3) Create the package database
+### 4) Create the package database
 On Linux
 ```
 ~/.meteor/package-metadata/v2.0.1
@@ -49,6 +74,7 @@ METEOR_PACKAGE_SERVER_URL=[YOUR URL]
 ```
 
 Meteor splits package database and files according to this URL, so you should be able to switch package servers back and forth by changing this variable.
+Note that because of the temporary changes to the auth-client.js file of meteor tool (see installation instructions), publishing to the official repository won't work anymore for the time being...
 
 ## Settings
 * upstreamURL: The URL to the official package server. Default value is packages.meteor.com, you probably don't want to change this.
@@ -70,6 +96,6 @@ Top priority now is fixing the OAuth flow from meteor tool to the package server
 Here are some other ideas:
 - Look into the 'XXX'-es inside the code, these serve as TODOS
 - Add Tests
-- Add better security (e.g. check upload tokens before upload starts)
+- Add better security (e.g. check upload tokens before upload starts, verify hashes, fix oauth flow of meteor-tool)
 - Convert raw object manipulation to a more clean solution (using Astronomy, some code for this is already present and commented out in model/models.js)
 - Whatever front-end functionality you consider useful
