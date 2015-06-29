@@ -418,7 +418,12 @@ var CreatePackageVersionParameters = new SimpleSchema({
     max:1500
   },
   'earliestCompatibleVersion':{
-    type:String
+    type:String,
+    defaultValue:'1.0.0'
+  },
+  'ecRecordFormat':{
+    type:String,
+    defaultValue:'1.0'
   },
   'git':{
     type:String,
@@ -500,7 +505,7 @@ function makePrivatePackage(data){
     console.log("Renaming existing public package");
     insert.upstream = pack._id;
     Packages.update(pack._id,{$set:{name:pack.name+"-UPSTREAM",lastUpdated:date}});
-    Versions.update({packageName:pack.name},{$set:{packageName:pack.name+"-UPSTREAM",lastUpdated:date}});
+    Versions.update({packageName:pack.name},{$set:{packageName:pack.name+"-UPSTREAM",lastUpdated:date}},{multi:true});
   }
 
   insert.maintainers = [];
@@ -553,7 +558,7 @@ Meteor.methods({
     if(pack.upstream){
       var date = new Date();
       Packages.update({_id:pack.upstream},{$set:{name:pack.name}});
-      Versions.update({packageName:pack.name+"-UPSTREAM"},{$set:{packageName:pack.name}});
+      Versions.update({packageName:pack.name+"-UPSTREAM"},{$set:{packageName:pack.name}},{multi:true});
     }
     Metadata.update({key:'lastDeletion'},{$set:{value:date.getTime()}});
 
@@ -854,7 +859,7 @@ Meteor.methods({
     if(!version) throw new Meteor.Error("Unknown version data");
 
     //XXX: verify hash
-    Versions.update({_id:version._id},{$set:{
+    Versions.update(version._id,{$set:{
       readme:{
         hash: options.hash,
         url: Meteor.settings.public.url + '/upload/version/' + tokenData.typeId + '_readme.md'

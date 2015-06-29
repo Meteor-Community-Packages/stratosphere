@@ -1,28 +1,28 @@
 {
   "dependencies": {
     "connect": {
-      "version": "2.7.10",
+      "version": "http://kndedu01.barco.com:4873/connect/-/connect-2.7.10.tgz",
       "dependencies": {
         "qs": {
-          "version": "0.6.5"
+          "version": "http://kndedu01.barco.com:4873/qs/-/qs-0.6.5.tgz"
         },
         "formidable": {
-          "version": "1.0.14"
+          "version": "http://kndedu01.barco.com:4873/formidable/-/formidable-1.0.14.tgz"
         },
         "cookie-signature": {
           "version": "1.0.1"
         },
         "buffer-crc32": {
-          "version": "0.2.1"
+          "version": "http://kndedu01.barco.com:4873/buffer-crc32/-/buffer-crc32-0.2.1.tgz"
         },
         "cookie": {
-          "version": "0.0.5"
+          "version": "http://kndedu01.barco.com:4873/cookie/-/cookie-0.0.5.tgz"
         },
         "send": {
-          "version": "0.1.0",
+          "version": "http://kndedu01.barco.com:4873/send/-/send-0.1.0.tgz",
           "dependencies": {
             "mime": {
-              "version": "1.2.6"
+              "version": "http://kndedu01.barco.com:4873/mime/-/mime-1.2.6.tgz"
             },
             "range-parser": {
               "version": "0.0.4"
@@ -33,26 +33,26 @@
           "version": "0.2.0"
         },
         "fresh": {
-          "version": "0.1.0"
+          "version": "http://kndedu01.barco.com:4873/fresh/-/fresh-0.1.0.tgz"
         },
         "pause": {
-          "version": "0.0.1"
+          "version": "http://kndedu01.barco.com:4873/pause/-/pause-0.0.1.tgz"
         },
         "debug": {
-          "version": "2.2.0",
+          "version": "http://kndedu01.barco.com:4873/debug/-/debug-2.2.0.tgz",
           "dependencies": {
             "ms": {
-              "version": "0.7.1"
+              "version": "http://kndedu01.barco.com:4873/ms/-/ms-0.7.1.tgz"
             }
           }
         }
       }
     },
     "formidable": {
-      "version": "1.0.15"
+      "version": "http://kndedu01.barco.com:4873/formidable/-/formidable-1.0.15.tgz"
     },
     "wrench": {
-      "version": "1.5.8"
+      "version": "http://kndedu01.barco.com:4873/wrench/-/wrench-1.5.8.tgz"
     }
   }
 }
