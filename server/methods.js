@@ -417,6 +417,9 @@ var CreatePackageVersionParameters = new SimpleSchema({
     optional:true,
     max:1500
   },
+  'earliestCompatibleVersion':{
+    type:String
+  },
   'git':{
     type:String,
     optional:true
@@ -494,6 +497,7 @@ function makePrivatePackage(data){
 
   //If an upstream package already exist, rename it with an "-UPSTREAM"-suffix
   if(pack){
+    console.log("Renaming existing public package");
     insert.upstream = pack._id;
     Packages.update(pack._id,{$set:{name:pack.name+"-UPSTREAM",lastUpdated:date}});
     Versions.update({packageName:pack.name},{$set:{packageName:pack.name+"-UPSTREAM",lastUpdated:date}});
@@ -737,7 +741,7 @@ Meteor.methods({
 
     return {
       uploadToken: token._id,
-      uploadUrl: Meteor.absoluteUrl() + 'upload/?token='+token._id+'&type=build'
+      uploadUrl: Meteor.settings.public.url + '/upload/?token='+token._id+'&type=build'
     }
   },
 
@@ -776,7 +780,7 @@ Meteor.methods({
       build:{
         treeHash: treeHash,
         tarballHash: tarballHash,
-        url: Meteor.absoluteUrl() + 'upload/build/' + tokenData.typeId + '.tgz'
+        url: Meteor.settings.public.url + '/upload/build/' + tokenData.typeId + '.tgz'
       },
       builtBy:builtBy,
       hidden:false,
@@ -820,7 +824,8 @@ Meteor.methods({
 
     token._id = UploadTokens.insert(token);
     result.uploadToken = token._id;
-    result.url = Meteor.absoluteUrl() + 'upload/?token='+token._id+'&type=readme';
+    result.url = Meteor.settings.public.url + '/upload/?token='+token._id+'&type=readme';
+
     console.log("Allow publication of readme for version "+version._id);
     return result;
   },
@@ -852,7 +857,7 @@ Meteor.methods({
     Versions.update({_id:version._id},{$set:{
       readme:{
         hash: options.hash,
-        url: Meteor.absoluteUrl() + 'upload/version/' + tokenData.typeId + '_readme.md'
+        url: Meteor.settings.public.url + '/upload/version/' + tokenData.typeId + '_readme.md'
       },
       lastUpdated: new Date()
     }});
@@ -914,8 +919,8 @@ Meteor.methods({
     console.log("Created package version "+record._id);
     return {
       uploadToken: token._id,
-      uploadUrl: Meteor.absoluteUrl() + 'upload/?token='+token._id+'&type=sources',
-      readmeUrl: Meteor.absoluteUrl() + 'upload/?token='+token._id+'&type=readme'
+      uploadUrl: Meteor.settings.public.url + '/upload/?token='+token._id+'&type=sources',
+      readmeUrl: Meteor.settings.public.url + '/upload/?token='+token._id+'&type=readme'
     }
   },
 
@@ -941,7 +946,7 @@ Meteor.methods({
     //XXX verify hashes?
     var publishedBy = {};
 
-    var uploadUrlBase = Meteor.absoluteUrl();
+    var uploadUrlBase = Meteor.settings.public.url;
 
     var pack = Packages.findOne({name:version.packageName});
 
@@ -970,7 +975,7 @@ Meteor.methods({
         publishedBy:publishedBy,
         hidden: false,
         source:{
-          url: uploadUrlBase + 'upload/version/' + tokenData.typeId + '.tgz',
+          url: uploadUrlBase + '/upload/version/' + tokenData.typeId + '.tgz',
           tarballHash:hashes.tarballHash,
           treeHash:hashes.treeHash
         },

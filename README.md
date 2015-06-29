@@ -39,23 +39,26 @@ This is currently necessary because of:
 
 The config.js problem is solved in the next release, but any help to solve the problem with auth-client.js would be highly appreciated.
 
-### 2) create a Meteor developer app
-First create an  app that can use the meteor developer account services:
+### 2) Create a Meteor developer app
+First create an app that can use the meteor developer account services:
 [https://www.meteor.com/account-settings/apps](https://www.meteor.com/account-settings/apps) (be sure to set a correct redirect url)
-Fill in the app id and app secret in the settings.json.template file and rename the template file to settings.json
 
-### 3) Run the app
+### 3) Create settings.json file
+Rename the settings.json.template file to settings.json
+Fill in the app id (meteorDeveloperAccount.clientId) and app secret (meteorDeveloperAccount.secret) from step 2 and the url the package server will run on (public.url)
+
+### 4) Run the app
 This is a Meteor project, so you can deploy and run it the same way as any other Meteor project.
 You need to tell meteor it needs to use the settings.json file with the --settings option:
+
 ```
 meteor --settings settings.json
 ```
-First start-up can take long, since it needs to import all packages from the official package repo.
 
 After this, you need to create the database file.
 First you need to find the existing database file (packages.data.db) here:
 
-### 4) Create the package database
+### 5) Create the package database
 On Linux
 ```
 ~/.meteor/package-metadata/v2.0.1
@@ -77,6 +80,8 @@ METEOR_PACKAGE_SERVER_URL=[YOUR URL]
 
 Meteor splits package database and files according to this URL, so you should be able to switch package servers back and forth by changing this variable.
 Note that because of the temporary changes to the auth-client.js file of meteor tool (see installation instructions), publishing to the official repository won't work anymore for the time being...
+
+First time syncing can take long (~10min), since it needs to import all packages from the official package repo and do some processing on them.
 
 ## Settings
 * upstreamURL: The URL to the official package server. Default value is packages.meteor.com, you probably don't want to change this.

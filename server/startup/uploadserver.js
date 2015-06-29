@@ -7,6 +7,8 @@ var fsExtra = Meteor.npmRequire('fs-extra');
 Meteor.startup(function () {
   console.log('-Start upload server');
 
+  Meteor.settings.public.url = Meteor.settings.public.url.replace(/\/+$/, "");
+
   var meteor_root = fs.realpathSync( process.cwd() + '/../' );
   var application_root = fs.realpathSync( meteor_root + '/../' );
 
@@ -48,8 +50,8 @@ Meteor.startup(function () {
 
       var destination = path.join(Meteor.settings.directories.uploads,tokenData.type);
 
-      if(!fs.existsSync(fileInfo.destination))
-        wrench.mkdirSyncRecursive(fileInfo.destination);
+      if(!fs.existsSync(destination))
+        wrench.mkdirSyncRecursive(destination);
 
       var filename = tokenData.typeId;
 
