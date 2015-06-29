@@ -30,6 +30,7 @@ On Linux/Mac
 On Windows:
 ```
 %appdata%\..\Local\.meteor\meteor-tool\mt-os.windows.x86_32\tools
+```
 
 This is currently necessary because of:
 config.js - remove illegal character on windows - solved in next release, see: https://github.com/meteor/meteor/pull/4460
