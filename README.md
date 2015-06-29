@@ -33,8 +33,9 @@ On Windows:
 ```
 
 This is currently necessary because of:
-config.js - remove illegal character on windows - solved in next release, see: https://github.com/meteor/meteor/pull/4460
-auth-client.js - problems with meteor oAuth flow - tracked here: https://github.com/meteor/meteor/issues/4497
+
+* config.js - remove illegal character on windows - solved in next release, see: https://github.com/meteor/meteor/pull/4460
+* auth-client.js - problems with meteor oAuth flow - tracked here: https://github.com/meteor/meteor/issues/4497
 
 The config.js problem is solved in the next release, but any help to solve the problem with auth-client.js would be highly appreciated.
 
