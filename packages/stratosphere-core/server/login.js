@@ -8,7 +8,7 @@ var NonEmptyString = Match.Where(function (x) {
 
 
 // Handler to login from meteor-tool
-Accounts.registerLoginHandler("tool", function (options) {
+/*Accounts.registerLoginHandler("tool", function (options) {
   if (! options.meteorAccountsLoginInfo)
     return undefined; // don't handle
 
@@ -29,4 +29,4 @@ Accounts.registerLoginHandler("tool", function (options) {
     user,
     options.meteorAccountsLoginInfo.password
   );
-});
+});*/

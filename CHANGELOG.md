@@ -1,3 +1,9 @@
+1.0.0-ALPHA2
+
+* Implemented some meteor-tool admin methods
+* Better data validation
+* Some file refactoring
+
 1.0.0-ALPHA1
 
 Working so far, with changes to the auth-client of meteor-tool:

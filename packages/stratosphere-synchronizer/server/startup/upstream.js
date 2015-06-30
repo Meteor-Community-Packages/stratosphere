@@ -1,4 +1,4 @@
-Stratosphere = {UpstreamConn:''};
+Stratosphere.UpstreamConn = '';
 
 /**
  * Connect to upstream package server

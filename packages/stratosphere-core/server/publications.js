@@ -1,11 +1,6 @@
-function checkAccess(){
-  if(Meteor.settings.public.loginRequired && !Meteor.user()){
-    throw new Meteor.Error("Insufficient permissions");
-  }
-}
 
 FindFromPublication.publish('packageList', function(options) {
-  checkAccess();
+  Stratosphere.utils.checkAccess();
 
   check(options, {
     sort: Object,
@@ -15,18 +10,18 @@ FindFromPublication.publish('packageList', function(options) {
 });
 
 Meteor.publish('nbPackages', function() {
-  checkAccess();
+  Stratosphere.utils.checkAccess();
   Counts.publish(this, 'nbPackages', Packages.find({/*hidden:false,*/private:true}));
 });
 
 Meteor.publish('packageDetails', function(packageId) {
-  checkAccess();
+  Stratosphere.utils.checkAccess();
   check(packageId,String);
   return Packages.find({_id:packageId});
 });
 
 Meteor.publish('versions', function(packageId) {
-  checkAccess();
+  Stratosphere.utils.checkAccess();
   check(packageId, String);
   var pack = Packages.findOne(packageId);
   if(pack){

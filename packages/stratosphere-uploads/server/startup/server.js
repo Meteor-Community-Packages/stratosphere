@@ -1,7 +1,7 @@
-var path = Meteor.npmRequire('path');
-var fs = Meteor.npmRequire('fs');
-var wrench = Meteor.npmRequire('wrench');
-var fsExtra = Meteor.npmRequire('fs-extra');
+var path = Npm.require('path');
+var fs = Npm.require('fs');
+var wrench = Npm.require('wrench');
+var fsExtra = Npm.require('fs-extra');
 
 
 Meteor.startup(function () {
