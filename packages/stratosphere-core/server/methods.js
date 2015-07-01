@@ -1,8 +1,3 @@
-var fs = Npm.require("fs");
-var path = Npm.require('path');
-var crypto = Npm.require('crypto');
-
-
 /**
  * Set a package as published, this is after at least one version is published
  */
@@ -70,7 +65,7 @@ function makePrivateX(target,data){
 
     var childUpdate = {lastUpdated:date};
     childUpdate[targets[target].childReference] = record.name+"-UPSTREAM";
-    targets[target].childCollection.update({packageName:pack.name},{$set:childUpdate},{multi:true});
+    targets[target].childCollection.update(childQuery,{$set:childUpdate},{multi:true});
   }
 
   insert.maintainers = [];
@@ -175,6 +170,17 @@ Meteor.methods({
       Versions.update({packageName:pack.name+"-UPSTREAM"},{$set:{packageName:pack.name}},{multi:true});
     }
     Metadata.update({key:'lastDeletion'},{$set:{value:date.getTime()}});
+
+    var wrench = Npm.require('wrench');
+    var fs = Npm.require('fs');
+    var path = Npm.require('path');
+    var targets = ['version','build'];
+
+    for(var i = 0; i < targets.length; i++){
+      var destination = path.join(Meteor.settings.directories.uploads,targets[i],pack._id);
+      if(fs.existsSync(destination))
+        wrench.rmdirSyncRecursive(destination);
+    }
 
     console.log("Unpublished package " + pack.name);
     return true;
@@ -315,10 +321,13 @@ Meteor.methods({
     Stratosphere.schemas.ChangeVersionMetadataParameters.clean(data);
     check(data,Stratosphere.schemas.ChangeVersionMetadataParameters);
 
-    if(!Versions.update({packageName:versionIdentifier.packageName,version:versionIdentifier.version, private:true},{$set:data}))
+    var pack = Packages.findOne({name:versionIdentifier.packageName,private:true});
+    var version = Versions.findOne({packageName:versionIdentifier.packageName,version:versionIdentifier.version, private:true});
+
+    if(!pack || !version)
       throw new Meteor.Error("Unknown private package or version");
 
-    var pack = Packages.findOne({name:versionIdentifier.packageName,private:true});
+    Versions.update(version._id,{$set:data});
 
     if(pack.latestVersion && pack.latestVersion.id === version._id){
       Packages.update(pack._id,{$set:{"latestVersion.description":version.description}});
@@ -470,6 +479,7 @@ Meteor.methods({
     var token = {
       type:'build',
       typeId:insert._id,
+      packageId:pack._id,
       paths:{build:''},
       createdAt: date
     };
@@ -556,6 +566,7 @@ Meteor.methods({
     var token = {
       type:'version',
       typeId:version._id,
+      packageId:pack._id,
       paths:{readme:''},
       createdAt: new Date()
     };
@@ -631,7 +642,7 @@ Meteor.methods({
       }
     }else{
       console.log("Making package "+pack.name+" private");
-      makePrivatePackage({name:pack.name});
+      pack._id = makePrivatePackage({name:pack.name});
     }
 
     var d = new Date();
@@ -648,6 +659,7 @@ Meteor.methods({
     var token = {
       type:'version',
       typeId:record._id,
+      packageId:pack._id,
       paths:{sources:'',readme:''},
       createdAt: d
     };

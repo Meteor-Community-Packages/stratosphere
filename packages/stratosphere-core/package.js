@@ -52,4 +52,9 @@ Package.onUse(function (api) {
     'server/methods.js'
   ], ['server']);
 
+  Npm.depends({
+    "wrench":"1.5.8",
+    "fs-extra":"0.19.0"
+  });
+
 });

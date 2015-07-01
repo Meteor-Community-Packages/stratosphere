@@ -93,6 +93,7 @@ Stratosphere.schemas.ReadmeSchema = new SimpleSchema({
 
 Stratosphere.schemas.PackageVersionHashes = new SimpleSchema([Stratosphere.schemas.VersionSourceSchema.pick(['tarballHash','treeHash']),{readmeHash:{type:String,optional:true}}]);
 
+
 Stratosphere.schemas.VersionSchema = new SimpleSchema([Stratosphere.schemas.BaseSchema,{
   'packageName':{
     type:String,
@@ -209,18 +210,22 @@ Stratosphere.schemas.CreatePackageVersionSchema = Stratosphere.schemas.VersionSc
   'compilerVersion',
   'containsPlugins',
   'debugOnly',
-  //'exports',
-  //'exports.$.name',
-  //'exports.$.architectures',
+  'exports',
+  'exports.$',
+  'exports.$.name',
+  'exports.$.architectures',
+  'exports.$.architectures.$',
   'releaseName',
-  //'dependencies',
-  //'dependencies.$.packageName',
-  //'dependencies.$.constraint',
-  //'dependencies.$.references',
-  //'dependencies.$.references.$.arch',
-  //'dependencies.$.references.$.implied',
-  //'dependencies.$.references.$.weak',
-  //'dependencies.$.references.$.unordered'
+  'dependencies',
+  'dependencies.$',
+  'dependencies.$.packageName',
+  'dependencies.$.constraint',
+  'dependencies.$.references',
+  'dependencies.$.references.$',
+  'dependencies.$.references.$.arch',
+  'dependencies.$.references.$.implied',
+  'dependencies.$.references.$.weak',
+  'dependencies.$.references.$.unordered'
 ]);
 Stratosphere.schemas.ChangeVersionMetadataParameters = Stratosphere.schemas.VersionSchema.pick(['git','description','longDescription']);
 

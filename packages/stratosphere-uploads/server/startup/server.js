@@ -48,7 +48,7 @@ Meteor.startup(function () {
         throw new Error("Unmatched upload type");
       }
 
-      var destination = path.join(Meteor.settings.directories.uploads,tokenData.type);
+      var destination = path.join(Meteor.settings.directories.uploads,tokenData.type,tokenData.packageId);
 
       if(!fs.existsSync(destination))
         wrench.mkdirSyncRecursive(destination);
