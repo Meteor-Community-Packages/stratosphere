@@ -7,7 +7,7 @@ Working so far, with changes to the auth-client of meteor-tool:
 * Synchronization with meteor-tool
 * Publishing and unpublishing of packages, versions, builds, metadata changes
 * Uploading and downloading of files
-* Soem fo the admin commands
+* Some fo the admin commands
 
 Next thing to figure out is how to handle logins from Meteor tool
 
