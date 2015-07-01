@@ -124,7 +124,7 @@ function setRecommendationStatus(name,version,recommended){
   Stratosphere.schemas.RecommendVersionSchema.clean(params);
   check(params,Stratosphere.schemas.RecommendVersionSchema);
   console.log('Changing release version recommendation state');
-  if(!ReleaseVersions.update({track:params.track,version:params.version,private:true},{recommended:params.recommended,lastUpdated:new Date()}))
+  if(!ReleaseVersions.update({track:params.track,version:params.version,private:true},{$set:{recommended:params.recommended,lastUpdated:new Date()}}))
     throw new Meteor.Error('404', 'Private release version not found');
 }
 
@@ -243,7 +243,8 @@ Meteor.methods({
     Stratosphere.schemas.ChangePackageHomepageSchema.clean(params);
     check(params,Stratosphere.schemas.ChangePackageHomepageSchema);
     console.log('Changing package homepage');
-    if(!Packages.update({name:params.name},{homepage:params.homepage,lastUpdated:new Date()}));
+    if(!Packages.update({name:params.name,private:true},{$set:{homepage:params.homepage,lastUpdated:new Date()}}))
+      throw new Meteor.Error('404','Package not found');
   },
 
   /**
@@ -259,7 +260,7 @@ Meteor.methods({
     Stratosphere.schemas.ChangeVersionMigrationStatusSchema.clean(params);
     check(params,Stratosphere.schemas.ChangeVersionMigrationStatusSchema);
     console.log('Changing version migration state');
-    if(!Versions.update({packageName:params.packageName,version:params.version,private:true},{unmigrated:params.unmigrated}))
+    if(!Versions.update({packageName:params.packageName,version:params.version,private:true},{$set:{unmigrated:params.unmigrated}}))
       throw new Meteor.Error('404','Private version not found');
 
   },
@@ -288,7 +289,7 @@ Meteor.methods({
     Stratosphere.utils.checkAccess();
     Stratosphere.schemas.CreateReleaseVersionSchema.clean(record);
     check(Stratosphere.schemas.CreateReleaseVersionSchema,record);
-
+    //XXX
   },
 
   /**
@@ -296,6 +297,7 @@ Meteor.methods({
    */
   createPatchReleaseVersion:function(record,patchFrom){
     Stratosphere.utils.checkAccess();
+    //XXX
     Meteor.call('createPatchReleaseVersion',record);
   },
 

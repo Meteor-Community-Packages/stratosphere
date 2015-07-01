@@ -2,7 +2,7 @@
 
 * Implemented some meteor-tool admin methods
 * Better data validation
-* Some file refactoring
+* Refactored into packages
 
 1.0.0-ALPHA1
 
