@@ -70,7 +70,6 @@ On Windows:
 %appdata%\..\Local\.meteor\package-metadata\v2.0.1
 ```
 Next, you copy the existing database file and give it the filename you see when going to the front-end of your package server.
-Note that Meteor does not currently support package servers running on another port than port 80, [see this PR](https://github.com/meteor/meteor/pull/4460)
 
 ## Usage
 To publish and sync with Stratosphere, you have to set the package server URL to your stratosphere URL.
@@ -89,6 +88,7 @@ First time syncing can take long (~10min), since it needs to import all packages
 * directories.tmp: Directory where file uploads are temporarily uploaded to
 * directories.uploads: Directory where files are moved to and downloaded from after they have been verified
 * public.loginRequired: Whether a login is required. Default is false, true will result in errors for now.
+* public.url: The url of the package server
 * allowedUsers: Which user accounts are allowed on this server
 * meteorDeveloperAccount.clientId: Client id of your meteor accounts app
 * meteorDeveloperAccount.secret: Secret key of your meteor accounts app

@@ -129,16 +129,9 @@ function setRecommendationStatus(name,version,recommended){
 }
 
 /**
- * Methods - exposes package server API to ddp clients (meteor tool)
+ * Methods - meteor tool methods
  */
 Meteor.methods({
-
-  refresh:function(){
-    Stratosphere.utils.checkAccess();
-    var synchronizer = new Synchronizer();
-    synchronizer.synchronize();
-  },
-
   /**
    * Create a package
    * Current behavior when a package already exists upstream is to rename the upstream package
@@ -147,43 +140,6 @@ Meteor.methods({
   createPackage: function(data){
     Stratosphere.utils.checkAccess();
     return makePrivatePackage(data);
-  },
-
-  /**
-   * Unpublish a package
-   * @param id
-   * @returns {boolean}
-   */
-  unPublishPackage:function(id){
-    Stratosphere.utils.checkAccess();
-    check(id,String);
-
-    var pack = Packages.findOne({_id:id,private:true});
-    if(!pack) throw new Meteor.Error('No such private package, stratosphere can only unpublish private packages');
-
-    Packages.remove(pack._id);
-    Versions.remove({packageName:pack.name});
-    Builds.remove({buildPackageName:pack.name});
-    if(pack.upstream){
-      var date = new Date();
-      Packages.update({_id:pack.upstream},{$set:{name:pack.name}});
-      Versions.update({packageName:pack.name+"-UPSTREAM"},{$set:{packageName:pack.name}},{multi:true});
-    }
-    Metadata.update({key:'lastDeletion'},{$set:{value:date.getTime()}});
-
-    var wrench = Npm.require('wrench');
-    var fs = Npm.require('fs');
-    var path = Npm.require('path');
-    var targets = ['version','build'];
-
-    for(var i = 0; i < targets.length; i++){
-      var destination = path.join(Meteor.settings.directories.uploads,targets[i],pack._id);
-      if(fs.existsSync(destination))
-        wrench.rmdirSyncRecursive(destination);
-    }
-
-    console.log("Unpublished package " + pack.name);
-    return true;
   },
 
   /**
@@ -530,7 +486,7 @@ Meteor.methods({
       build:{
         treeHash: treeHash,
         tarballHash: tarballHash,
-        url: Meteor.settings.public.url + '/upload/build/' + tokenData.typeId + '.tgz'
+        url: Meteor.settings.public.url + '/upload/build/' + tokenData.packageId + '/' + tokenData.typeId + '.tgz'
       },
       builtBy:builtBy,
       hidden:false,
@@ -608,7 +564,7 @@ Meteor.methods({
     Versions.update(version._id,{$set:{
       readme:{
         hash: options.hash,
-        url: Meteor.settings.public.url + '/upload/version/' + tokenData.typeId + '_readme.md'
+        url: Meteor.settings.public.url + '/upload/version/' + tokenData.packageId + '/' + tokenData.typeId + '_readme.md'
       },
       lastUpdated: new Date()
     }});
