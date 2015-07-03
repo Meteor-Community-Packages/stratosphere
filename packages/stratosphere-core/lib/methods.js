@@ -24,8 +24,9 @@ Meteor.methods({
     Packages.remove(pack._id);
     Versions.remove({packageName:pack.name});
     Builds.remove({buildPackageName:pack.name});
+    var date = new Date();
+
     if(pack.upstream){
-      var date = new Date();
       Packages.update({_id:pack.upstream},{$set:{name:pack.name}});
       Versions.update({packageName:pack.name+"-UPSTREAM"},{$set:{packageName:pack.name}},{multi:true});
     }
