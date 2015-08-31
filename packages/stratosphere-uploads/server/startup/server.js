@@ -1,7 +1,7 @@
-var path = Npm.require('path');
-var fs = Npm.require('fs');
-var wrench = Npm.require('wrench');
-var fsExtra = Npm.require('fs-extra');
+const path = Npm.require('path');
+const fs = Npm.require('fs');
+const wrench = Npm.require('wrench');
+const fsExtra = Npm.require('fs-extra');
 
 
 Meteor.startup(function () {
@@ -9,8 +9,8 @@ Meteor.startup(function () {
 
   Meteor.settings.public.url = Meteor.settings.public.url.replace(/\/+$/, "");
 
-  var meteor_root = fs.realpathSync( process.cwd() + '/../' );
-  var application_root = fs.realpathSync( meteor_root + '/../' );
+  const meteor_root = fs.realpathSync( process.cwd() + '/../' );
+  let application_root = fs.realpathSync( meteor_root + '/../' );
 
 // if running on dev mode
   if( path.basename( fs.realpathSync( meteor_root + '/../../../' ) ) == '.meteor' ){
@@ -41,19 +41,20 @@ Meteor.startup(function () {
       return;
     },
     finished: function(fileInfo, query) {
-      var tokenData = UploadTokens.findOne({_id:query.token});
+      const tokenData = UploadTokens.findOne({_id:query.token});
 
       if(!tokenData || !tokenData.paths.hasOwnProperty(query.type)){
         fs.unlinkSync(fileInfo.path);
         throw new Error("Unmatched upload type");
       }
 
-      var destination = path.join(Meteor.settings.directories.uploads,tokenData.type,tokenData.packageId);
+      let destination = path.join(Meteor.settings.directories.uploads,tokenData.type,tokenData.packageId);
 
-      if(!fs.existsSync(destination))
+      if(!fs.existsSync(destination)){
         wrench.mkdirSyncRecursive(destination);
+      }
 
-      var filename = tokenData.typeId;
+      let filename = tokenData.typeId;
 
       if(query.type === 'readme'){
         filename += '_readme.md';

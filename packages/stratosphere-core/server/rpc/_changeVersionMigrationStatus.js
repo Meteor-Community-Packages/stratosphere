@@ -4,7 +4,7 @@ Meteor.methods({
      */
     _changeVersionMigrationStatus:function(name,version,migrated){
         Stratosphere.utils.checkAccess();
-        var params = {
+        const params = {
             packageName:name,
             version:version,
             unmigrated:!migrated

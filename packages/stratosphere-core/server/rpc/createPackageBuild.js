@@ -16,16 +16,16 @@ Meteor.methods({
         Stratosphere.schemas.CreatePackageBuildParameters.clean(data);
         check(data,Stratosphere.schemas.CreatePackageBuildParameters);
 
-        var pack = Packages.findOne({name:data.packageName, private:true});
-        var version = Versions.findOne({packageName:data.packageName,version:data.version, private:true});
+        const pack = Packages.findOne({name:data.packageName, private:true});
+        const version = Versions.findOne({packageName:data.packageName,version:data.version, private:true});
         if(!pack || !version) throw new Meteor.Error("Unknown private package or version");
 
-        var build = Builds.findOne({versionId:version._id,buildArchitectures:data.buildArchitectures});
+        const build = Builds.findOne({versionId:version._id,buildArchitectures:data.buildArchitectures});
         if(build) throw new Meteor.Error("Build already exists");
 
-        var date = new Date();
+        const date = new Date();
 
-        var insert = {
+        const insert = {
             buildArchitectures: data.buildArchitectures,
             versionId: version._id,
             lastUpdated: date,
@@ -35,7 +35,7 @@ Meteor.methods({
         };
         insert._id = Builds.insert(insert);
 
-        var token = {
+        const token = {
             type:'build',
             typeId:insert._id,
             packageId:pack._id,
@@ -44,7 +44,7 @@ Meteor.methods({
         };
         token._id = UploadTokens.insert(token);
 
-        console.log("Create package build " + insert._id);
+        console.log(`Create package build ${insert._id}`);
 
         return {
             uploadToken: token._id,

@@ -58,8 +58,7 @@ Stratosphere.utils.validateVersion = function validateVersion(){
  * @returns {boolean}
  */
 Stratosphere.utils.verifyHashes = function verifyHashes(files){
-    for(var file in files){
-        if(!files.hasOwnProperty(file))continue;
+    for(let file of files.keys()){
         if(!verifyHash(file,files[file])) return false;
     }
     return true;
@@ -72,15 +71,15 @@ Stratosphere.utils.verifyHashes = function verifyHashes(files){
  * @returns {boolean}
  */
 Stratosphere.utils.verifyHash = function verifyHash(file,hash){
-    var fs = Npm.require("fs");
-    var path = Npm.require('path');
-    var crypto = Npm.require('crypto');
+    const fs = Npm.require("fs");
+    const path = Npm.require('path');
+    const crypto = Npm.require('crypto');
 
-    var hasher = crypto.createHash('sha256');
+    const hasher = crypto.createHash('sha256');
     hash.setEncoding('base64');
     //file = files.convertToOSPath(args[0]);
 
-    var rs = fs.createReadStream(file)
+    const rs = fs.createReadStream(file)
 
     Async.runSync(function(done){ rs.on('end',done);rs.pipe(hasher, { end: false });});
 
@@ -89,7 +88,9 @@ Stratosphere.utils.verifyHash = function verifyHash(file,hash){
 }
 
 Stratosphere.utils.checkAccess = function checkAccess(){
-    if(Meteor.settings.public.loginRequired && !Meteor.user()) throw new Meteor.Error("403");
+    if(Meteor.settings.public.loginRequired && !Meteor.user()){
+        throw new Meteor.Error("403","Forbidden");
+    }
 }
 
 

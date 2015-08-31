@@ -20,28 +20,25 @@ Meteor.methods({
         check(uploadToken, String);
         check(hashes, Stratosphere.schemas.PackageVersionHashes);
 
-        var tokenData = UploadTokens.findOne({_id: uploadToken});
+        const tokenData = UploadTokens.findOne({_id: uploadToken});
         if (!tokenData || tokenData.type !== 'version') {
             throw new Meteor.Error("Invalid upload token");
         }
 
         UploadTokens.remove({_id: uploadToken});
-        var version = Versions.findOne({_id: tokenData.typeId});
+        const version = Versions.findOne({_id: tokenData.typeId});
         if (!version) {
             throw new Meteor.Error("Invalid upload token");
         }
 
         //XXX verify hashes?
-        var publishedBy = {};
-
-        var uploadUrlBase = Meteor.settings.public.url;
-
-        var pack = Packages.findOne({name: version.packageName});
+        let publishedBy = {};
+        const pack = Packages.findOne({name: version.packageName});
 
         if (Meteor.user()) {
             publishedBy = {username: Meteor.user().username, id: Meteor.userId()};
 
-            var maintainer = {username: Meteor.user().username, id: Meteor.userId()};
+            const maintainer = {username: Meteor.user().username, id: Meteor.userId()};
             if (!pack.hasOwnProperty("maintainers")) {
                 Packages.update({name: version.packageName}, {$set: {maintainers: []}});
             }
@@ -52,7 +49,7 @@ Meteor.methods({
 
         }
 
-        var date = new Date();
+        const date = new Date();
         //Cache latest version
         Packages.update({name: version.packageName}, {
             $set: {
@@ -64,6 +61,8 @@ Meteor.methods({
                 }
             }
         });
+
+        const uploadUrlBase = Meteor.settings.public.url;
         //Publish version
         Versions.update(version._id, {
             $set: {
@@ -72,12 +71,12 @@ Meteor.methods({
                 publishedBy: publishedBy,
                 hidden: false,
                 source: {
-                    url: uploadUrlBase + '/upload/version/' + tokenData.typeId + '.tgz',
+                    url: `${uploadUrlBase}/upload/version/${tokenData.typeId}.tgz`,
                     tarballHash: hashes.tarballHash,
                     treeHash: hashes.treeHash
                 },
                 readme: {
-                    url: uploadUrlBase + '/upload/version/' + tokenData.typeId + '_readme.md',
+                    url: `${uploadUrlBase}/upload/version/${tokenData.typeId}_readme.md`,
                     hash: hashes.readmeHash
                 }
             }
@@ -88,7 +87,7 @@ Meteor.methods({
             Stratosphere.utils.publishPackage(pack.name);
         }
 
-        console.log("Published package version " + version._id);
+        console.log(`Published package version ${version._id}`);
         return true;
     }
 });

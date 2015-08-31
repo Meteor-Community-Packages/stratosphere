@@ -5,7 +5,7 @@
 Meteor.methods({
     refresh:function(){
         Stratosphere.utils.checkAccess();
-        var synchronizer = new Synchronizer();
+        const synchronizer = new Synchronizer();
         synchronizer.synchronize();
     }
 });

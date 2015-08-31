@@ -45,8 +45,8 @@ Meteor.methods({
         Stratosphere.schemas.CreatePackageVersionSchema.clean(record,{autoConvert:false,removeEmptyStrings:false});
         check(record,Stratosphere.schemas.CreatePackageVersionSchema);
 
-        var pack = Packages.findOne({name:record.packageName});
-        var version = Versions.findOne({packageName:record.packageName,version:record.version});
+        const pack = Packages.findOne({name:record.packageName});
+        const version = Versions.findOne({packageName:record.packageName,version:record.version});
 
         if(!pack)
             throw new Meteor.Error("404","Package does not exist");
@@ -61,7 +61,7 @@ Meteor.methods({
             pack._id = makePrivatePackage({name:pack.name});
         }
 
-        var d = new Date();
+        const d = new Date();
 
         _.extend(record,{
             versionMagnitude:Stratosphere.utils.versionMagnitude(record.version),
@@ -72,7 +72,7 @@ Meteor.methods({
 
         record._id = Versions.insert(record);
 
-        var token = {
+        const token = {
             type:'version',
             typeId:record._id,
             packageId:pack._id,
@@ -82,7 +82,7 @@ Meteor.methods({
 
         token._id = UploadTokens.insert(token);
 
-        console.log("Created package version "+record._id);
+        console.log(`Created package version ${record._id}`);
         return {
             uploadToken: token._id,
             uploadUrl: Meteor.settings.public.url + '/upload/?token='+token._id+'&type=sources',

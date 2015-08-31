@@ -6,7 +6,7 @@ Meteor.methods({
      */
     _changePackageHomepage:function(name,url){
         Stratosphere.utils.checkAccess();
-        var params = {name:name,homepage:url};
+        const params = {name:name,homepage:url};
         Stratosphere.schemas.ChangePackageHomepageSchema.clean(params);
         check(params,Stratosphere.schemas.ChangePackageHomepageSchema);
         console.log('Changing package homepage');

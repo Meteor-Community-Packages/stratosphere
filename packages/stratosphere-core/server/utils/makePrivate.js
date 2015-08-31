@@ -6,7 +6,7 @@
 Stratosphere.schemas.CreateReleaseTrackParameters = Stratosphere.schemas.CreatePackageParameters;
 
 Stratosphere.utils.makePrivateX = function makePrivateX(target,data){
-    var targets = {
+    const targets = {
         'package' : {
             collection: Packages,
             childCollection: Versions,
@@ -24,26 +24,25 @@ Stratosphere.utils.makePrivateX = function makePrivateX(target,data){
     targets[target].schema.clean(data);
     check(data,targets[target].schema);
 
-    var record = targets[target].collection.findOne(data);
-    var insert;
+    const record = targets[target].collection.findOne(data);
+    if(record && record.private){
+        throw new Meteor.Error(`Private ${target} already exists.`);
+    }
 
-    if(record && record.private)
-        throw new Meteor.Error("Private "+ target +" already exists.");
-
-    var date = new Date();
-    insert = {name:data.name, hidden:true, private:true, lastUpdated: date};
+    const date = new Date();
+    const insert = {name:data.name, hidden:true, private:true, lastUpdated: date};
 
     //If an upstream record already exist, rename it with an "-UPSTREAM"-suffix
     if(record){
-        console.log("Renaming existing public " + target);
+        console.log(`Renaming existing public ${target}`);
         insert.upstream = record._id;
-        targets[target].collection.update(record._id,{$set:{name:record.name+"-UPSTREAM",lastUpdated:date}});
+        targets[target].collection.update(record._id,{$set:{name:`${record.name}-UPSTREAM`,lastUpdated:date}});
 
-        var childQuery = {};
+        const childQuery = {};
         childQuery[targets[target].childReference] = record.name;
 
-        var childUpdate = {lastUpdated:date};
-        childUpdate[targets[target].childReference] = record.name+"-UPSTREAM";
+        const childUpdate = {lastUpdated:date};
+        childUpdate[targets[target].childReference] = `${record.name}-UPSTREAM`;
         targets[target].childCollection.update(childQuery,{$set:childUpdate},{multi:true});
     }
 

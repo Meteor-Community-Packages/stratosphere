@@ -16,8 +16,8 @@ Meteor.methods({
         Stratosphere.schemas.ChangeVersionMetadataParameters.clean(data);
         check(data,Stratosphere.schemas.ChangeVersionMetadataParameters);
 
-        var pack = Packages.findOne({name:versionIdentifier.packageName,private:true});
-        var version = Versions.findOne({packageName:versionIdentifier.packageName,version:versionIdentifier.version, private:true});
+        const pack = Packages.findOne({name:versionIdentifier.packageName,private:true});
+        const version = Versions.findOne({packageName:versionIdentifier.packageName,version:versionIdentifier.version, private:true});
 
         if(!pack || !version)
             throw new Meteor.Error("Unknown private package or version");
