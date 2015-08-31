@@ -1,11 +1,11 @@
 Package.describe({
     name: 'uploadserver',
     summary: 'Based of tomi:upload-server',
-    version: '1.0.0-alpha2'
+    version: '1.0.0-rc1'
 });
 
 Package.onUse(function(api) {
-    api.versionsFrom('METEOR@1.1.0.2');
+    api.versionsFrom('1.2-rc.8');
 
     api.use(['webapp', 'routepolicy'], 'server');
 

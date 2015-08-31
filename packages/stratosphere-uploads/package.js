@@ -1,18 +1,18 @@
 Package.describe({
   name: "stratosphere:uploads",
   summary: "Stratosphere Uploads package",
-  version: "1.0.0-alpha2",
+  version: "1.0.0-rc1",
   git: "https://github.com/sebakerckhof/stratosphere.git"
 });
 
 Package.onUse(function (api) {
 
-  api.versionsFrom(['METEOR@1.1.0.2']);
+  api.versionsFrom(['1.2-rc.8']);
 
   api.use([
-    'stratosphere:lib@1.0.0-alpha2',
-    'stratosphere:schemas@1.0.0-alpha2',
-    'uploadserver@1.0.0-alpha2'
+    'stratosphere:lib',
+    'stratosphere:collections',
+    'uploadserver'
   ]);
 
   api.addFiles([

@@ -2,7 +2,12 @@
  * Synchronizer fetches new data from upstream package repository
  */
 //Constructor function
-Synchronizer = function(){
+class Synchronizer{
+
+}
+
+
+function(){
   if (!(this instanceof Synchronizer))
     return new Synchronizer();
 }
@@ -21,7 +26,7 @@ Synchronizer.prototype.collections = {
  * Fetch new data from upstream package repository
  * @returns new upstream sync token
  */
-Synchronizer.prototype.synchronize = function(){
+Synchronizer.prototype.synchronize = function synchronize(){
   //If there is no connection to an upstream server, we cannot synchronize
   if(!Stratosphere.UpstreamConn || !Stratosphere.UpstreamConn.status().connected)
     return Metadata.findOne({key:"syncToken"}).value;
@@ -35,7 +40,7 @@ Synchronizer.prototype.synchronize = function(){
     try {
       this._synchronizeChunk();
     }catch(e){
-      throw new Meteor.Error("Error while syncing with upstream package server: "+e);
+      throw new Meteor.Error(`Error while syncing with upstream package server: ${e}`);
     }
   }
 
@@ -47,7 +52,7 @@ Synchronizer.prototype.synchronize = function(){
  * Initialize or reset synchronization data
  * @private
  */
-Synchronizer.prototype._init = function(){
+Synchronizer.prototype._init = function _init(){
   this.chunk =  0;
   this.remoteData = {upToDate:false,collections:{}};
   this.syncToken = Metadata.findOne({key:'syncToken'}).value;
@@ -58,7 +63,7 @@ Synchronizer.prototype._init = function(){
  * Initialize or reset synchronization data
  * @private
  */
-Synchronizer.prototype._reset = function() {
+Synchronizer.prototype._reset = function _reset() {
   for (collectionName in this.collections) {
     if (!this.collections.hasOwnProperty(collectionName))continue;
     this.collections[collectionName].remove({private:false});
@@ -69,7 +74,7 @@ Synchronizer.prototype._reset = function() {
  * Fetch a part of the upstream data
  * @returns new upstream sync token
  */
-Synchronizer.prototype._synchronizeChunk = function(){
+Synchronizer.prototype._synchronizeChunk = function _synchronizeChunk(){
   console.log('Fetch upstream chunk '+ ++this.chunk);
   //Fetch a chunk of data
   this.remoteData = Stratosphere.UpstreamConn.call('syncNewPackageData', this.syncToken, {});
@@ -107,7 +112,7 @@ Synchronizer.prototype._synchronizeChunk = function(){
  * Upsert a chunk of remote data in our database
  * @private
  */
-Synchronizer.prototype._upsertChunk = function(){
+Synchronizer.prototype._upsertChunk = function _upsertChunk(){
   console.log('Import upstream chunk '+ this.chunk);
 
   var collectionName,collection,element,i;
@@ -148,7 +153,7 @@ Synchronizer.prototype._upsertChunk = function(){
  * @param element
  * @private
  */
-Synchronizer.prototype._checkName = function(element,collectionName){
+Synchronizer.prototype._checkName = function _checkName(element,collectionName){
   var query;
   var date = new Date();
   var checkName = false;
@@ -195,7 +200,7 @@ Synchronizer.prototype._checkName = function(element,collectionName){
  * @param element
  * @private
  */
-Synchronizer.prototype._addCustomFields = function(element){
+Synchronizer.prototype._addCustomFields = function _addCustomFields(element){
   //To easily query versions, add an integer representation of the semver version
   if(element.hasOwnProperty("version")){
     element.versionMagnitude = Stratosphere.utils.versionMagnitude(element.version);
