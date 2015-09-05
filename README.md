@@ -1,4 +1,4 @@
-# V1.0.0-alpha2
+# V1.0.0-beta1
 
 # THIS IS A WIP
 Working so far, with changes to the auth-client of meteor-tool:
@@ -21,11 +21,11 @@ These changes are a temporary fix to make the package server work. In the future
 Replace the files in meteor tool with these files:
 https://gist.github.com/sebakerckhof/d4cd1f41ba0e1ecaa8ae
 
-Note that these files are for meteor tool 1.1.3.
+Note that these files are for meteor tool 1.1.7.
 
 On Linux/Mac
 ```
-~/.meteor/packages/meteor-tool/1.1.3/mt-os.(linux|osx).x86_(32|64)/tools
+~/.meteor/packages/meteor-tool/1.1.7/mt-os.(linux|osx).x86_(32|64)/tools
 ```
 
 On Windows:
@@ -35,10 +35,9 @@ On Windows:
 
 This is currently necessary because of:
 
-* config.js - remove illegal character on windows - solved in next release, see: https://github.com/meteor/meteor/pull/4460
 * auth-client.js - problems with meteor oAuth flow - tracked here: https://github.com/meteor/meteor/issues/4497
 
-The config.js problem is solved in the next release, but any help to solve the problem with auth-client.js would be highly appreciated.
+Any help to solve the problem with auth-client.js would be highly appreciated.
 
 ### 2) Create a Meteor developer app
 First create an app that can use the meteor developer account services:

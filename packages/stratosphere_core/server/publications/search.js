@@ -1,4 +1,4 @@
-SearchSource.defineSource('packages', function(searchText, options) {
+SearchSource.defineSource('packages', function(searchText) {
     const options = {sort: {name: 1}, limit: 20};
 
     if(searchText) {

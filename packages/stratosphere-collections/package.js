@@ -7,13 +7,16 @@ Package.describe({
 
 Package.onUse(function (api) {
 
-  api.versionsFrom(['1.2-rc.8']);
+  api.versionsFrom(['METEOR@1.2-rc.12']);
 
   api.use([
     'stratosphere:lib'
   ]);
 
   api.addFiles([
+    //BaseSchemas
+    'shared/schemas.js',
+
       //Collections
     'shared/collections/builds.js',
     'shared/collections/metadata.js',
@@ -22,16 +25,6 @@ Package.onUse(function (api) {
     'shared/collections/releaseVersions.js',
     'shared/collections/uploadTokens.js',
     'shared/collections/versions.js',
-
-      //Schemas
-    'shared/schemas.js',
-    'shared/schemas/builds.js',
-    'shared/schemas/metadata.js',
-    'shared/schemas/packages.js',
-    'shared/schemas/releaseTracks.js',
-    'shared/schemas/releaseVersions.js',
-    'shared/schemas/uploadTokens.js',
-    'shared/schemas/versions.js',
 
   ], ['server','client']);
 

@@ -7,7 +7,7 @@ Package.describe({
 
 Package.onUse(function (api) {
 
-  api.versionsFrom(['1.2-rc.8']);
+  api.versionsFrom(['METEOR@1.2-rc.12']);
 
   api.use([
     'stratosphere:lib',
@@ -33,7 +33,7 @@ Package.onUse(function (api) {
     'server/utils/publishPackage.js',
     'server/utils/setRecommendationStatus.js',
 
-      //methods
+      //RPC's
     'server/rpc/_changePackageHomepage.js',
     'server/rpc/_changeVersionMigrationStatus.js',
 
@@ -66,8 +66,7 @@ Package.onUse(function (api) {
     'server/publications/releaseTracks.js',
     'server/publications/releaseVersions.js',
     'server/publications/search.js',
-    'server/publications/versions.js',
-    'server/methods.js'
+    'server/publications/versions.js'
   ], ['server']);
 
   Npm.depends({

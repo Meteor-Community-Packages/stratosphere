@@ -7,7 +7,7 @@ Package.describe({
 
 Package.onUse(function (api) {
 
-  api.versionsFrom(['1.2-rc.8']);
+  api.versionsFrom(['METEOR@1.2-rc.12']);
 
   var packages = [
     'meteor-base',
@@ -15,7 +15,7 @@ Package.onUse(function (api) {
     'session',
     'tracker',
     'accounts-password',
-    'ecmascript',
+    'ecmascript@0.1.3-rc.1',
     'package-version-parser',
     'service-configuration',
     //'accounts-oauth',

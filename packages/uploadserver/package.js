@@ -5,7 +5,7 @@ Package.describe({
 });
 
 Package.onUse(function(api) {
-    api.versionsFrom('1.2-rc.8');
+    api.versionsFrom('METEOR@1.2-rc.12');
 
     api.use(['webapp', 'routepolicy'], 'server');
 

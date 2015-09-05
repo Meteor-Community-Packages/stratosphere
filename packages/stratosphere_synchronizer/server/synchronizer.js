@@ -1,12 +1,13 @@
 /**
  * Synchronizer fetches new data from upstream package repository
  */
-const collections = new Map(
-    ["packages",Packages],
-    ["versions",Versions],
-    ["builds",Builds],
-    ["releaseVersions",ReleaseVersions],
-    ["releaseTracks",ReleaseTracks]
+const collections = new Map([
+        ["packages",Packages],
+        ["versions",Versions],
+        ["builds",Builds],
+        ["releaseVersions",ReleaseVersions],
+        ["releaseTracks",ReleaseTracks]
+    ]
 );
 
 

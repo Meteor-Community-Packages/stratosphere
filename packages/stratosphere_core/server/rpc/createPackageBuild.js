@@ -48,7 +48,7 @@ Meteor.methods({
 
         return {
             uploadToken: token._id,
-            uploadUrl: Meteor.settings.public.url + '/upload/?token='+token._id+'&type=build'
+            uploadUrl: `${Meteor.settings.public.url}/upload/?token=${token._id}&type=build`,
         }
     }
 });

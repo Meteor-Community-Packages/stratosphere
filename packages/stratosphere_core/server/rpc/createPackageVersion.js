@@ -85,8 +85,8 @@ Meteor.methods({
         console.log(`Created package version ${record._id}`);
         return {
             uploadToken: token._id,
-            uploadUrl: Meteor.settings.public.url + '/upload/?token='+token._id+'&type=sources',
-            readmeUrl: Meteor.settings.public.url + '/upload/?token='+token._id+'&type=readme'
+            uploadUrl: `${Meteor.settings.public.url}/upload/?token=${token._id}&type=sources`,
+            readmeUrl: `${Meteor.settings.public.url}/upload/?token=${token._id}&type=readme`
         }
     }
 });
