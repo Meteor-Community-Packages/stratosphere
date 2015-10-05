@@ -1,11 +1,11 @@
 import {Component, View, NgFor, bootstrap} from 'angular2/angular2';
-import {ReleaseForm} from 'client/release-form/release-form';
+import {ReleaseForm} from 'packages/stratosphere_frontend/client/release-form/release-form';
 
 @Component({
     selector: 'stratosphere'
 })
 @View({
-    templateUrl: 'client/stratosphere.ng.html',
+    templateUrl: 'packages/stratosphere_frontend/client/stratosphere.ng.html',
     directives: [NgFor,ReleaseForm]
 })
 class StratosphereApp {
