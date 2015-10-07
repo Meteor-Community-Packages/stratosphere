@@ -5,7 +5,7 @@ Package.describe({
 });
 
 Package.onUse(function(api) {
-    api.versionsFrom('METEOR@1.2-rc.12');
+    api.versionsFrom('METEOR@1.2.0.2');
 
     api.use(['webapp', 'routepolicy'], 'server');
 
@@ -14,11 +14,6 @@ Package.onUse(function(api) {
     api.export('UploadServer', 'server');
 });
 
-//Package.onTest(function(api) {
-//  api.use('tinytest');
-//  api.use('tomi:upload-server');
-//  api.addFiles('upload-server-tests.js');
-//});
 
 Npm.depends({
     formidable: '1.0.15',

@@ -12,16 +12,12 @@ Package.onUse(function (api) {
     api.use([
         'static-html',
         'stratosphere:core',
-        'shmck:angular2@2.0.4',
-        'shmck:angular2-router@2.0.3',
-        //'netanelgilad:angular2-typescript@0.0.3',
-        'sclausen:angular2-typescript@1.0.1',
-        //ian:accounts-ui-bootstrap-3@1.2.56',
-        //'twbs:bootstrap@3.3.4',
-        'chuikoff:bootstrap-4@0.0.1',
-        'chuikoff:accounts-ui-bootstrap-4@0.0.1',
-        'fourseven:scss@3.2.0',
-        'fortawesome:fontawesome@4.3.0'
+        'angular',
+        'angular:angular-material',
+        'angularui:angular-ui-router',
+        //'bootstrap@4.0.0-alpha',
+        'fourseven:scss@3.4.0-beta1',
+        'fortawesome:fontawesome@4.4.0'
     ]);
 
     api.addFiles([
@@ -29,8 +25,8 @@ Package.onUse(function (api) {
     ], ['server','client']);
 
     api.addFiles([
-        'client/style/style.scss',
-        'client/app.ts',
+        'client/app.js',
+        'client/routes.js',
         'client/index.html',
     ], ['client']);
 

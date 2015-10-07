@@ -1,0 +1,1 @@
+angular.module('stratosphere.components',['stratosphere.components.version','stratosphere.components.package','stratosphere.components.packageDetails']);

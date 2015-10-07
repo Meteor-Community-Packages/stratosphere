@@ -7,7 +7,7 @@ Package.describe({
 
 Package.onUse(function (api) {
 
-  api.versionsFrom(['METEOR@1.2-rc.12']);
+  api.versionsFrom(['METEOR@1.2.0.2']);
 
   var packages = [
     'meteor-base',
