@@ -11,35 +11,31 @@ if(Meteor.isServer){}
 /**
  * Schemas
  */
-Stratosphere.schemas.SyncTokenSchema = new SimpleSchema({
-    'lastDeletion': {
-        type: Number
+Stratosphere.schemas.UploadTokenSchema = new SimpleSchema({
+    'type': {
+        type: String,
+        allowedValues: ['build','version','readme']
     },
-    'format': {
+    'packageId': {
         type: String
     },
-    'packages': {
-        type: Number
-    },
-    'versions': {
-        type: Number
-    },
-    'builds': {
-        type: Number
-    },
-    'releaseTracks': {
-        type: Number
-    },
-    'releaseVersions': {
-        type: Number
-    },
-    'stratosphere': {
+    'used':{
         type: Boolean,
-        optional:true,
         defaultValue:false
     },
-    '_id': {
+    'versionId': {
         type: String,
         optional:true
+    },
+    'relatedTokens':{
+        type:[String],
+        optional:true
+    },
+    'buildId': {
+        type: String,
+        optional:true
+    },
+    'createdAt': {
+        type: Date
     }
 });

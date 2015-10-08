@@ -61,32 +61,42 @@ Meteor.methods({
             pack._id = makePrivatePackage({name:pack.name});
         }
 
-        const d = new Date();
+        const date = new Date();
 
         _.extend(record,{
             versionMagnitude:Stratosphere.utils.versionMagnitude(record.version),
-            lastUpdated: new Date(),
+            lastUpdated: date,
             private:true,
             hidden:true
         });
 
         record._id = Versions.insert(record);
 
-        const token = {
-            type:'version',
-            typeId:record._id,
+        const readmeToken = {
+            type:'readme',
+            versionId:record._id,
             packageId:pack._id,
-            paths:{sources:'',readme:''},
-            createdAt: d
+            createdAt: date,
+            used:false
         };
+        readmeToken._id = UploadTokens.insert(readmeToken);
 
-        token._id = UploadTokens.insert(token);
+        const versionToken = {
+            type:'version',
+            versionId:record._id,
+            packageId:pack._id,
+            createdAt: date,
+            relatedTokens:[readmeToken._id],
+            used:false
+        };
+        versionToken._id = UploadTokens.insert(versionToken);
+
 
         console.log(`Created package version ${record._id}`);
         return {
-            uploadToken: token._id,
-            uploadUrl: `${Meteor.settings.public.url}/upload/?token=${token._id}&type=sources`,
-            readmeUrl: `${Meteor.settings.public.url}/upload/?token=${token._id}&type=readme`
+            uploadToken: versionToken._id,
+            uploadUrl: `${Meteor.settings.public.url}/upload/?token=${versionToken._id}`,
+            readmeUrl: `${Meteor.settings.public.url}/upload/?token=${readmeToken._id}`
         }
     }
 });

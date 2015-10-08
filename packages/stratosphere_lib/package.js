@@ -11,6 +11,7 @@ Package.onUse(function (api) {
 
   var packages = [
     'meteor-base',
+    'check',
     'mongo',
     'session',
     'tracker',

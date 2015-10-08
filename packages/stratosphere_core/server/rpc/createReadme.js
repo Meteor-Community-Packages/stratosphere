@@ -22,16 +22,16 @@ Meteor.methods({
         const result = {uploadToken:'',url:''};
 
         const token = {
-            type:'version',
-            typeId:version._id,
+            type:'readme',
+            versionId:version._id,
             packageId:pack._id,
-            paths:{readme:''},
-            createdAt: new Date()
+            createdAt: new Date(),
+            used:false
         };
 
         token._id = UploadTokens.insert(token);
         result.uploadToken = token._id;
-        result.url = `${Meteor.settings.public.url}/upload/?token=${token._id}&type=readme`;
+        result.url = `${Meteor.settings.public.url}/upload/?token=${token._id}`;
 
         console.log(`Allow publication of readme for version ${version._id}`);
         return result;

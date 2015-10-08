@@ -16,22 +16,30 @@ Meteor.methods({
      * Publish version of a package
      */
     publishPackageVersion: function(uploadToken, hashes) {
+        //Little bit of security
         Stratosphere.utils.checkAccess();
         check(uploadToken, String);
         check(hashes, Stratosphere.schemas.PackageVersionHashes);
 
-        const tokenData = UploadTokens.findOne({_id: uploadToken});
+
+        const tokenData = UploadTokens.findOne({_id: uploadToken,used:true});
         if (!tokenData || tokenData.type !== 'version') {
             throw new Meteor.Error("Invalid upload token");
         }
 
         UploadTokens.remove({_id: uploadToken});
-        const version = Versions.findOne({_id: tokenData.typeId});
+        if(uploadToken.relatedTokens){
+            UploadTokens.remove({_id: {$in : uploadToken.relatedTokens}});
+        }
+
+        const version = Versions.findOne({_id: tokenData.versionId});
         if (!version) {
             throw new Meteor.Error("Invalid upload token");
         }
 
         //XXX verify hashes?
+
+        //Add publisher metadata
         let publishedBy = {};
         const pack = Packages.findOne({name: version.packageName});
 
@@ -50,18 +58,24 @@ Meteor.methods({
         }
 
         const date = new Date();
-        //Cache latest version
-        Packages.update({name: version.packageName}, {
-            $set: {
-                latestVersion: {
-                    id: version._id,
-                    description: version.description,
-                    version: version.version,
-                    published: date
-                }
-            }
-        });
 
+        //Cache latest version
+        if(!pack.latestVersion || Stratosphere.utils.versionMagnitude(pack.latestVersion.version) < Stratosphere.utils.versionMagnitude(version.version)){
+            //Cache latest version
+            Packages.update({name: version.packageName}, {
+                $set: {
+                    latestVersion: {
+                        id: version._id,
+                        description: version.description,
+                        version: version.version,
+                        published: date
+                    }
+                }
+            });
+        }
+
+
+        //Publish to db
         const uploadUrlBase = Meteor.settings.public.url;
         //Publish version
         Versions.update(version._id, {
@@ -71,12 +85,12 @@ Meteor.methods({
                 publishedBy: publishedBy,
                 hidden: false,
                 source: {
-                    url: `${uploadUrlBase}/upload/version/${tokenData.typeId}.tgz`,
+                    url: `${uploadUrlBase}/upload/${tokenData.packageId}/version/${tokenData.versionId}/sources.tgz`,
                     tarballHash: hashes.tarballHash,
                     treeHash: hashes.treeHash
                 },
                 readme: {
-                    url: `${uploadUrlBase}/upload/version/${tokenData.typeId}_readme.md`,
+                    url: `${uploadUrlBase}/upload/${tokenData.packageId}/version/${tokenData.versionId}/README.md`,
                     hash: hashes.readmeHash
                 }
             }

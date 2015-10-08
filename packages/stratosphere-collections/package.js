@@ -23,6 +23,7 @@ Package.onUse(function (api) {
     'shared/collections/packages.js',
     'shared/collections/releaseTracks.js',
     'shared/collections/releaseVersions.js',
+    'shared/collections/syncTokens.js',
     'shared/collections/uploadTokens.js',
     'shared/collections/versions.js',
 

@@ -57,6 +57,9 @@ Package.onUse(function (api) {
     'server/rpc/setBannersOnReleases.js',
     'server/rpc/syncNewPackageData.js',
     'server/rpc/unPublishPackage.js',
+    'server/rpc/unPublishReleaseTrack.js',
+    'server/rpc/unPublishReleaseVersion.js',
+    'server/rpc/unPublishVersion.js',
     'server/rpc/unrecommendVersion.js',
 
       //publications

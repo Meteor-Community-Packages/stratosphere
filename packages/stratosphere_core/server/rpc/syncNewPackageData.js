@@ -63,18 +63,29 @@ Meteor.methods({
         }
 
         //Sync with upstream
-        const synchronizer = new Synchronizer();
+        const synchronizer = new Stratosphere.Synchronizer();
         synchronizer.synchronize();
 
         //Bootstrap sync data
         const result = {collections:{},upToDate:true,resetData:false};
-        const collections = new Map(
-            ["packages",Packages],
-            ["versions",Versions],
-            ["builds",Builds],
-            ["releaseVersions",ReleaseVersions],
-            ["releaseTracks",ReleaseTracks]
-        );
+        //XXX:Apparently maps are not supported ATM
+        //const collections = new Map([
+        //        ["packages",Packages],
+        //        ["versions",Versions],
+        //        ["builds",Builds],
+        //        ["releaseVersions",ReleaseVersions],
+        //        ["releaseTracks",ReleaseTracks]
+        //    ]
+        //);
+
+
+        const collections = {
+            packages: Packages,
+            versions: Versions,
+            builds: Builds,
+            releaseVersions: ReleaseVersions,
+            releaseTracks: ReleaseTracks
+        };
 
         const lastDeletion = Metadata.findOne({key:'lastDeletion'}).value;
 
@@ -83,7 +94,10 @@ Meteor.methods({
             result.resetData = true;
             syncToken.stratosphere = true;
             syncToken.lastDeletion = lastDeletion;
-            for(let collectionName of collections.keys()){
+            //XXX: not yet supported
+            // for(let collectionName of collections.keys()){
+            for(let collectionName in collections){
+                if(collections.hasOwnProperty(collectionName))continue;
                 syncToken[collectionName] = 0;
             }
         }
@@ -91,7 +105,11 @@ Meteor.methods({
         result.syncToken = syncToken;
 
 
-        for(let collectionName of collections.keys()){
+        //XXX: not yet supported
+        // for(let collectionName of collections.keys()){
+        for(let collectionName in collections){
+            if(collections.hasOwnProperty(collectionName))continue;
+
             const cursor = collections[collectionName].rawCollection().find({/*hidden:false,*/lastUpdated:{$gt:new Date(syncToken[collectionName])}},{sort:{lastUpdated:1},fields:{latestVersion:0,upstream:0,private:0,hidden:0,buildPackageName:0,versionMagnitude:0}});
 
             const count = Async.runSync(function(done) {cursor.count(true,done);}).result;

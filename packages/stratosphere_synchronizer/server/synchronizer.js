@@ -1,18 +1,27 @@
 /**
  * Synchronizer fetches new data from upstream package repository
  */
-const collections = new Map([
-        ["packages",Packages],
-        ["versions",Versions],
-        ["builds",Builds],
-        ["releaseVersions",ReleaseVersions],
-        ["releaseTracks",ReleaseTracks]
-    ]
-);
 
+  //XXX:Apparently maps are not supported ATM
+//const collections = new Map([
+//        ["packages",Packages],
+//        ["versions",Versions],
+//        ["builds",Builds],
+//        ["releaseVersions",ReleaseVersions],
+//        ["releaseTracks",ReleaseTracks]
+//    ]
+//);
+
+const collections = {
+  packages: Packages,
+  versions: Versions,
+  builds: Builds,
+  releaseVersions: ReleaseVersions,
+  releaseTracks: ReleaseTracks
+};
 
 //Constructor function
-class Synchronizer {
+Stratosphere.Synchronizer = class Synchronizer {
     constructor(options) {
         this.options = _.extend({compressCollections: false, useShortPages: false}, options);
     }
@@ -59,8 +68,12 @@ class Synchronizer {
      * @private
      */
     _reset() {
-        for (let collectionName in collections.keys()) {
-            collections.get(collectionName).remove({private: false});
+        //XXX: maps are not supported yet
+        // for (let collection of collections.values()) {
+        //    collection.remove({private: false});
+        //}
+        for (let collectionName in collections) {
+            collections[collectionName].remove({private: false});
         }
     }
 
@@ -108,7 +121,10 @@ class Synchronizer {
      */
     _upsertChunk(){
         console.log('Import upstream chunk '+ this.chunk);
-        for(let collectionName of collections.keys()){
+        for(let collectionName in collections){
+            if(!collections.hasOwnProperty(collectionName))continue;
+        //XXX: maps are not yet supported
+        // for(let collectionName of collections.keys()){
             if(!this.remoteData.collections.hasOwnProperty(collectionName))continue;
 
             let collection = this.remoteData.collections[collectionName];
@@ -134,7 +150,8 @@ class Synchronizer {
                 this._addCustomFields(element);
 
                 //Upsert into the collection
-                collections.get(collectionName).upsert(element._id,{$set:element});
+                //XXX collections.get(collectionName).upsert(element._id,{$set:element});
+              collections[collectionName].upsert(element._id,{$set:element});
             }
         }
     }

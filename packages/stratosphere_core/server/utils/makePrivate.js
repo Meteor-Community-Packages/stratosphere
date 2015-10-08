@@ -3,7 +3,6 @@
  * @param data
  * @returns {*|any}
  */
-Stratosphere.schemas.CreateReleaseTrackParameters = Stratosphere.schemas.CreatePackageParameters;
 
 Stratosphere.utils.makePrivateX = function makePrivateX(target,data){
     const targets = {
@@ -17,7 +16,7 @@ Stratosphere.utils.makePrivateX = function makePrivateX(target,data){
             collection: ReleaseTracks,
             childCollection: ReleaseVersions,
             childReference: 'track',
-            schema: Stratosphere.schemas.CreateReleaseTrackParameters
+            schema: Stratosphere.schemas.CreateReleaseTrackSchema
         }
     }
 

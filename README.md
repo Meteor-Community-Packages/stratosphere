@@ -1,13 +1,13 @@
-# V1.0.0-beta1
+# V1.0.0-rc1
 
 # THIS IS A WIP
 Working so far, with changes to the auth-client of meteor-tool:
 
 * Synchronization with upstream server
 * Synchronization with meteor-tool
-* Publishing and unpublishing of packages, versions, builds, metadata changes
+* Publishing and unpublishing of packages, versions, release tracks, release versions, builds, metadata changes
 * Uploading and downloading of files
-* Some fo the admin commands
+* Some of the admin commands
 
 Next thing to figure out is how to handle logins from Meteor tool
 
@@ -21,11 +21,11 @@ These changes are a temporary fix to make the package server work. In the future
 Replace the files in meteor tool with these files:
 https://gist.github.com/sebakerckhof/d4cd1f41ba0e1ecaa8ae
 
-Note that these files are for meteor tool 1.1.7.
+Note that these files are for meteor tool 1.1.9.
 
 On Linux/Mac
 ```
-~/.meteor/packages/meteor-tool/1.1.7/mt-os.(linux|osx).x86_(32|64)/tools
+~/.meteor/packages/meteor-tool/1.1.9/mt-os.(linux|osx).x86_(32|64)/tools
 ```
 
 On Windows:

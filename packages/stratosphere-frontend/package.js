@@ -25,9 +25,30 @@ Package.onUse(function (api) {
     ], ['server','client']);
 
     api.addFiles([
+        //Components
+        'client/components/package/component.js',
+        'client/components/package/controller.js',
+        'client/components/package/item.ng.html',
+        'client/components/package/directive.js',
+
+        'client/components/packageDetails/component.js',
+        'client/components/packageDetails/controller.js',
+        'client/components/packageDetails/details.ng.html',
+        'client/components/packageDetails/directive.js',
+
+        'client/components/version/component.js',
+        'client/components/version/controller.js',
+        'client/components/version/item.ng.html',
+        'client/components/version/directive.js',
+
+        'client/components/components.js',
+
         'client/app.js',
         'client/routes.js',
         'client/index.html',
+        'client/index.ng.html',
+
+
     ], ['client']);
 
 

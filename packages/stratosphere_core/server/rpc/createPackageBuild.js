@@ -37,10 +37,11 @@ Meteor.methods({
 
         const token = {
             type:'build',
-            typeId:insert._id,
+            buildId:insert._id,
             packageId:pack._id,
-            paths:{build:''},
-            createdAt: date
+            versionId:version._id,
+            createdAt: date,
+            used:false
         };
         token._id = UploadTokens.insert(token);
 

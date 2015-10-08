@@ -1,4 +1,12 @@
-Stratosphere.schemas.CreateReleaseVersionSchema = Stratosphere.schemas.ReleaseVersionSchema.pick(['','']);
+Stratosphere.schemas.CreateReleaseVersionSchema = Stratosphere.schemas.ReleaseVersionSchema.pick([
+  'track',
+  'version',
+  'orderKey',
+  'description',
+  'recommended',
+  'tool',
+  'packages'
+]);
 
 Meteor.methods({
     /**
@@ -14,9 +22,25 @@ Meteor.methods({
      * };
      */
     createReleaseVersion:function(record){
+      //Little bit of security
         Stratosphere.utils.checkAccess();
         Stratosphere.schemas.CreateReleaseVersionSchema.clean(record);
-        check(Stratosphere.schemas.CreateReleaseVersionSchema,record);
-        //XXX
+        check(record,Stratosphere.schemas.CreateReleaseVersionSchema);
+
+        let publishedBy = {};
+        if(Meteor.user()){
+            publishedBy = {username:Meteor.user().username,id:Meteor.userId()};
+        }
+
+      //add to db
+        _.extend(record,{
+            lastUpdated: new Date(),
+            versionMagnitude:Stratosphere.utils.versionMagnitude(record.version),
+            private:true,
+            published:new Date(),
+            publishedBy:publishedBy
+        });
+      ReleaseVersions.insert(record);
+
     }
 });

@@ -19,6 +19,4 @@ Package.onUse(function (api) {
     'server/synchronizer.js'
   ], ['server']);
 
-  api.export(['Synchronizer']);
-
 });

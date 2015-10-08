@@ -41,25 +41,32 @@ Meteor.startup(function () {
       return;
     },
     finished: function(fileInfo, query) {
-      const tokenData = UploadTokens.findOne({_id:query.token});
+      const tokenData = UploadTokens.findOne({_id:query.token,used:false});
 
-      if(!tokenData || !tokenData.paths.hasOwnProperty(query.type)){
+      if(!tokenData){
         fs.unlinkSync(fileInfo.path);
-        throw new Error("Unmatched upload type");
+        throw new Error("Invalid upload token");
       }
 
-      let destination = path.join(Meteor.settings.directories.uploads,tokenData.type,tokenData.packageId);
+      let destination = path.join(Meteor.settings.directories.uploads,tokenData.packageId);
+      let filename;
+      switch(tokenData.type){
+        case 'build':
+          destination = path.join(destination,'versions',tokenData.versionId,'builds',tokenData.buildId);
+          filename = 'build.tgz';
+          break;
+        case 'version':
+          destination = path.join(destination,'versions',tokenData.versionId);
+          filename = 'sources.tgz';
+          break;
+        case 'readme':
+          destination = path.join(destination,'versions',tokenData.versionId);
+          filename = 'README.md';
+          break;
+      }
 
       if(!fs.existsSync(destination)){
         wrench.mkdirSyncRecursive(destination);
-      }
-
-      let filename = tokenData.typeId;
-
-      if(query.type === 'readme'){
-        filename += '_readme.md';
-      }else{
-        filename += '.tgz';
       }
 
       destination = path.join(destination,filename);
@@ -67,9 +74,7 @@ Meteor.startup(function () {
       fsExtra.copySync(fileInfo.path, destination);
       fs.unlinkSync(fileInfo.path);
 
-      tokenData.paths[query.type] = destination;
-
-      UploadTokens.upsert(tokenData._id,tokenData);
+      UploadTokens.update(tokenData._id,{$set:{used:true}});
     }
   });
 });

@@ -97,11 +97,15 @@ Stratosphere.utils.checkAccess = function checkAccess(){
 Stratosphere.utils.versionMagnitude = function versionMagnitude(version){
     var SemVer = Npm.require("semver-loose");
     try{
-        return versionMagnitude(PackageVersion.versionMagnitude(element.version));
+        return PackageVersion.versionMagnitude(element.version);
     }catch(e){
         var v = SemVer.parse(version);
-        return v.major * 100 * 100 +
-            v.minor * 100 +
-            v.patch;
+        return (v.major || 0) * 100 * 100 +
+                (v.minor || 0) * 100 +
+                (v.patch || 0);
     }
 }
+
+
+console.log("0.9.3.1",Stratosphere.utils.versionMagnitude("0.9.3.1"));
+console.log("0.9.3.1",Stratosphere.utils.versionMagnitude("0.9.3.1"));
