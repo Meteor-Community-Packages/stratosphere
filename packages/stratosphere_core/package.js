@@ -64,11 +64,14 @@ Package.onUse(function (api) {
 
       //publications
     'server/publications/nbPackages.js',
-    'server/publications/packageDetails.js',
-    'server/publications/packageList.js',
+    'server/publications/package.js',
+    'server/publications/packages.js',
+    'server/publications/releaseTrack.js',
     'server/publications/releaseTracks.js',
+    'server/publications/releaseVersion.js',
     'server/publications/releaseVersions.js',
     'server/publications/search.js',
+    'server/publications/version.js',
     'server/publications/versions.js'
   ], ['server']);
 

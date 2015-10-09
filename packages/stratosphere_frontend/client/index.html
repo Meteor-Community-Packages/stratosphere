@@ -1,0 +1,56 @@
+<head>
+    <base href="/">
+    <title>Stratosphere - private package server</title>
+</head>
+
+<body ng-app="stratosphere">
+<div ng-controller="IndexCtrl as ctrl" ng-cloak>
+    <md-toolbar class="md-menu-toolbar">
+        <div layout="row">
+            <md-toolbar-filler layout layout-align="center center">
+                <md-icon md-svg-icon="call:chat"></md-icon>
+            </md-toolbar-filler>
+            <div>
+                <h2 class="md-toolbar-tools">Stratosphere</h2>
+                <md-menu-bar>
+                    <button ng-click="$mdOpenMenu()">
+                        File
+                    </button>
+                    <md-menu>
+                        <button ng-click="$mdOpenMenu()">
+                            File
+                        </button>
+                        <md-menu-content>
+                            <md-menu-item>
+                                <md-button>
+                                    Share...
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-divider></md-menu-divider>
+                            <md-menu-item>
+                                <md-menu>
+                                    <md-button ng-click="$mdOpenMenu()">New</md-button>
+                                    <md-menu-content>
+                                        <md-menu-item><md-button>Document</md-button></md-menu-item>
+                                        <md-menu-item><md-button>Spreadsheet</md-button></md-menu-item>
+                                </md-menu>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <md-button>
+                                    Open...
+                                </md-button>
+                            </md-menu-item>
+
+                        </md-menu-content>
+                    </md-menu>
+                </md-menu-bar>
+            </div>
+        </div>
+    </md-toolbar>
+    <div class="page-container">
+        <div class="page">
+            <div ui-view></div>
+         </div>
+    </div>
+</div>
+</body>

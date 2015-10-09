@@ -1,0 +1,11 @@
+<md-content>
+    <md-list>
+        <md-list-item class="md-3-line" ng-repeat="package in vm.packages">
+            <div class="md-list-item-text" layout="column" ng-click="$state.go('track',{id:package._id,name:package.name})">
+                <h3>{{ ::package.name }}</h3>
+                <h4>Last version: {{ package.latestVersion.version }}</h4>
+                <p>{{ package.latestVersion.description }}</p>
+            </div>
+        </md-list-item>
+    </md-list>
+</md-content>
