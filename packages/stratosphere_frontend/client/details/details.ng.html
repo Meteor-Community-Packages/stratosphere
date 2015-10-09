@@ -1,0 +1,53 @@
+
+    <div ng-if="!vm.item._id">
+        <md-card ng-if="vm.item._id">
+            <md-card-content>
+                <h2 class="md-title">{{ ::vm.name }}</h2>
+                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+            </md-card-content>
+        </md-card>
+    </div>
+    <div ng-if="vm.item._id">
+        <md-card>
+            <md-card-content>
+                <h2 class="md-title">{{ ::vm.item.name }}</h2>
+                <p>
+                    {{ ::vm.item.latestVersion.description }}
+                </p>
+            </md-card-content>
+            <div class="md-actions" layout="row" layout-align="end center">
+                <md-button ng-click="vm.unpublish($event)" class="md-raised md-warn">unpublish</md-button>
+            </div>
+        </md-card>
+        <div layout="row" layout-sm="column" layout-wrap>
+            <div flex="66" flex-sm="100">
+                <md-card>
+                    <md-card-content>
+                        <h2>README</h2>
+                        <div ng-if="vm.item.latestVersion">
+                            <md-button hide-gt-sm ng-click="vm.showReadme = !vm.showReadme"><span ng-show="!vm.showReadme">Show</span><span ng-show="vm.showReadme">Hide</span> Readme</md-button>
+                            <btf-markdown ng-show="vm.showReadme" ng-include src="vm.item.latestVersion.readme"></btf-markdown>
+                        </div>
+                        <span ng-if="!vm.item.latestVersion">No info available</span>
+                    </md-card-content>
+                </md-card>
+            </div>
+            <div flex>
+                <md-card>
+                    <md-card-content>
+                        <h2><ng-pluralize count="vm.nbVersions.count" when="{'0': 'No published versions.','one': '1 version:','other': '{} versions:'}"></ng-pluralize></h2>
+                        <md-list>
+                            <md-list-item class="md-2-line" ng-repeat="version in vm.versions">
+                                <div class="md-list-item-text" layout="column" ng-click="vm.versionDetails($event,version)">
+                                    <h3>{{ ::version.version }}</h3>
+                                    <h4>{{ ::version.lastUpdated | date : mediumDate }}</h4>
+                                </div>
+                            </md-list-item>
+                        </md-list>
+                        <md-progress-circular ng-show="vm.loadingVersions" md-mode="indeterminate"></md-progress-circular>
+                        <md-button ng-show="!vm.loadingVersions && vm.nbVersions.count !== vm.versions.length" ng-click="vm.loadVersions()">Load {{ vm.nbVersions.count - vm.versions.length}} more...</md-button>
+                    </md-card-content>
+                </md-card>
+            </div>
+        </div>
+    </div>

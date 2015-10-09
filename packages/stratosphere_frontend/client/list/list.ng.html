@@ -1,0 +1,14 @@
+<md-content>
+    <h2><ng-pluralize count="vm.nbItems.count" when="{'0': 'No published {{ vm.type.label }}s.','one': '1 {{ vm.type.label }}:','other': '{} {{ vm.type.label }}s:'}"></ng-pluralize></h2>
+    <div infinite-scroll='vm.loadMore()' infinite-scroll-distance='0'>
+        <md-list>
+            <md-list-item class="md-3-line" ng-repeat="item in vm.items">
+                <div class="md-list-item-text" layout="column" ui-sref="details({name:item.name,id:item._id,type:vm.type.id})">
+                    <h3>{{ ::item.name }}</h3>
+                    <h4>{{ item.latestVersion.description }}</h4>
+                    <p>Last version: {{ item.latestVersion.version }}</p>
+                </div>
+            </md-list-item>
+        </md-list>
+    </div>
+</md-content>

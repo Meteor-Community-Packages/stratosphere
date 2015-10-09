@@ -1,11 +1,11 @@
 Package.describe({
     name: 'uploadserver',
     summary: 'Based of tomi:upload-server',
-    version: '1.0.0-alpha2'
+    version: '1.0.0-beta1'
 });
 
 Package.onUse(function(api) {
-    api.versionsFrom('METEOR@1.1.0.2');
+    api.versionsFrom('METEOR@1.2.0.2');
 
     api.use(['webapp', 'routepolicy'], 'server');
 
@@ -14,11 +14,6 @@ Package.onUse(function(api) {
     api.export('UploadServer', 'server');
 });
 
-//Package.onTest(function(api) {
-//  api.use('tinytest');
-//  api.use('tomi:upload-server');
-//  api.addFiles('upload-server-tests.js');
-//});
 
 Npm.depends({
     formidable: '1.0.15',

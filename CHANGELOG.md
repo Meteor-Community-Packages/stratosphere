@@ -1,3 +1,12 @@
+1.0.0-beta1
+
+* New, angular front-end
+* Support for release tracks and versions
+* Partially rewritten for ES2015
+* Only supports Meteor 1.2 (meteor tool 1.1.7) and up
+* Removed meteor tool config.js edit, since no longer necessary with meteor-tool 1.1.7
+* Refactored packages
+
 1.0.0-ALPHA2
 
 * Implemented some meteor-tool admin methods

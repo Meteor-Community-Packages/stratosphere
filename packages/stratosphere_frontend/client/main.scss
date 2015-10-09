@@ -1,0 +1,18 @@
+.app{
+  min-height:100vh;
+}
+
+.page{
+  margin: 0 auto;
+  padding: 24px;
+  max-width: 80vw;
+}
+
+.page-container{
+  background-color: #f1f1f1;
+  flex:1;
+}
+
+md-card{
+  box-shadow:none;
+}

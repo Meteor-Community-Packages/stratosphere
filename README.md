@@ -1,13 +1,13 @@
-# V1.0.0-alpha2
+# V1.0.0-beta1
 
 # THIS IS A WIP
 Working so far, with changes to the auth-client of meteor-tool:
 
 * Synchronization with upstream server
 * Synchronization with meteor-tool
-* Publishing and unpublishing of packages, versions, builds, metadata changes
+* Publishing and unpublishing of packages, versions, release tracks, release versions, builds, metadata changes
 * Uploading and downloading of files
-* Some fo the admin commands
+* Some of the admin commands
 
 Next thing to figure out is how to handle logins from Meteor tool
 
@@ -15,30 +15,26 @@ Next thing to figure out is how to handle logins from Meteor tool
 Stratosphere is a private package server for Meteor.
 
 ## Installation
-### 1) Change files to meteor tool
-These changes are a temporary fix to make the package server work. In the future these changes shouldn't be necessary.
+### 1) Patch aut-client.js in meteor tool
+This change is a temporary fix to make the package server work. In the future this shouldn't be necessary.
 
-Replace the files in meteor tool with these files:
-https://gist.github.com/sebakerckhof/d4cd1f41ba0e1ecaa8ae
+Replace auth-client.js in meteor tool with this file: https://gist.github.com/sebakerckhof/9ed52a45fcb7d940fc60
 
-Note that these files are for meteor tool 1.1.3.
+Note that these instructions are for meteor tool 1.1.7. and up
 
 On Linux/Mac
 ```
-~/.meteor/packages/meteor-tool/1.1.3/mt-os.(linux|osx).x86_(32|64)/tools
+~/.meteor/packages/meteor-tool/1.1.7/mt-os.(linux|osx).x86_(32|64)/tools
 ```
 
 On Windows:
 ```
-%appdata%\..\Local\.meteor\meteor-tool\mt-os.windows.x86_32\tools
+%appdata%\..\Local\.meteor\packages\meteor-tool\1.1.7\mt-os.windows.x86_32\tools
 ```
 
-This is currently necessary because of:
+This is currently necessary because of [this issue](https://github.com/meteor/meteor/issues/4497)
 
-* config.js - remove illegal character on windows - solved in next release, see: https://github.com/meteor/meteor/pull/4460
-* auth-client.js - problems with meteor oAuth flow - tracked here: https://github.com/meteor/meteor/issues/4497
-
-The config.js problem is solved in the next release, but any help to solve the problem with auth-client.js would be highly appreciated.
+Any help to solve the problem with auth-client.js would be highly appreciated.
 
 ### 2) Create a Meteor developer app
 First create an app that can use the meteor developer account services:
@@ -69,7 +65,7 @@ On Windows:
 ```
 %appdata%\..\Local\.meteor\package-metadata\v2.0.1
 ```
-Next, you copy the existing database file and give it the filename you see when going to the front-end of your package server.
+Next, you copy the existing database file and give it the filename you see when going to instructions in the front-end of your package server.
 
 ## Usage
 To publish and sync with Stratosphere, you have to set the package server URL to your stratosphere URL.
@@ -105,5 +101,5 @@ Here are some other ideas:
 - Look into the 'XXX'-es inside the code, these serve as TODOS
 - Add Tests
 - Add better security (e.g. check upload tokens before upload starts, verify hashes, fix oauth flow of meteor-tool)
-- Convert raw object manipulation to a more clean solution (using Astronomy, some code for this is already present and commented out in model/models.js)
-- Whatever front-end functionality you consider useful
+- Convert raw object manipulation to a more clean solution (e.g. using Astronomy)
+- Whatever front-end functionality that might be useful
