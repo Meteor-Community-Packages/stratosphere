@@ -1,10 +1,10 @@
 angular
-  .module('stratosphere.packages')
-  .controller("stPackagesCtrl", stPackagesCtrl);
+  .module('stratosphere.list')
+  .controller("stListCtrl", stListCtrl);
 
-stPackagesCtrl.$inject = ['$scope','$stateParams','$meteor'];
+stListCtrl.$inject = ['$scope','$types','$stateParams','$meteor'];
 
-function stPackagesCtrl($scope,$stateParams,$meteor) {
+function stListCtrl($scope,$types,$stateParams,$meteor) {
   var self = this;
 
   //properties
@@ -16,21 +16,23 @@ function stPackagesCtrl($scope,$stateParams,$meteor) {
   $scope.sort = {};
   $scope.sort[($stateParams.sort || 'name')] = 1;
 
+  self.type = $types[$stateParams.type];
+
   //activate
   activate();
 
   function activate(){
-    $scope.$meteorSubscribe('stratosphere/packages',{});
-    self.packages = $scope.$meteorCollection(function() {
-      return Packages.find({}, {
+    $scope.$meteorSubscribe(self.type.subscribeList,{});
+    self.items = $scope.$meteorCollection(function() {
+      return self.type.collection.find({}, {
         sort : $scope.getReactively('sort')
       });
     },false);
 
-    self.nbPackages = $scope.$meteorObject(Counts ,'nbPackages', false);
+    self.nbItems = $scope.$meteorObject(Counts ,self.type.count, false);
 
     $meteor.autorun($scope, function() {
-      $scope.$meteorSubscribe('stratosphere/packages', {
+      $scope.$meteorSubscribe(self.type.subscribeList, {
         limit: parseInt($scope.getReactively('perPage')),
         skip: (parseInt($scope.getReactively('page')) - 1) * parseInt($scope.getReactively('perPage')),
         sort: $scope.getReactively('sort')

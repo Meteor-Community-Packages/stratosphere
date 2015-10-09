@@ -1,7 +1,7 @@
 Package.describe({
     name: "stratosphere:frontend",
     summary: "Stratosphere Frontend",
-    version: "1.0.0-rc1",
+    version: "1.0.0-beta1",
     git: "https://github.com/sebakerckhof/stratosphere.git"
 });
 
@@ -34,29 +34,21 @@ Package.onUse(function (api) {
         'client/dependencies.js',
 
         //modules
-        'client/package/module.js',
-        'client/package/stPackageCtrl.js',
-        'client/package/stVersionCtrl.js',
-        'client/package/view.ng.html',
-        'client/package/version.ng.html',
+        'client/details/module.js',
+        'client/details/stDetailsCtrl.js',
+        'client/details/stVersionCtrl.js',
+        'client/details/version.ng.html',
+        'client/details/details.ng.html',
 
-        'client/packages/module.js',
-        'client/packages/stPackagesCtrl.js',
-        'client/packages/view.ng.html',
+        'client/list/module.js',
+        'client/list/stListCtrl.js',
+        'client/list/list.ng.html',
 
-        'client/tracks/module.js',
-        'client/tracks/stTracksCtrl.js',
-        'client/tracks/view.ng.html',
-
-        'client/track/module.js',
-        'client/track/stReleaseVersionCtrl.js',
-        'client/track/stTrackCtrl.js',
-        'client/track/view.ng.html',
-        'client/track/version.ng.html',
 
         'client/app.js',
         'client/IndexCtrl.js',
         'client/index.html',
+        'client/instructions.ng.html',
         'client/main.scss',
 
     ], ['client']);

@@ -1,5 +1,5 @@
 angular
-  .module("stratosphere.track",['stratosphere.dependencies'])
+  .module("stratosphere.list",['stratosphere.dependencies'])
   .config(configureRoutes);
 
 
@@ -8,10 +8,10 @@ function configureRoutes($stateProvider, $locationProvider) {
   $locationProvider.html5Mode(true);
 
   $stateProvider
-    .state('track', {
-      url: "/track/:name",
-      templateUrl: 'stratosphere_frontend_client/track/view.ng.html',
-      controller: 'stTrackCtrl',
+    .state('list', {
+      url: "/{type:(?:package|track)}/list/:sort",
+      templateUrl: 'stratosphere_frontend_client/list/list.ng.html',
+      controller: 'stListCtrl',
       controllerAs: 'vm'
     });
 }

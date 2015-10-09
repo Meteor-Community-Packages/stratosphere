@@ -1,16 +1,45 @@
 angular
   .module('stratosphere')
-  .controller("IndexCtrl", IndexCtrl);
+    .controller('InstructionsCtrl', InstructionsCtrl)
+    .controller("IndexCtrl", IndexCtrl);
 
-IndexCtrl.$inject = ['$scope','$stateParams','$meteor'];
+InstructionsCtrl.$inject = ['$scope','$mdDialog'];
 
-function IndexCtrl($scope,$stateParams,$meteor) {
+function InstructionsCtrl($scope,$mdDialog) {
+  var self = this;
+  self.$scope = $scope;
+  self.cancel = function(){
+    $mdDialog.hide();
+  }
+};
 
-  this.settings = {
+
+IndexCtrl.$inject = ['$scope','$mdDialog'];
+
+function IndexCtrl($scope,$mdDialog) {
+
+  var self = this;
+  self.$scope = $scope;
+
+  self.settings = {
     printLayout: true,
     showRuler: true,
     showSpellingSuggestions: true,
     presentationMode: 'edit'
   };
+
+  self.showInstructions = showInstructions;
+
+
+  function showInstructions($event){
+    $mdDialog.show({
+      templateUrl: 'stratosphere_frontend_client/instructions.ng.html',
+      targetEvent:$event,
+      controller:'InstructionsCtrl',
+      controllerAs:'vm',
+      clickOutsideToClose:true,
+      disableParentScroll:true
+    });
+  }
 
 };

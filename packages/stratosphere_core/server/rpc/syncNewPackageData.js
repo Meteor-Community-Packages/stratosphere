@@ -97,7 +97,7 @@ Meteor.methods({
             //XXX: not yet supported
             // for(let collectionName of collections.keys()){
             for(let collectionName in collections){
-                if(collections.hasOwnProperty(collectionName))continue;
+                if(!collections.hasOwnProperty(collectionName))continue;
                 syncToken[collectionName] = 0;
             }
         }

@@ -1,5 +1,5 @@
 angular
-  .module("stratosphere.packages",['stratosphere.dependencies'])
+  .module("stratosphere.details",['stratosphere.dependencies'])
   .config(configureRoutes);
 
 
@@ -8,10 +8,10 @@ function configureRoutes($stateProvider, $locationProvider) {
   $locationProvider.html5Mode(true);
 
   $stateProvider
-    .state('packages', {
-      url: "/packages/:sort",
-      templateUrl: 'stratosphere_frontend_client/packages/view.ng.html',
-      controller: 'stPackagesCtrl',
+    .state('details', {
+      url: "/{type:(?:package|track)}/details/:name",
+      templateUrl: 'stratosphere_frontend_client/details/details.ng.html',
+      controller: 'stDetailsCtrl',
       controllerAs: 'vm'
     });
 }

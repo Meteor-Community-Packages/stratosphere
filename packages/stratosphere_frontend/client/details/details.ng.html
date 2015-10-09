@@ -1,18 +1,18 @@
 
-    <div ng-if="!vm.package._id">
-        <md-card ng-if="vm.package._id">
+    <div ng-if="!vm.item._id">
+        <md-card ng-if="vm.item._id">
             <md-card-content>
                 <h2 class="md-title">{{ ::vm.name }}</h2>
                 <md-progress-circular md-mode="indeterminate"></md-progress-circular>
             </md-card-content>
         </md-card>
     </div>
-    <div ng-if="vm.package._id">
+    <div ng-if="vm.item._id">
         <md-card>
             <md-card-content>
-                <h2 class="md-title">{{ ::vm.package.name }}</h2>
+                <h2 class="md-title">{{ ::vm.item.name }}</h2>
                 <p>
-                    {{ ::vm.package.latestVersion.description }}
+                    {{ ::vm.item.latestVersion.description }}
                 </p>
             </md-card-content>
             <div class="md-actions" layout="row" layout-align="end center">
@@ -24,11 +24,11 @@
                 <md-card>
                     <md-card-content>
                         <h2>README</h2>
-                        <div ng-if="vm.package.latestVersion">
+                        <div ng-if="vm.item.latestVersion">
                             <md-button hide-gt-sm ng-click="vm.showReadme = !vm.showReadme"><span ng-show="!vm.showReadme">Show</span><span ng-show="vm.showReadme">Hide</span> Readme</md-button>
-                            <btf-markdown ng-show="vm.showReadme" ng-include src="vm.package.latestVersion.readme"></btf-markdown>
+                            <btf-markdown ng-show="vm.showReadme" ng-include src="vm.item.latestVersion.readme"></btf-markdown>
                         </div>
-                        <span ng-if="!vm.package.latestVersion">No info available</span>
+                        <span ng-if="!vm.item.latestVersion">No info available</span>
                     </md-card-content>
                 </md-card>
             </div>

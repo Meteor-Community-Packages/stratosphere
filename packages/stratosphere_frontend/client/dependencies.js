@@ -6,7 +6,13 @@ angular.module('stratosphere.dependencies',[
   'ngMaterial',
   'infinite-scroll'
 ])
-  .config(configureIcons);
+    .config(configureIcons)
+    .filter('prettyJSON', function () {
+      function syntaxHighlight(json) {
+        return JSON ? JSON.stringify(json, null, '  ') : 'your browser doesnt support JSON so cant pretty print';
+      }
+      return syntaxHighlight;
+    });
 
 configureIcons.$inject = ['$mdIconProvider'];
 

@@ -1,7 +1,7 @@
 Package.describe({
     name: "stratosphere:frontendng2",
     summary: "Stratosphere Frontend",
-    version: "1.0.0-rc1",
+    version: "1.0.0-beta1",
     git: "https://github.com/sebakerckhof/stratosphere.git"
 });
 

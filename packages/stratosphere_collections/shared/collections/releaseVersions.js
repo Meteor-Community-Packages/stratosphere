@@ -41,6 +41,10 @@ Stratosphere.schemas.ReleaseVersionSchema = new SimpleSchema([Stratosphere.schem
         type:Object,
         blackbox:true
     },
+    patchReleaseVersion:{
+        type:String,
+        optional:true,
+    },
     publishedBy:{
         type:Stratosphere.schemas.UserSchema,
         optional:true

@@ -19,19 +19,22 @@
                         </button>
                         <md-menu-content>
                             <md-menu-item>
-                                <md-button ui-sref="packages({sort:'lastUpdated'})">
+                                <md-button ui-sref="list({type:'package',sort:'lastUpdated'})">
                                     Recently updated
                                 </md-button>
                             </md-menu-item>
                             <md-menu-item>
-                                <md-button ui-sref="packages({sort:'name'})">
+                                <md-button ui-sref="list({type:'package',sort:'name'})">
                                     Alphabetical
                                 </md-button>
                             </md-menu-item>
                         </md-menu-content>
                     </md-menu>
-                    <button ui-sref="tracks({})">
+                    <button ui-sref="list({type:'track'})">
                         Release Tracks
+                    </button>
+                    <button ng-click="ctrl.showInstructions($event)">
+                        Instructions
                     </button>
                 </md-menu-bar>
             </div>
