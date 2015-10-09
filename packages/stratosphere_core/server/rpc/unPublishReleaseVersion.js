@@ -16,6 +16,28 @@ Meteor.methods({
     //Remove from DB
     ReleaseVersions.remove(releaseVersion._id);
 
+    const date = new Date();
+
+    //Reset track cache
+    const track = ReleaseTracks.findOne({name:releaseVersion.track},{fields:{latestVersion:1}});
+    if(track.latestVersion.id === releaseVersion._id){
+      const latestVersion = ReleaseVersion.findOne({track:releaseVersion.track},{sort:{versionMagnitude:1},fields:{description:1,version:1}});
+
+      if(latestVersion){
+        ReleaseTracks.update(track._id,{$set:{latestVersion:{
+          id: latestVersion._id,
+          description: latestVersion.description,
+          version: latestVersion.version,
+          published: date
+        }}});
+      }else{
+        ReleaseTracks.update(track._id,{$unset:{latestVersion:1}});
+      }
+    }
+
+    //trigger resets downstream
+    Metadata.update({key:'lastDeletion'},{$set:{value:date.getTime()}});
+
     let msg = `Unpublished release version ${releaseVersion.version} of track ${releaseVersion.track}`;
     console.log(msg);
     return msg;

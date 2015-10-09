@@ -77,7 +77,7 @@ function stDetailsCtrl($scope,$types,$state,$stateParams,$meteor,$mdDialog,$mdMe
       controller:'stVersionCtrl',
       controllerAs:'vm',
       locals:{
-        type:$stateParams.type,
+        type:self.type,
         version:version
       },
       bindToController:true,

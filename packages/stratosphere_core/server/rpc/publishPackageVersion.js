@@ -85,7 +85,7 @@ Meteor.methods({
         //Cache latest version
         if(!pack.latestVersion || Stratosphere.utils.versionMagnitude(pack.latestVersion.version) < version.versionMagnitude){
             //Cache latest version
-            Packages.update({name: version.packageName}, {
+            Packages.update(pack._id, {
                 $set: {
                     latestVersion: {
                         id: version._id,

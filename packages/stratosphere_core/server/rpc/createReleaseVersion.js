@@ -1,11 +1,11 @@
 Stratosphere.schemas.CreateReleaseVersionSchema = Stratosphere.schemas.ReleaseVersionSchema.pick([
-  'track',
-  'version',
-  'orderKey',
-  'description',
-  'recommended',
-  'tool',
-  'packages'
+    'track',
+    'version',
+    'orderKey',
+    'description',
+    'recommended',
+    'tool',
+    'packages'
 ]);
 
 Meteor.methods({
@@ -22,25 +22,48 @@ Meteor.methods({
      * };
      */
     createReleaseVersion:function(record){
-      //Little bit of security
+        //Little bit of security
         Stratosphere.utils.checkAccess();
         Stratosphere.schemas.CreateReleaseVersionSchema.clean(record);
         check(record,Stratosphere.schemas.CreateReleaseVersionSchema);
+
+        const track = ReleaseTracks.findOne({name: record.track,private:true});
+        if (!track) {
+            throw new Meteor.Error("No such private track");
+        }
 
         let publishedBy = {};
         if(Meteor.user()){
             publishedBy = {username:Meteor.user().username,id:Meteor.userId()};
         }
 
-      //add to db
+        const date = new Date();
+
+        //add to db
         _.extend(record,{
             lastUpdated: new Date(),
             versionMagnitude:Stratosphere.utils.versionMagnitude(record.version),
             private:true,
-            published:new Date(),
+            published:date,
             publishedBy:publishedBy
         });
-      ReleaseVersions.insert(record);
+        ReleaseVersions.insert(record);
+
+
+        //Cache latest version
+        if(!track.latestVersion || Stratosphere.utils.versionMagnitude(track.latestVersion.version) < record.versionMagnitude){
+            //Cache latest version
+            ReleaseTracks.update(track._id, {
+                $set: {
+                    latestVersion: {
+                        id: record._id,
+                        description: record.description,
+                        version: record.version,
+                        published: date
+                    }
+                }
+            });
+        }
 
     }
 });

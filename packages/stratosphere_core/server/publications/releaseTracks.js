@@ -6,7 +6,7 @@ Meteor.publish('stratosphere/releaseTracks', function(options) {
     check(options, Stratosphere.schemas.publishOptions);
 
     Counts.publish(this, 'nbTracks', ReleaseTracks.find({private:true}), {noReady:true});
-    return ReleaseTracks.find(packageId, options);
+    return ReleaseTracks.find({private:true}, options);
   }catch(e){
     return [];
   }

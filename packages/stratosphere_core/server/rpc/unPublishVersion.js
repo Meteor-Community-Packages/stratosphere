@@ -24,7 +24,7 @@ Meteor.methods({
 
     const date = new Date();
 
-    //Reset last package cache
+    //Reset package cache
     const pack = Packages.findOne({name:version.packageName},{fields:{latestVersion:1}});
     if(pack.latestVersion.id === version._id){
       const latestVersion = Versions.findOne({packageName:version.packageName},{sort:{versionMagnitude:1},fields:{description:1,version:1,"readme.url":1}});

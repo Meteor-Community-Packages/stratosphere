@@ -33,8 +33,8 @@ angular.module('stratosphere',[
         linkedBy:'track',
         unpublish:'unPublishReleaseTrack',
         unpublishVersion:'unPublishReleaseVersion',
-        subscribeList:'stratosphere/tracks',
-        subscribeDetails:'stratosphere/track',
+        subscribeList:'stratosphere/releaseTracks',
+        subscribeDetails:'stratosphere/releaseTrack',
         subscribeVersions:'stratosphere/releaseVersions',
         subscribeVersion:'stratosphere/releaseVersion'
       }
@@ -42,5 +42,5 @@ angular.module('stratosphere',[
 
 configureRoutes.$inject = ['$urlRouterProvider'];
 function configureRoutes($urlRouterProvider){
-  $urlRouterProvider.otherwise('/list/package/lastUpdated')
+  $urlRouterProvider.otherwise('/package/list/lastUpdated')
 }
