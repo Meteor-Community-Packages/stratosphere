@@ -2,9 +2,9 @@ angular
   .module('stratosphere.package')
   .controller("stPackageCtrl", stPackageCtrl);
 
-stPackageCtrl.$inject = ['$scope','$stateParams','$meteor','$mdDialog'];
+stPackageCtrl.$inject = ['$scope','$stateParams','$meteor','$mdDialog','$mdMedia'];
 
-function stPackageCtrl($scope,$stateParams,$meteor,$mdDialog) {
+function stPackageCtrl($scope,$stateParams,$meteor,$mdDialog,$mdMedia) {
   var self = this;
 
   //properties
@@ -12,6 +12,7 @@ function stPackageCtrl($scope,$stateParams,$meteor,$mdDialog) {
   self.name = $stateParams.name;
   self.loadingVersions = false;
   self.allVersionsLoaded = false;
+  self.showReadme = $mdMedia('gt-sm');
 
   //methods
   self.loadVersions = loadVersions;

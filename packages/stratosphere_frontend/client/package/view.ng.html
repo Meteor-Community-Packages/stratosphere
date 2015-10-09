@@ -19,13 +19,16 @@
                 <md-button ng-click="vm.unpublish($event)" class="md-raised md-warn">unpublish</md-button>
             </div>
         </md-card>
-        <div layout="row" layout-wrap>
-            <div flex="66">
+        <div layout="row" layout-sm="column" layout-wrap>
+            <div flex="66" flex-sm="100">
                 <md-card>
                     <md-card-content>
                         <h2>README</h2>
-                        <btf-markdown ng-if="vm.packages.latestVersion" ng-include="{{ vm.package.latestVersion.readme }}"></btf-markdown>
-                        <span ng-if="!vm.packages.latestVersion">No info available</span>
+                        <div ng-if="vm.package.latestVersion">
+                            <md-button hide-gt-sm ng-click="vm.showReadme = !vm.showReadme"><span ng-show="!vm.showReadme">Show</span><span ng-show="vm.showReadme">Hide</span> Readme</md-button>
+                            <btf-markdown ng-show="vm.showReadme" ng-include src="vm.package.latestVersion.readme"></btf-markdown>
+                        </div>
+                        <span ng-if="!vm.package.latestVersion">No info available</span>
                     </md-card-content>
                 </md-card>
             </div>
