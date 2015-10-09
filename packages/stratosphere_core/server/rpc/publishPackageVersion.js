@@ -60,7 +60,7 @@ Meteor.methods({
         const date = new Date();
 
         //Cache latest version
-        if(!pack.latestVersion || Stratosphere.utils.versionMagnitude(pack.latestVersion.version) < Stratosphere.utils.versionMagnitude(version.version)){
+        if(!pack.latestVersion || Stratosphere.utils.versionMagnitude(pack.latestVersion.version) < version.versionMagnitude){
             //Cache latest version
             Packages.update({name: version.packageName}, {
                 $set: {
@@ -85,12 +85,12 @@ Meteor.methods({
                 publishedBy: publishedBy,
                 hidden: false,
                 source: {
-                    url: `${uploadUrlBase}/upload/${tokenData.packageId}/version/${tokenData.versionId}/sources.tgz`,
+                    url: `${uploadUrlBase}/upload/${tokenData.packageId}/versions/${tokenData.versionId}/sources.tgz`,
                     tarballHash: hashes.tarballHash,
                     treeHash: hashes.treeHash
                 },
                 readme: {
-                    url: `${uploadUrlBase}/upload/${tokenData.packageId}/version/${tokenData.versionId}/README.md`,
+                    url: `${uploadUrlBase}/upload/${tokenData.packageId}/versions/${tokenData.versionId}/README.md`,
                     hash: hashes.readmeHash
                 }
             }

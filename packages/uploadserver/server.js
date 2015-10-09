@@ -324,7 +324,6 @@ UploadHandler.prototype.put = function () {
         this.formFields[name] = value;
     }).on('file', function (name, file) {
         check(handler.req.query.token,String);
-        check(handler.req.query.type,String);
         var fileInfo = map[path.basename(file.path)];
         fileInfo.size = file.size;
 
@@ -403,6 +402,6 @@ var getSafeName = function(directory, fileName) {
 }
 
 // declare routes
-console.log(options.uploadUrl);
+console.log("Upload route mounted: "+options.uploadUrl);
 RoutePolicy.declare(options.uploadUrl, 'network');
 WebApp.connectHandlers.use(options.uploadUrl, UploadServer.serve);

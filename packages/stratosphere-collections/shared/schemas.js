@@ -35,7 +35,7 @@ Stratosphere.schemas.CustomFieldsSchema = new SimpleSchema({
         optional:true
     },
     versionMagnitude:{
-        type:Number
+        type:String
     },
     latestVersion:{
         type:String,

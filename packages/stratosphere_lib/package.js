@@ -45,7 +45,6 @@ Package.onUse(function (api) {
 
 
   Npm.depends({
-    "semver-loose":"0.2.0",
     "wrench":"1.5.8",
     "fs-extra":"0.19.0"
   });

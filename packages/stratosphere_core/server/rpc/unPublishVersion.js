@@ -45,7 +45,7 @@ Meteor.methods({
     Metadata.update({key:'lastDeletion'},{$set:{value:date.getTime()}});
 
     //Remove related files
-    let destination = path.join(Meteor.settings.directories.uploads,pack._id,'version',version._id);
+    let destination = path.join(Meteor.settings.directories.uploads,pack._id,'versions',version._id);
     if(fs.existsSync(destination)){
       wrench.rmdirSyncRecursive(destination);
     }

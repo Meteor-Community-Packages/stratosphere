@@ -36,7 +36,7 @@ Meteor.methods({
         Versions.update(version._id,{$set:{
             readme:{
                 hash: options.hash,
-                url: `${Meteor.settings.public.url}/upload/${tokenData.packageId}/version/${tokenData.versionId}/README.md`
+                url: `${Meteor.settings.public.url}/upload/${tokenData.packageId}/versions/${tokenData.versionId}/README.md`
             },
             lastUpdated: new Date()
         }});

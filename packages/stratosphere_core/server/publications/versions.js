@@ -1,9 +1,9 @@
-
-Meteor.publish('versions', function(packageId) {
-    Stratosphere.utils.checkAccess();
-    check(packageId, String);
-    var pack = Packages.findOne(packageId);
-    if(pack){
-        return Versions.find({packageName:pack.name/*,hidden:false*/});
+Meteor.publish('stratosphere/versions', function(packageName) {
+    try{
+        Stratosphere.utils.checkAccess();
+        check(packageName, String);
+        return Versions.find({packageName:packageName},{fields:{packageName:1,lastUpdated:1,versionMagnitude:1,version:1}});
+    }catch(e){
+        return [];
     }
 });

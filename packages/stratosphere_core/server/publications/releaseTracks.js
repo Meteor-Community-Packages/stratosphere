@@ -1,3 +1,10 @@
-/**
- * Created by seba on 9/08/2015.
- */
+Meteor.publish('stratosphere/releaseTracks', function(limit) {
+  try{
+    Stratosphere.utils.checkAccess();
+    check(limit,String);
+    return ReleaseTracks.find(packageId,{limit:limit});
+  }catch(e){
+    return [];
+  }
+
+});
