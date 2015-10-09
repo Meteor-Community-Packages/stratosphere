@@ -1,11 +1,14 @@
 <md-content>
-    <md-list>
-        <md-list-item class="md-3-line" ng-repeat="package in vm.packages">
-            <div class="md-list-item-text" layout="column" ng-click="$state.go('track',{id:package._id,name:package.name})">
-                <h3>{{ ::package.name }}</h3>
-                <h4>Last version: {{ package.latestVersion.version }}</h4>
-                <p>{{ package.latestVersion.description }}</p>
-            </div>
-        </md-list-item>
-    </md-list>
+    <h2><ng-pluralize count="vm.nbPackages.count" when="{'0': 'No published packages.','one': '1 package:','other': '{} packages:'}"></ng-pluralize></h2>
+    <div infinite-scroll='vm.loadMore()' infinite-scroll-distance='0'>
+        <md-list>
+            <md-list-item class="md-3-line" ng-repeat="package in vm.packages">
+                <div class="md-list-item-text" layout="column" ui-sref="package({id:package._id,name:package.name})">
+                    <h3>{{ ::package.name }}</h3>
+                    <h4>{{ package.latestVersion.description }}</h4>
+                    <p>Last version: {{ package.latestVersion.version }}</p>
+                </div>
+            </md-list-item>
+        </md-list>
+    </div>
 </md-content>

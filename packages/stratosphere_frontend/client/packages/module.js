@@ -1,5 +1,5 @@
 angular
-  .module("stratosphere.packages",[])
+  .module("stratosphere.packages",['stratosphere.dependencies'])
   .config(configureRoutes);
 
 

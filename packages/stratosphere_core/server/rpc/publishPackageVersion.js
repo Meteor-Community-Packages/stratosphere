@@ -59,6 +59,29 @@ Meteor.methods({
 
         const date = new Date();
 
+        //Publish to db
+        const uploadUrlBase = Meteor.settings.public.url;
+
+        const modifier = {
+            lastUpdated: date,
+            published: date,
+            publishedBy: publishedBy,
+            hidden: false,
+            source: {
+                url: `${uploadUrlBase}/upload/${tokenData.packageId}/versions/${tokenData.versionId}/sources.tgz`,
+                tarballHash: hashes.tarballHash,
+                treeHash: hashes.treeHash
+            },
+            readme: {
+                url: `${uploadUrlBase}/upload/${tokenData.packageId}/versions/${tokenData.versionId}/README.md`,
+                hash: hashes.readmeHash
+            }
+        };
+        //Publish version
+        Versions.update(version._id, {
+            $set: modifier
+        });
+
         //Cache latest version
         if(!pack.latestVersion || Stratosphere.utils.versionMagnitude(pack.latestVersion.version) < version.versionMagnitude){
             //Cache latest version
@@ -68,33 +91,13 @@ Meteor.methods({
                         id: version._id,
                         description: version.description,
                         version: version.version,
+                        readme: modifier.readme.url,
                         published: date
                     }
                 }
             });
         }
 
-
-        //Publish to db
-        const uploadUrlBase = Meteor.settings.public.url;
-        //Publish version
-        Versions.update(version._id, {
-            $set: {
-                lastUpdated: date,
-                published: date,
-                publishedBy: publishedBy,
-                hidden: false,
-                source: {
-                    url: `${uploadUrlBase}/upload/${tokenData.packageId}/versions/${tokenData.versionId}/sources.tgz`,
-                    tarballHash: hashes.tarballHash,
-                    treeHash: hashes.treeHash
-                },
-                readme: {
-                    url: `${uploadUrlBase}/upload/${tokenData.packageId}/versions/${tokenData.versionId}/README.md`,
-                    hash: hashes.readmeHash
-                }
-            }
-        });
 
         //If this is the first version published, publish the package
         if (pack.hidden) {

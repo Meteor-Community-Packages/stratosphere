@@ -1,5 +1,5 @@
 angular
-  .module("stratosphere.package",[])
+  .module("stratosphere.package",['stratosphere.dependencies'])
   .config(configureRoutes);
 
 
@@ -9,7 +9,7 @@ function configureRoutes($stateProvider, $locationProvider) {
 
   $stateProvider
     .state('package', {
-      url: "/package/:id",
+      url: "/package/:name",
       templateUrl: 'stratosphere_frontend_client/package/view.ng.html',
       controller: 'stPackageCtrl',
       controllerAs: 'vm'

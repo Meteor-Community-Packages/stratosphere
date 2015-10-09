@@ -34,6 +34,7 @@ Meteor.methods({
           id: latestVersion._id,
           description: latestVersion.description,
           version: latestVersion.version,
+          readme: latestVersion.readme.url,
           published: date
         }}});
       }else{

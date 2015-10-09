@@ -16,9 +16,12 @@ Package.onUse(function (api) {
         'angular:angular-animate@1.4.7',
         'angular:angular-aria@1.4.7',
         'angular:angular-resource@1.4.7',
+        'angular:angular-sanitize@1.4.7',
+        'divramod:angular-markdown-directive@0.0.1',
         'angular',
         'angular:angular-material@0.11.2',
         'angularui:angular-ui-router@0.2.15',
+        'netanelgilad:ng-infinite-scroll@1.2.0_1',
         'jquery',
         //'bootstrap@4.0.0-alpha',
         'fourseven:scss@3.4.0-beta1',
@@ -28,28 +31,33 @@ Package.onUse(function (api) {
     api.addFiles([], ['server','client']);
 
     api.addFiles([
-        //Components
+        'client/dependencies.js',
+
+        //modules
         'client/package/module.js',
-        'client/package/controller.js',
+        'client/package/stPackageCtrl.js',
+        'client/package/stVersionCtrl.js',
         'client/package/view.ng.html',
         'client/package/version.ng.html',
 
         'client/packages/module.js',
-        'client/packages/controller.js',
+        'client/packages/stPackagesCtrl.js',
         'client/packages/view.ng.html',
 
         'client/tracks/module.js',
-        'client/tracks/controller.js',
+        'client/tracks/stTracksCtrl.js',
         'client/tracks/view.ng.html',
 
         'client/track/module.js',
-        'client/track/controller.js',
+        'client/track/stReleaseVersionCtrl.js',
+        'client/track/stTrackCtrl.js',
         'client/track/view.ng.html',
         'client/track/version.ng.html',
 
         'client/app.js',
         'client/IndexCtrl.js',
         'client/index.html',
+        'client/main.scss',
 
     ], ['client']);
 

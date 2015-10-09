@@ -108,7 +108,7 @@ Meteor.methods({
         //XXX: not yet supported
         // for(let collectionName of collections.keys()){
         for(let collectionName in collections){
-            if(collections.hasOwnProperty(collectionName))continue;
+            if(!collections.hasOwnProperty(collectionName))continue;
 
             const cursor = collections[collectionName].rawCollection().find({/*hidden:false,*/lastUpdated:{$gt:new Date(syncToken[collectionName])}},{sort:{lastUpdated:1},fields:{latestVersion:0,upstream:0,private:0,hidden:0,buildPackageName:0,versionMagnitude:0}});
 

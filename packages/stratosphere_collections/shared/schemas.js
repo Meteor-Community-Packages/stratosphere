@@ -47,3 +47,32 @@ Stratosphere.schemas.CustomFieldsSchema = new SimpleSchema({
 });
 
 Stratosphere.schemas.archTypes = ['plugin','os','web.browser','web.cordova'];
+
+Stratosphere.schemas.publishOptions = new SimpleSchema({
+    limit:{
+        type:Number,
+        defaultValue:10
+    },
+    skip:{
+        type:Number,
+        defaultValue:0
+    },
+    sort:{
+        type:Object,
+        defaultValue: {name:1}
+    },
+    "sort.name":{
+        type:Number,
+        optional:true,
+        min:0,
+        max:1,
+        defaultValue:1
+    },
+    "sort.lastUpdated":{
+        type:Number,
+        optional:true,
+        min:0,
+        max:1,
+        defaultValue:1
+    }
+});

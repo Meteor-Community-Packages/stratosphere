@@ -4,7 +4,7 @@
 </head>
 
 <body ng-app="stratosphere">
-<div ng-controller="IndexCtrl as ctrl" ng-cloak>
+<div ng-controller="IndexCtrl as ctrl" ng-cloak layout="column" class="app">
     <md-toolbar class="md-menu-toolbar">
         <div layout="row">
             <md-toolbar-filler layout layout-align="center center">
@@ -13,36 +13,26 @@
             <div>
                 <h2 class="md-toolbar-tools">Stratosphere</h2>
                 <md-menu-bar>
-                    <button ng-click="$mdOpenMenu()">
-                        File
-                    </button>
                     <md-menu>
                         <button ng-click="$mdOpenMenu()">
-                            File
+                            Packages
                         </button>
                         <md-menu-content>
                             <md-menu-item>
-                                <md-button>
-                                    Share...
+                                <md-button ui-sref="packages({sort:'lastUpdated'})">
+                                    Recently updated
                                 </md-button>
                             </md-menu-item>
-                            <md-menu-divider></md-menu-divider>
                             <md-menu-item>
-                                <md-menu>
-                                    <md-button ng-click="$mdOpenMenu()">New</md-button>
-                                    <md-menu-content>
-                                        <md-menu-item><md-button>Document</md-button></md-menu-item>
-                                        <md-menu-item><md-button>Spreadsheet</md-button></md-menu-item>
-                                </md-menu>
-                            </md-menu-item>
-                            <md-menu-item>
-                                <md-button>
-                                    Open...
+                                <md-button ui-sref="packages({sort:'name'})">
+                                    Alphabetical
                                 </md-button>
                             </md-menu-item>
-
                         </md-menu-content>
                     </md-menu>
+                    <button ui-sref="tracks({})">
+                        Release Tracks
+                    </button>
                 </md-menu-bar>
             </div>
         </div>

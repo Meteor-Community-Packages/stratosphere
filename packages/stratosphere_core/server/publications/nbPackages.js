@@ -1,4 +1,9 @@
 Meteor.publish('stratosphere/nbPackages', function() {
-    Stratosphere.utils.checkAccess();
-    Counts.publish(this, 'nbPackages', Packages.find({/*hidden:false,*/private:true}));
+    try{
+        Stratosphere.utils.checkAccess();
+        Counts.publish(this, 'nbPackages', Packages.find({private:true}));
+    }catch(e){
+        return [];
+    }
+
 });

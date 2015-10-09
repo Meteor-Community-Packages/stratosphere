@@ -1,5 +1,5 @@
 angular
-  .module("stratosphere.tracks",[])
+  .module("stratosphere.tracks",['stratosphere.dependencies'])
   .config(configureRoutes);
 
 
@@ -9,7 +9,7 @@ function configureRoutes($stateProvider, $locationProvider) {
 
   $stateProvider
     .state('tracks', {
-      url: "/tracks/:sort",
+      url: "/tracks",
       templateUrl: 'stratosphere_frontend_client/tracks/view.ng.html',
       controller: 'stTracksCtrl',
       controllerAs: 'vm'
