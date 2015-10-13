@@ -1,21 +1,24 @@
 # V1.0.0-beta1
 
-# THIS IS A WIP
-Working so far, with changes to the auth-client of meteor-tool:
+# Stratosphere
+Stratosphere is a private package server for Meteor. 
+So this is like Atmosphere on your own servers, with private packages.
 
-* Synchronization with upstream server
+Besides your own packages, Stratosphere will also give you access to all packages on Atmosphere.
+
+## THIS IS A WIP
+Working so far:
+
+* Synchronization with upstream (atmosphere) server
 * Synchronization with meteor-tool
-* Publishing and unpublishing of packages, versions, release tracks, release versions, builds, metadata changes
+* Publishing and unpublishing of packages, package versions, release tracks, release versions, builds, metadata changes
 * Uploading and downloading of files
 * Some of the admin commands
 
-Next thing to figure out is how to handle logins from Meteor tool
-
-# Stratosphere
-Stratosphere is a private package server for Meteor.
+Next thing to figure out is how to handle logins from Meteor tool and make the overall installation process less cumbersome.
 
 ## Installation
-### 1) Patch aut-client.js in meteor tool
+### 1) Patch auth-client.js in meteor tool
 This change is a temporary fix to make the package server work. In the future this shouldn't be necessary.
 
 Replace auth-client.js in meteor tool with this file: https://gist.github.com/sebakerckhof/9ed52a45fcb7d940fc60
