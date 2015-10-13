@@ -37,7 +37,7 @@ Meteor.methods({
             build:{
                 treeHash: treeHash,
                 tarballHash: tarballHash,
-                url: `${Meteor.settings.public.url}/upload/${tokenData.packageId}/versions/${tokenData.versionId}/builds/${tokenData.buildId}.tgz`
+                url: `${Meteor.settings.public.url}/upload/${tokenData.packageId}/versions/${tokenData.versionId}/builds/${tokenData.buildId}/build.tgz`
             },
             builtBy:builtBy,
             hidden:false,
