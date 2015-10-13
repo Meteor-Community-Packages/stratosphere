@@ -90,7 +90,7 @@ Meteor.methods({
         const lastDeletion = Metadata.findOne({key:'lastDeletion'}).value;
 
         //If the syncToken is from a non-stratosphere package server, reset everything??
-        if(!syncToken.stratosphere || lastDeletion > syncToken.lastDeletion){
+        if(!syncToken.stratosphere || lastDeletion > syncToken.lastDeletion || !syncToken.lastDeletion){
             result.resetData = true;
             syncToken.stratosphere = true;
             syncToken.lastDeletion = lastDeletion;

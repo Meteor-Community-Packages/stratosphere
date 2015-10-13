@@ -4,25 +4,31 @@
 
 Stratosphere.schemas.SyncTokenSchema = new SimpleSchema({
   'lastDeletion': {
-    type: Number
+    type: Number,
+    optional:true
   },
   'format': {
     type: String
   },
   'packages': {
-    type: Number
+    type: Number,
+    optional:true
   },
   'versions': {
-    type: Number
+    type: Number,
+    optional:true
   },
   'builds': {
-    type: Number
+    type: Number,
+    optional:true
   },
   'releaseTracks': {
-    type: Number
+    type: Number,
+    optional:true
   },
   'releaseVersions': {
-    type: Number
+    type: Number,
+    optional:true
   },
   'stratosphere': {
     type: Boolean,
