@@ -87,10 +87,14 @@ Stratosphere.utils.verifyHash = function verifyHash(file,hash){
     return hasher.digest('base64') === hash;
 }
 
-Stratosphere.utils.checkAccess = function checkAccess(){
-    if(Meteor.settings.public.loginRequired && !Meteor.user()){
+Stratosphere.utils.checkAccess = function checkAccess(requireSuperUser){
+    if(!Stratosphere.utils.hasAccess(requireSuperUser)){
         throw new Meteor.Error("403","Forbidden");
     }
+}
+
+Stratosphere.utils.hasAccess = function hasAccess(requireSuperUser){
+    return !Meteor.settings.public.loginRequired || (Meteor.userId()  && (!requireSuperUser || Meteor.settings.superUsers.indexOf(Meteor.user().services.meteor-developer.username) > -1));
 }
 
 // If the given version matches a template (essentially, semver-style, but with

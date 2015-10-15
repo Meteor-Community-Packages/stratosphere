@@ -5,6 +5,7 @@ angular.module('stratosphere',[
   'stratosphere.details',
 ])
     .config(configureRoutes)
+    .run(handleStateChangeErrors)
     .constant('$types',{
       package:{
         id: 'package',
@@ -40,7 +41,35 @@ angular.module('stratosphere',[
       }
     });
 
-configureRoutes.$inject = ['$urlRouterProvider'];
-function configureRoutes($urlRouterProvider){
+configureRoutes.$inject = ['$stateProvider','$urlRouterProvider'];
+function configureRoutes($stateProvider,$urlRouterProvider){
+  $stateProvider
+      .state('forbidden', {
+        url: "/forbidden",
+        template: '<h2>Forbidden</h2>',
+      });
+
   $urlRouterProvider.otherwise('/package/list/lastUpdated')
+}
+
+handleStateChangeErrors.$inject = ["$rootScope", "$state", "$mdToast"];
+
+function handleStateChangeErrors($rootScope, $state, $mdToast) {
+  $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams, error) {
+    // We can catch the error thrown when the $meteor.requireUser() promise is rejected
+    // or the custom error, and redirect the user back to the login page
+    switch(error) {
+      case "AUTH_REQUIRED":
+        $state.go('logIn');
+        break;
+      case "FORBIDDEN":
+        $state.go('forbidden');
+        break;
+      case "UNAUTHORIZED":
+        $state.go('forbidden');
+        break;
+      default:
+        $mdToast.show($mdToast.simple().content('Internal error'));
+    }
+  });
 }
