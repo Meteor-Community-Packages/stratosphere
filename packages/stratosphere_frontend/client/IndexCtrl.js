@@ -1,17 +1,6 @@
 angular
   .module('stratosphere')
-    .controller('InstructionsCtrl', InstructionsCtrl)
     .controller("IndexCtrl", IndexCtrl);
-
-InstructionsCtrl.$inject = ['$scope','$mdDialog'];
-
-function InstructionsCtrl($scope,$mdDialog) {
-  var self = this;
-  self.$scope = $scope;
-  self.cancel = function(){
-    $mdDialog.hide();
-  }
-};
 
 
 IndexCtrl.$inject = ['$scope','$mdDialog'];

@@ -46,6 +46,7 @@ Package.onUse(function (api) {
 
         'client/app.js',
         'client/IndexCtrl.js',
+        'client/InstructionsCtrl.js',
         'client/index.html',
         'client/instructions.ng.html',
         'client/main.scss',

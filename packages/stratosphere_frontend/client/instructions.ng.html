@@ -11,36 +11,16 @@
         </md-toolbar>
         <md-dialog-content style="max-width:80vw;max-height:80vh; ">
             <div>
-                <h2>Warning</h2>
-
-                <p>This is still a WIP. Working so far, with changes to the auth-client of meteor-tool:</p>
-
-                <ul>
-                    <li>Synchronization with upstream server</li>
-                    <li>Synchronization with meteor-tool</li>
-                    <li>Publishing and unpublishing of packages, versions, builds, release tracks, release versions and metadata changes</li>
-                    <li>Uploading and downloading of files</li>
-                </ul>
                 <h2>
                    Installation
                 </h2>
-                <h3>Patch auth-client.js</h3>
-                <p>
-                    <p>Replace auth-client.js files in meteor tool with <a href="https://gist.github.com/sebakerckhof/9ed52a45fcb7d940fc60" target="_blank">this file</a></p>
-                    <p>Note that this file is for meteor tool 1.1.7. and higher</p>
-                    <p>On Linux/Mac</p>
-                    <pre><code>~/.meteor/packages/meteor-tool/1.1.9/mt-os.(linux|osx).x86_(32|64)/tools/meteor-services</code></pre>
-                    <p>On Windows:</p>
-                    <pre><code>%appdata%\..\Local\.meteor\packages\meteor-tool\1.1.9\mt-os.windows.x86_32\tools\meteor-services</code></pre>
-                    <p>This is currently necessary because of <a href="https://github.com/meteor/meteor/issues/4497" target="_blank">this issue</a>.</p>
-                </p>
                 <h3>Create local database</h3>
                 <p>You also need to create the database file. First you need to find the existing database file (packages.data.db) here:</p>
                 <p>On Linux</p>
                 <pre><code>~/.meteor/package-metadata/v2.0.1</code></pre>
                 <p>On Windows:</p>
                 <pre><code>%appdata%\..\Local\.meteor\package-metadata\v2.0.1</code></pre>
-                <p>Next, you copy the existing database file and give it the filename you see when going to the front-end of your package server.</p>
+                <p>Next, you copy the existing database file and give it the following filename: {{vm.dbName}}</p>
 
                 <h2>Usage</h2>
                 <p>To publish and sync with Stratosphere, you have to set the package server URL to your stratosphere URL. This can be achieved by setting the environment variable: METEOR_PACKAGE_SERVER to your package server url:</p>
