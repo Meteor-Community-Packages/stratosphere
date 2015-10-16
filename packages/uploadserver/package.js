@@ -1,7 +1,7 @@
 Package.describe({
     name: 'uploadserver',
     summary: 'Based of tomi:upload-server',
-    version: '1.0.0-beta1'
+    version: '1.0.0-beta2'
 });
 
 Package.onUse(function(api) {

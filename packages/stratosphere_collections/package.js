@@ -1,7 +1,7 @@
 Package.describe({
   name: "stratosphere:collections",
   summary: "Stratosphere Models/Schemas package",
-  version: "1.0.0-beta1",
+  version: "1.0.0-beta2",
   git: "https://github.com/sebakerckhof/stratosphere.git"
 });
 

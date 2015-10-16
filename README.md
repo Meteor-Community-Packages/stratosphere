@@ -18,6 +18,7 @@ First create an app that can uses the meteor developer account services:
 Rename the settings.json.template file to settings.json
 Fill in the app id (`meteorDeveloperAccount.clientId`) and app secret (`meteorDeveloperAccount.secret`) from the previous step and the url the package server will run on (`public.url`)
 Also fill in if people need to login by setting `public.loginRequired`. If you enable logins, you need to add at least one superUser. This is the username of your meteor-developer account.
+
 **NOTE** meteor-tool only tries to authenticate when publishing data. `loginRequired` has no effect on who can see your packages!
 
 ### 3) Run the app
@@ -76,6 +77,6 @@ We welcome contributions.
 Here are some other ideas:
 - Look into the 'XXX'-es inside the code, these serve as TODOS
 - Add Tests
-- Improve security (e.g. check upload tokens before upload starts, verify hashes, fix oauth flow of meteor-tool)
+- Improve security (e.g. check upload tokens before upload starts, verify hashes)
 - Convert raw object manipulation to a more clean solution (e.g. using Astronomy)
 - Whatever front-end functionality that might be useful

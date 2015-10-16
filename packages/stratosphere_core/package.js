@@ -1,7 +1,7 @@
 Package.describe({
   name: "stratosphere:core",
   summary: "Stratosphere Main package",
-  version: "1.0.0-beta1",
+  version: "1.0.0-beta2",
   git: "https://github.com/sebakerckhof/stratosphere.git"
 });
 
