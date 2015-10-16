@@ -18,6 +18,7 @@ First create an app that can uses the meteor developer account services:
 Rename the settings.json.template file to settings.json
 Fill in the app id (`meteorDeveloperAccount.clientId`) and app secret (`meteorDeveloperAccount.secret`) from the previous step and the url the package server will run on (`public.url`)
 Also fill in if people need to login by setting `public.loginRequired`. If you enable logins, you need to add at least one superUser. This is the username of your meteor-developer account.
+**NOTE** meteor-tool only tries to authenticate when publishing data. `loginRequired` has no effect on who can see your packages!
 
 ### 3) Run the app
 This is a Meteor project, so you can deploy and run it the same way as any other Meteor project.
@@ -59,9 +60,11 @@ First time syncing can take long (~10min), since it needs to import all package 
 * directories.uploads: Directory where files are moved to and downloaded from after they have been verified
 * public.loginRequired: Whether a login is required. Default is false, true will result in errors for now.
 * public.url: The url of the package server
-* allowedUsers: Which user accounts are allowed on this server
+* superUsers: Which user accounts (meteor developer account names) are allowed to publish on this server
 * meteorDeveloperAccount.clientId: Client id of your meteor accounts app
 * meteorDeveloperAccount.secret: Secret key of your meteor accounts app
+
+If `loginRequired` is set to true, you need at least one superUser. SuperUsers can add and manage other users in the Stratosphere GUI.
 
 ## Security remarks
 Note that currently little effort has been made towards security.
