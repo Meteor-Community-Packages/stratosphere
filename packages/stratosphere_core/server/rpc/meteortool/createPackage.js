@@ -7,7 +7,7 @@ Meteor.methods({
      * by adding the "-UPSTREAM"-suffix
      */
     createPackage: function (data) {
-        Stratosphere.utils.checkAccess();
+        Stratosphere.utils.checkAccess('canPublish');
         return  Stratosphere.utils.makePrivatePackage(data);
     }
 });

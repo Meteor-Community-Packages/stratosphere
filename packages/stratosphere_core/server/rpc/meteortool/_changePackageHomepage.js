@@ -5,7 +5,7 @@ Meteor.methods({
      * Change a package homepage
      */
     _changePackageHomepage:function(name,url){
-        Stratosphere.utils.checkAccess();
+        Stratosphere.utils.checkAccess('canPublish');
         const params = {name:name,homepage:url};
         Stratosphere.schemas.ChangePackageHomepageSchema.clean(params);
         check(params,Stratosphere.schemas.ChangePackageHomepageSchema);

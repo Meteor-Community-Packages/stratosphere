@@ -6,7 +6,7 @@ Meteor.methods({
      * Create a release track
      */
     createReleaseTrack:function(data){
-        Stratosphere.utils.checkAccess();
+        Stratosphere.utils.checkAccess('canPublish');
         Stratosphere.utils.makePrivateTrack(data);
     }
 });

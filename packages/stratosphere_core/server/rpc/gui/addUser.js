@@ -4,9 +4,10 @@ Meteor.methods({
      * @param id
      * @returns {boolean}
      */
-    addUser:function(id){
+    "/stratosphere/addUser":function(username){
         //Little bit of security
-        Stratosphere.utils.checkAccess(true);
-        return Meteor.settings.superUsers;
+        Stratosphere.utils.checkAccess('superUser');
+        check(username,String);
+        Stratosphere.utils.createUserStub(username,{canSynchronize:true,canPublish:true});
     }
 });

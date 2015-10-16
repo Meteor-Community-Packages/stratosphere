@@ -1,7 +1,7 @@
 //FindFromPublication.publish('stratosphere/releaseTracks', function(options) {
-Meteor.publish('stratosphere/releaseTracks', function(options) {
+Meteor.publish('/stratosphere/releaseTracks', function(options) {
   try{
-    Stratosphere.utils.checkAccess();
+    Stratosphere.utils.checkAccess('canSynchronize',this.userId);
     Stratosphere.schemas.publishOptions.clean(options);
     check(options, Stratosphere.schemas.publishOptions);
 

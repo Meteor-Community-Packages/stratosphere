@@ -1,25 +1,19 @@
 angular
   .module('stratosphere')
-    .controller('InstructionsCtrl', InstructionsCtrl)
     .controller("IndexCtrl", IndexCtrl);
 
-InstructionsCtrl.$inject = ['$scope','$mdDialog'];
 
-function InstructionsCtrl($scope,$mdDialog) {
-  var self = this;
-  self.$scope = $scope;
-  self.cancel = function(){
-    $mdDialog.hide();
-  }
-};
+IndexCtrl.$inject = ['$scope','$rootScope','$meteor','$mdDialog'];
 
-
-IndexCtrl.$inject = ['$scope','$mdDialog'];
-
-function IndexCtrl($scope,$mdDialog) {
+function IndexCtrl($scope,$rootScope,$meteor,$mdDialog) {
 
   var self = this;
   self.$scope = $scope;
+
+  console.log($rootScope.currentUser);
+
+  self.loginRequired = Meteor.settings.public.loginRequired;
+  self.logout = $meteor.logout;
 
   self.settings = {
     printLayout: true,
@@ -29,7 +23,6 @@ function IndexCtrl($scope,$mdDialog) {
   };
 
   self.showInstructions = showInstructions;
-
 
   function showInstructions($event){
     $mdDialog.show({

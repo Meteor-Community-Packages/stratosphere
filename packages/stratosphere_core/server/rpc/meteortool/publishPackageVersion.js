@@ -17,7 +17,7 @@ Meteor.methods({
      */
     publishPackageVersion: function(uploadToken, hashes) {
         //Little bit of security
-        Stratosphere.utils.checkAccess();
+        Stratosphere.utils.checkAccess('canPublish');
         check(uploadToken, String);
         check(hashes, Stratosphere.schemas.PackageVersionHashes);
 

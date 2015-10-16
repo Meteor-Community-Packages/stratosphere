@@ -20,7 +20,7 @@ Meteor.methods({
      *
      */
     publishReadme: function(uploadToken,options) {
-        Stratosphere.utils.checkAccess();
+        Stratosphere.utils.checkAccess('canPublish');
         check(uploadToken,String);
         check(options.hash,String);
 

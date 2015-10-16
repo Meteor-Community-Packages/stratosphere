@@ -15,12 +15,13 @@ Package.onUse(function (api) {
     'mongo',
     'session',
     'tracker',
+    //'meteortoys:allthings@2.1.0',
     'accounts-password',
     'ecmascript@0.1.3-rc.1',
     'package-version-parser',
     'service-configuration',
-    //'accounts-oauth',
-    //'accounts-meteor-developer',
+    'accounts-oauth',
+    'accounts-meteor-developer',
     'aldeed:simple-schema@1.3.3',
     'meteorhacks:search-source@1.4.0',
     'percolate:find-from-publication@0.1.0',
@@ -38,10 +39,14 @@ Package.onUse(function (api) {
   ]);
 
   api.addFiles([
-    'namespace.js',
-    'utils.js'
+    'shared/namespace.js',
+    'shared/utils.js'
   ], ['server','client']);
 
+
+  api.addFiles([
+    'server/utils.js'
+  ], ['server']);
 
 
   Npm.depends({

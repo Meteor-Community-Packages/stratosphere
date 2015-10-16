@@ -1,6 +1,6 @@
-Meteor.publish('stratosphere/version', function(versionId) {
+Meteor.publish('/stratosphere/version', function(versionId) {
   try{
-    Stratosphere.utils.checkAccess();
+    Stratosphere.utils.checkAccess('canSynchronize',this.userId);
     check(versionId, String);
     return Versions.find(versionId);
   }catch(e){

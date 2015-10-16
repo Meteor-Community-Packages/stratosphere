@@ -47,7 +47,7 @@ Meteor.methods({
    * }
      */
     syncNewPackageData: function(syncToken, syncOptions){
-        Stratosphere.utils.checkAccess();
+        Stratosphere.utils.checkAccess('canSynchronize');
 
         Stratosphere.schemas.SyncTokenSchema.clean(syncToken);
         Stratosphere.schemas.SyncOptionsSchema.clean(syncOptions);

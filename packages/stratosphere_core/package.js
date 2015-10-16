@@ -20,20 +20,29 @@ Package.onUse(function (api) {
     'stratosphere:collections'
   ]);
 
+  api.addFiles([
+      'shared/rights/users.js',
 
+      'shared/rpc/gui/removeUser.js',
+      'shared/rpc/gui/setUserPermission.js',
 
-  api.addFiles([], ['server','client']);
+      'shared/accountsConfig.js'
+  ], ['server','client']);
 
-  api.addFiles([], ['client']);
+  api.addFiles([
+    'client/rpc/gui/addUser.js',
+  ], ['client']);
 
   api.addFiles([
     'server/utils/addMaintainer.js',
+    'server/utils/createUserStub.js',
     'server/utils/removeMaintainer.js',
     'server/utils/makePrivate.js',
     'server/utils/publishPackage.js',
     'server/utils/setRecommendationStatus.js',
 
       //RPC's
+    'server/rpc/gui/addUser.js',
     'server/rpc/gui/unPublishPackage.js',
     'server/rpc/gui/unPublishReleaseTrack.js',
     'server/rpc/gui/unPublishReleaseVersion.js',
@@ -55,7 +64,6 @@ Package.onUse(function (api) {
     'server/rpc/meteortool/publishPackageVersion.js',
     'server/rpc/meteortool/publishReadme.js',
     'server/rpc/meteortool/recommendVersion.js',
-    'server/rpc/meteortool/refresh.js',
     'server/rpc/meteortool/removeMaintainer.js',
     'server/rpc/meteortool/removeReleaseMaintainer.js',
     'server/rpc/meteortool/setBannersOnReleases.js',
@@ -63,6 +71,7 @@ Package.onUse(function (api) {
     'server/rpc/meteortool/unrecommendVersion.js',
 
       //publications
+    'server/publications/loggedInUser.js',
     'server/publications/nbPackages.js',
     'server/publications/package.js',
     'server/publications/packages.js',
@@ -70,9 +79,13 @@ Package.onUse(function (api) {
     'server/publications/releaseTracks.js',
     'server/publications/releaseVersion.js',
     'server/publications/releaseVersions.js',
-    'server/publications/search.js',
+    'server/publications/users.js',
     'server/publications/version.js',
-    'server/publications/versions.js'
+    'server/publications/versions.js',
+
+
+      'server/startupChecks.js',
+      'server/verifyAccount.js'
   ], ['server']);
 
   Npm.depends({

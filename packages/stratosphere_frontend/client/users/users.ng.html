@@ -1,6 +1,66 @@
-<h2>Super Users</h2>
-<md-chips ng-model="vm.superUsers" placeholder="Add an item" readonly="true">
-</md-chips>
-<h2>Users</h2>
-<md-chips ng-model="vm.users" placeholder="Add an item" readonly="isReadOnly" md-on-append="">
-</md-chips>
+<h1>User management</h1>
+<div ng-if="!vm.loginRequired">
+    <md-card>
+        <md-card-content>
+            <h2 class="md-title">User management can only be used if you set loginRequired to true in the settings.json file.</h2>
+        </md-card-content>
+    </md-card>
+</div>
+<div ng-if="vm.loginRequired">
+    <!--<md-button ng-repeat="viewMode in ::vm.viewModes" ng-click="vm.viewMode = viewMode" ng-class="{'md-primary': vm.viewMode === viewMode}" class="md-raised">{{::viewMode}}</md-button>-->
+    <md-card>
+        <md-card-content>
+            <h2 class="md-title">SuperUsers</h2>
+            <p>
+                These users are defined in the settings.json file.
+                <md-chips ng-if="vm.viewMode === 'chips'" ng-model="vm.superUsers" readonly="true">
+                    <md-chip-template>
+                <span>
+                    {{$chip.username}}
+                </span>
+                    </md-chip-template>
+                </md-chips>
+
+                <md-list ng-if="vm.viewMode === 'list'" layout="column" layout-padding>
+                    <md-list-item ng-repeat="user in vm.superUsers">
+                            <h3>{{::user.username}}</h3>
+                    </md-list-item>
+                </md-list>
+
+            </p>
+        </md-card-content>
+    </md-card>
+    <md-card>
+        <md-card-content>
+            <h2 class="md-title">Users</h2>
+            <p>
+                <md-chips ng-if="vm.viewMode === 'chips'" ng-model="vm.users" placeholder="Add a meteor-developer username" md-on-select="vm.showPermissionsDialog($event,$chip)" md-on-append="vm.addUser($chip)" md-on-remove="vm.removeUser($chip)">
+                    <md-chip-template>
+                <span>
+                    {{$chip.username}}
+                </span>
+                    </md-chip-template>
+                </md-chips>
+            <div ng-if="vm.viewMode === 'list'">
+            <md-content md-theme="docs-dark" layout-padding layout="row" layout-sm="column">
+                <form ng-submit="addUser(vm.newUser)">
+                <md-input-container>
+                    <label>Add user:</label>
+                    <input ng-model="vm.newUser">
+                </md-input-container>
+                </form>
+            </md-content>
+            <section ng-repeat="user in vm.users" >
+                <md-subheader>{{::user.username}}</md-subheader>
+                <md-list layout="column" layout-padding>
+                    <md-list-item ng-repeat="permission in ::vm.permissions">
+                        <p> {{ ::permission }} </p>
+                        <md-switch class="md-secondary" ng-model="vm.user.permissions[permission]" ng-change="vm.setPermission(permission)"></md-switch>
+                    </md-list-item>
+                </md-list>
+            </section>
+            </div>
+            </p>
+        </md-card-content>
+    </md-card>
+</div>

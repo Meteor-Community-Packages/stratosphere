@@ -8,9 +8,9 @@ Meteor.methods({
      * @param id
      * @returns {boolean}
      */
-    unPublishPackage:function(id){
-        //Little bit of security
-        Stratosphere.utils.checkAccess();
+    '/stratosphere/unPublishPackage':function(id){
+
+        Stratosphere.utils.checkAccess('canUnpublish');
         check(id,String);
 
         //We can only delete private packages

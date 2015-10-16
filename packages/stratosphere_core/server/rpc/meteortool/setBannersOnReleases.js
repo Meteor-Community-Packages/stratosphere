@@ -3,7 +3,7 @@ Meteor.methods({
      * setBannersOnReleases
      */
     setBannersOnReleases:function(track,banners){
-        Stratosphere.utils.checkAccess();
+        Stratosphere.utils.checkAccess('canPublish');
         //XXX
     }
 });

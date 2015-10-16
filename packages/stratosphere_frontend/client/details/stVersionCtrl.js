@@ -35,13 +35,15 @@ function stVersionCtrl($scope,$types,$meteor,$mdDialog,$mdToast) {
         .cancel('Cancel')
         .ok('Yes, delete!')
         .targetEvent(ev)
-    ).then(function() {
-        return $meteor.call(self.type.unpublishVersion,self.version._id)
-      }).then(function(){
-          $mdToast.show($mdToast.simple().content(`Successfully unpublished ${self.type.versionLabel}`));
-          self.cancel();
-        },function(err){
-          $mdToast.show($mdToast.simple().content(`Error while unpublishing ${self.type.versionLabel}: ${err.msg}`).theme('warn'));
+    )
+        .then(function() {
+          $meteor.call(self.type.unpublishVersion,self.version._id)
+              .then(function(){
+                $mdToast.show($mdToast.simple().content(`Successfully unpublished ${self.type.versionLabel}`));
+                self.cancel();
+              },function(err){
+                $mdToast.show($mdToast.simple().content(`Error while unpublishing ${self.type.versionLabel}: ${err.msg}`).theme('warn'));
+              });
         });
   }
 

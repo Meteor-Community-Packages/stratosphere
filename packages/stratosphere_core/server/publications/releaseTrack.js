@@ -1,6 +1,6 @@
-Meteor.publish('stratosphere/releaseTrack', function(track) {
+Meteor.publish('/stratosphere/releaseTrack', function(track) {
   try{
-    Stratosphere.utils.checkAccess();
+    Stratosphere.utils.checkAccess('canSynchronize',this.userId);
     check(track,String);
 
     Counts.publish(this, 'nbReleaseVersions', ReleaseVersions.find({track:track}), {noReady:true});

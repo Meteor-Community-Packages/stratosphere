@@ -42,7 +42,12 @@ function stListCtrl($scope,$types,$stateParams,$meteor) {
 
   function sortBy(key){
     var sort = {};
-    sort[key] = 1;
+    if(key==='name'){
+      sort[key] = 1;
+    }else{
+      sort[key] = -1;
+    }
+
     $scope.sortBy = sort;
   }
 

@@ -8,7 +8,7 @@ Meteor.methods({
      */
     publishPackageBuild: function(uploadToken,tarballHash,treeHash){
         //Little bit of security
-        Stratosphere.utils.checkAccess();
+        Stratosphere.utils.checkAccess('canPublish');
         check(uploadToken,String);
         check(tarballHash,String);
         check(treeHash,String);

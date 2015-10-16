@@ -11,9 +11,3 @@ if(Meteor.isServer){
     ReleaseTracks._ensureIndex({ "private": 1 });
     ReleaseTracks._ensureIndex({ "hidden":1, "lastUpdated":1});
 }
-
-/**
- * Schemas
- */
-Stratosphere.schemas.ReleaseTrackSchema = Stratosphere.schemas.PackageSchema;
-Stratosphere.schemas.CustomReleaseTrackSchema = Stratosphere.schemas.CustomPackageSchema;

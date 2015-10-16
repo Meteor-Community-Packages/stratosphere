@@ -59,14 +59,17 @@ function stDetailsCtrl($scope,$types,$state,$stateParams,$meteor,$mdDialog,$mdMe
         .cancel('Cancel')
         .ok('Yes, delete!')
         .targetEvent(ev)
-      ).then(function() {
-        return $meteor.call(self.type.unpublish,self.item._id);
-      }).then(function(){
-          $mdToast.show($mdToast.simple().content(`Successfully unpublished ${self.type.label}`));
-          $state.go('list',{type:$stateParams.type});
-        },function(err){
-          $mdToast.show($mdToast.simple().content(`Error while unpublishing ${self.type.label}: ${err.msg}`).theme('warn'));
+      )
+        .then(function() {
+          $meteor.call(self.type.unpublish,self.item._id)
+              .then(function(){
+                $mdToast.show($mdToast.simple().content(`Successfully unpublished ${self.type.label}`));
+                $state.go('list',{type:$stateParams.type});
+              },function(err){
+                $mdToast.show($mdToast.simple().content(`Error while unpublishing ${self.type.label}: ${err.msg}`).theme('warn'));
+              });
         });
+
   }
 
   function versionDetails($event,version){

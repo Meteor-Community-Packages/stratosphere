@@ -40,7 +40,7 @@ Meteor.methods({
      * }
      */
     createPackageVersion: function(record){
-        Stratosphere.utils.checkAccess();
+        Stratosphere.utils.checkAccess('canPublish');
         record.dependencies = _.toArrayFromObj(record.dependencies,'packageName')
         Stratosphere.schemas.CreatePackageVersionSchema.clean(record,{autoConvert:false,removeEmptyStrings:false});
         check(record,Stratosphere.schemas.CreatePackageVersionSchema);

@@ -9,23 +9,6 @@ _.mixin({
     }
 });
 
-Stratosphere.utils = {};
-
-/*
- * XXX nicer lodash alternative, see http://stackoverflow.com/questions/26155219/opposite-of-indexby-in-lodash-underscore
-
- _.mixin({
- disorder: function(collection, path) {
- return _.transform(collection, function(result, item, key) {
- if (path)
- _.set(item, path, key);
-
- result.push(item);
- }, []);
- }
- });
- */
-
 /**
  * Validate a package name
  * @returns {boolean}
@@ -85,16 +68,6 @@ Stratosphere.utils.verifyHash = function verifyHash(file,hash){
 
     rs.close();
     return hasher.digest('base64') === hash;
-}
-
-Stratosphere.utils.checkAccess = function checkAccess(requireSuperUser){
-    if(!Stratosphere.utils.hasAccess(requireSuperUser)){
-        throw new Meteor.Error("403","Forbidden");
-    }
-}
-
-Stratosphere.utils.hasAccess = function hasAccess(requireSuperUser){
-    return !Meteor.settings.public.loginRequired || (Meteor.userId()  && (!requireSuperUser || Meteor.settings.superUsers.indexOf(Meteor.user().services.meteor-developer.username) > -1));
 }
 
 // If the given version matches a template (essentially, semver-style, but with

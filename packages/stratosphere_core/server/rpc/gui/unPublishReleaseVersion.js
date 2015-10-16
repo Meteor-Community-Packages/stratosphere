@@ -4,9 +4,9 @@ Meteor.methods({
    * @param id
    * @returns {boolean}
    */
-  unPublishReleaseVersion:function(id){
+  '/stratosphere/unPublishReleaseVersion':function(id){
     //Little bit of security
-    Stratosphere.utils.checkAccess();
+    Stratosphere.utils.checkAccess('canUnpublish');
     check(id,String);
 
     //We can only delete private versions

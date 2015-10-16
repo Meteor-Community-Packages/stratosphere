@@ -14,22 +14,32 @@ Package.onUse(function (api) {
   ]);
 
   api.addFiles([
-    //BaseSchemas
-    'shared/schemas.js',
-
       //Collections
     'shared/collections/builds.js',
-    'shared/collections/metadata.js',
     'shared/collections/packages.js',
     'shared/collections/releaseTracks.js',
     'shared/collections/releaseVersions.js',
-    'shared/collections/syncTokens.js',
-    'shared/collections/uploadTokens.js',
     'shared/collections/versions.js',
 
   ], ['server','client']);
 
   api.addFiles([
+    //Collections
+    'server/collections/metadata.js',
+    'server/collections/uploadTokens.js',
+
+
+    //schemas
+    'server/schemas/general.js',
+
+    'server/schemas/builds.js',
+    'server/schemas/packages.js',
+    'server/schemas/releaseTracks.js',
+    'server/schemas/releaseVersions.js',
+    'server/schemas/syncTokens.js',
+    'server/schemas/uploadTokens.js',
+    'server/schemas/versions.js',
+
     'server/startup/fixtures.js'
   ], ['server']);
 

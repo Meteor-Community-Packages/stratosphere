@@ -11,7 +11,7 @@ Meteor.methods({
      * }
      */
     createPackageBuild: function(data){
-        Stratosphere.utils.checkAccess();
+        Stratosphere.utils.checkAccess('canPublish');
 
         Stratosphere.schemas.CreatePackageBuildParameters.clean(data);
         check(data,Stratosphere.schemas.CreatePackageBuildParameters);

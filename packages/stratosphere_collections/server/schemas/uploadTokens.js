@@ -1,16 +1,3 @@
-/**
- * Collection
- */
-UploadTokens = new Mongo.Collection("uploadTokens");
-
-/**
- * Indexes
- */
-if(Meteor.isServer){}
-
-/**
- * Schemas
- */
 Stratosphere.schemas.UploadTokenSchema = new SimpleSchema({
     'type': {
         type: String,

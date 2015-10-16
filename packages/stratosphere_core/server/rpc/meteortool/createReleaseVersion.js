@@ -23,7 +23,7 @@ Meteor.methods({
      */
     createReleaseVersion:function(record){
         //Little bit of security
-        Stratosphere.utils.checkAccess();
+        Stratosphere.utils.checkAccess('canPublish');
         Stratosphere.schemas.CreateReleaseVersionSchema.clean(record);
         check(record,Stratosphere.schemas.CreateReleaseVersionSchema);
 

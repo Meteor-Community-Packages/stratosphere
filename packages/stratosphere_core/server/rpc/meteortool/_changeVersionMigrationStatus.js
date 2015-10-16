@@ -3,7 +3,7 @@ Meteor.methods({
      * Change version migration status
      */
     _changeVersionMigrationStatus:function(name,version,migrated){
-        Stratosphere.utils.checkAccess();
+        Stratosphere.utils.checkAccess('canPublish');
         const params = {
             packageName:name,
             version:version,

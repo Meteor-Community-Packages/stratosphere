@@ -9,7 +9,7 @@ Meteor.methods({
      * @return success(boolean)?
      */
     changeVersionMetadata: function(versionIdentifier, data){
-        Stratosphere.utils.checkAccess();
+        Stratosphere.utils.checkAccess('canPublish');
         Stratosphere.schemas.VersionIdentifierSchema.clean(versionIdentifier);
         check(versionIdentifier,Stratosphere.schemas.VersionIdentifierSchema);
 

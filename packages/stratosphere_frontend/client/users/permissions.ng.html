@@ -1,0 +1,30 @@
+<md-dialog aria-label="User permissions"  ng-cloak>
+    <form>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>User {{::vm.user.username}}</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="vm.cancel()">
+                    <md-icon md-svg-src="img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content style="max-width:800px;max-height:810px; ">
+            <div>
+                <md-list>
+                    <md-subheader class="md-no-sticky">Permissions</md-subheader>
+                    <md-list-item ng-repeat="permission in ::vm.permissions">
+                        <p> {{ ::permission }} </p>
+                        <md-switch class="md-secondary" ng-model="vm.user.permissions[permission]" ng-change="vm.setPermission(permission)"></md-switch>
+                    </md-list-item>
+                </md-list>
+            </div>
+        </md-dialog-content>
+        <div class="md-actions" layout="row">
+            <span flex></span>
+            <md-button ng-click="vm.cancel()" style="margin-right:20px;" class="md-raised md-primary">
+                Close
+            </md-button>
+        </div>
+    </form>
+</md-dialog>

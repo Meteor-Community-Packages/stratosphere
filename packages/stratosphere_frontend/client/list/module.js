@@ -12,6 +12,11 @@ function configureRoutes($stateProvider, $locationProvider) {
       url: "/{type:(?:package|track)}/list/:sort",
       templateUrl: 'stratosphere_frontend_client/list/list.ng.html',
       controller: 'stListCtrl',
-      controllerAs: 'vm'
+      controllerAs: 'vm',
+        resolve: {
+          "currentUser": ["$meteor", function($meteor){
+            return $meteor.requireUser();
+          }]
+        }
     });
 }

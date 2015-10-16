@@ -13,7 +13,7 @@ Meteor.methods({
         Stratosphere.schemas.VersionIdentifierSchema.clean(versionIdentifier);
         check(versionIdentifier,Stratosphere.schemas.VersionIdentifierSchema);
 
-        Stratosphere.utils.checkAccess();
+        Stratosphere.utils.checkAccess('canPublish');
 
         const pack = Packages.findOne({name:versionIdentifier.packageName,private:true});
         const version = Versions.findOne({packageName:versionIdentifier.packageName,version:versionIdentifier.version});
