@@ -1,7 +1,7 @@
 Package.describe({
   name: "stratosphere:lib",
   summary: "Stratosphere Library package",
-  version: "1.0.0-beta2",
+  version: "1.0.0-rc1",
   git: "https://github.com/sebakerckhof/stratosphere.git"
 });
 

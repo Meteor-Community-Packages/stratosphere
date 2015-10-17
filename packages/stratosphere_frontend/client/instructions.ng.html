@@ -11,30 +11,33 @@
         </md-toolbar>
         <md-dialog-content style="max-width:80vw;max-height:80vh; ">
             <div>
-                <h2>
-                   Installation
-                </h2>
-                <h3>Create local database</h3>
-                <p>You also need to create the database file. First you need to find the existing database file (packages.data.db) here:</p>
-                <p>On Linux</p>
-                <pre><code>~/.meteor/package-metadata/v2.0.1</code></pre>
-                <p>On Windows:</p>
-                <pre><code>%appdata%\..\Local\.meteor\package-metadata\v2.0.1</code></pre>
-                <p>Next, you copy the existing database file and give it the following filename: {{vm.dbName}}</p>
-
+                <h2>Installation</h2>
+                Follow the instructions in the <a href="https://github.com/sebakerckhof/stratosphere" target="_blank">README</a>.
                 <h2>Usage</h2>
-                <p>To publish and sync with Stratosphere, you have to set the package server URL to your stratosphere URL. This can be achieved by setting the environment variable: METEOR_PACKAGE_SERVER to your package server url:</p>
-                <pre><code>METEOR_PACKAGE_SERVER_URL=[YOUR URL]</code></pre>
-                <p>Meteor splits package database and files according to this URL, so you should be able to switch package servers back and forth by changing this variable.
-                    Note that because of the temporary changes to the auth-client.js file of meteor tool (see installation instructions), publishing to the official repository won't work anymore for the time being...</p>
-                <p>First time syncing can take long (~10min), since it needs to import all packages from the official package repo and do some processing on them.</p>
+                <p>
+                To publish and sync with Stratosphere, you have to set the package server URL to your stratosphere URL.
+                This can be achieved by setting the environment variable: <pre><code>METEOR_PACKAGE_SERVER_URL</code></pre> to your package server url.
+                </p>
+                <p>
+                    <strong>IMPORTANT:</strong> You can not immediately publish stand-alone packages. Meteor first needs to create and fill up a new package database file.
+                    This is automatically done for you when you try to run an existing meteor project with the environment variable set.
+                    First time syncing can take long (up to 10min), since it needs to import all package data from the official package repo and do some processing on them.
+                </p>
+                <p>
+                    Meteor splits the package database and package files according to this URL, so you should be able to switch package servers back and forth by changing this variable.
+                </p>
+                <h2>Access Control</h2>
+                <p>
+                    Note that there is no way to protect who can see and synchronize packages! Therefore, you probably want to run Stratosphere inside a firewall protected part of your organization.<br>
+                    But you can protect who can publish and unpublish pacakges by setting <pre><code>public.loginRequired</code></pre> in the settings.json file.<br>
+                    You will need to add at least one superUser in the settings.json file (a meteor developer account username). SuperUsers can manage other user rights in the frontend.<br>
+                </p>
                 <h2>
                     Credits
                 </h2>
                 <p>
                     Created by <a href="https://github.com/sebakerckhof" target="_blank" >Seba Kerckhof</a>
                 </p>
-
             </div>
         </md-dialog-content>
         <div class="md-actions" layout="row">
