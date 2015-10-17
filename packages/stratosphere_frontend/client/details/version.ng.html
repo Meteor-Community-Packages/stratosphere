@@ -17,7 +17,7 @@
             </div>
         </md-dialog-content>
         <div class="md-actions" layout="row">
-            <md-button ng-click="vm.unpublish()" md-autofocus class="md-raised md-warn">
+            <md-button ng-click="vm.unpublish()" md-autofocus class="md-raised md-warn"  ng-if="$root.currentUser.permissions.superUser || $root.currentUser.permissions.canUnpublish">
                 Unpublish
             </md-button>
             <span flex></span>

@@ -39,6 +39,9 @@
                     <button ng-click="ctrl.showInstructions($event)">
                         Instructions
                     </button>
+                    <button ng-click="ctrl.login()" ng-if="ctrl.loginRequired && !$root.currentUser">
+                        Login
+                    </button>
                     <button ng-click="ctrl.logout()" ng-if="$root.currentUser">
                         Logout
                     </button>

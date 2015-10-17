@@ -3,9 +3,9 @@ angular
     .controller("IndexCtrl", IndexCtrl);
 
 
-IndexCtrl.$inject = ['$scope','$rootScope','$meteor','$mdDialog'];
+IndexCtrl.$inject = ['$scope','$rootScope','$state','$meteor','$mdDialog'];
 
-function IndexCtrl($scope,$rootScope,$meteor,$mdDialog) {
+function IndexCtrl($scope,$rootScope,$state,$meteor,$mdDialog) {
 
   var self = this;
   self.$scope = $scope;
@@ -14,6 +14,7 @@ function IndexCtrl($scope,$rootScope,$meteor,$mdDialog) {
 
   self.loginRequired = Meteor.settings.public.loginRequired;
   self.logout = $meteor.logout;
+  self.login = login;
 
   self.settings = {
     printLayout: true,
@@ -23,6 +24,20 @@ function IndexCtrl($scope,$rootScope,$meteor,$mdDialog) {
   };
 
   self.showInstructions = showInstructions;
+
+  function login(){
+    //$state.go('login');
+    $meteor.loginWithMeteorDeveloperAccount().then(function(){
+      // $history.previous();
+    }, function(err){
+      console.log('Login error - ', err.msg);
+      $mdToast.show(
+          $mdToast.simple()
+              .content("Login error: "+err.msg)
+      );
+      $state.go('forbidden');
+    });
+  }
 
   function showInstructions($event){
     $mdDialog.show({

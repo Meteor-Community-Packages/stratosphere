@@ -12,6 +12,17 @@ function configureRoutes($stateProvider, $locationProvider) {
             url: "/users",
             templateUrl: 'stratosphere_frontend_client/users/users.ng.html',
             controller: 'stUsersCtrl',
-            controllerAs: 'vm'
+            controllerAs: 'vm',
+            resolve: {
+                "currentUser": ["$meteor", function($meteor){
+                    return $meteor.requireValidUser(function(user) {
+                        if (Meteor.settings.public.loginRequired && user.permissions.superUser) {
+                            return true;
+                        }
+
+                        return 'FORBIDDEN';
+                    });
+                }]
+            }
         });
 }

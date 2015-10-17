@@ -16,7 +16,7 @@
                 </p>
             </md-card-content>
             <div class="md-actions" layout="row" layout-align="end center">
-                <md-button ng-click="vm.unpublish($event)" class="md-raised md-warn">unpublish</md-button>
+                <md-button ng-click="vm.unpublish($event)" class="md-raised md-warn" ng-if="$root.currentUser.permissions.superUser || $root.currentUser.permissions.canUnpublish">unpublish</md-button>
             </div>
         </md-card>
         <div layout="row" layout-sm="column" layout-wrap>
