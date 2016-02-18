@@ -7,7 +7,7 @@ Package.describe({
 Package.onUse(function(api) {
     api.versionsFrom('METEOR@1.2.0.2');
 
-    api.use(['webapp', 'routepolicy'], 'server');
+    api.use(['webapp','ecmascript', 'routepolicy'], 'server');
 
     api.addFiles('server.js', ['server']);
     // Export the object 'UploadServer' to packages or apps that use this package.

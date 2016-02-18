@@ -10,6 +10,7 @@ Package.onUse(function (api) {
   api.versionsFrom(['METEOR@1.2.0.2']);
 
   api.use([
+    'ecmascript',
     'stratosphere:lib',
     'stratosphere:collections',
     'uploadserver'

@@ -17,7 +17,7 @@ Package.onUse(function (api) {
     'tracker',
     //'meteortoys:allthings@2.1.0',
     'accounts-password',
-    'ecmascript@0.1.3-rc.1',
+
     'package-version-parser',
     'service-configuration',
     'accounts-oauth',
@@ -33,6 +33,7 @@ Package.onUse(function (api) {
   api.imply(packages);
 
   api.use(packages);
+  api.use('ecmascript');
 
   api.export([
     'Stratosphere'

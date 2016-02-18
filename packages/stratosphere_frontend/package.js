@@ -19,6 +19,7 @@ Package.onUse(function (api) {
         'angular:angular-sanitize@1.4.7',
         'divramod:angular-markdown-directive@0.0.1',
         'angular',
+        'ecmascript',
         'angular:angular-material@0.11.2',
         'angularui:angular-ui-router@0.2.15',
         'netanelgilad:ng-infinite-scroll@1.2.0_1',
