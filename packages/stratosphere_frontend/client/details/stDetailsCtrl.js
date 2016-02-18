@@ -2,77 +2,34 @@ angular
   .module('stratosphere.details')
   .controller("stDetailsCtrl", stDetailsCtrl);
 
-stDetailsCtrl.$inject = ['$scope','$types','$state','$stateParams','$meteor','$mdDialog','$mdMedia','$mdToast'];
+stDetailsCtrl.$inject = ['$scope','$types','$state','$stateParams','$reactive','$mdDialog','$mdMedia','$mdToast'];
 
-function stDetailsCtrl($scope,$types,$state,$stateParams,$meteor,$mdDialog,$mdMedia,$mdToast) {
-  var self = this;
+function stDetailsCtrl($scope,$types,$state,$stateParams,$reactive,$mdDialog,$mdMedia,$mdToast) {
+  $reactive(this).attach($scope);
 
   //properties
-  self.$scope = $scope;
-  self.name = $stateParams.name;
-  self.loadingVersions = false;
-  self.allVersionsLoaded = false;
-  self.showReadme = $mdMedia('gt-sm');
+  this.name = $stateParams.name;
+  this.loadingVersions = false;
+  this.allVersionsLoaded = false;
+  this.showReadme = $mdMedia('gt-sm');
+
+  this.type = $types[$stateParams.type];
+
+  var selector = {};
+  selector[this.type.linkedBy] = this.name;
+  this.helpers({
+    versions: () => this.type.versionsCollection.find(selector, {sort : {versionMagnitude : -1}})
+  });
 
   //methods
-  self.loadVersions = loadVersions;
-  self.versionDetails = versionDetails;
-  self.unpublish = unpublish;
-
-  self.type = $types[$stateParams.type];
-
-  //activate
-  activate();
-
-  function activate(){
-    $scope.$meteorSubscribe(self.type.subscribeDetails,self.name);
-
-    self.item = $scope.$meteorObject(self.type.collection,{name:self.name},false);
-
-    self.versions = $scope.$meteorCollection(function() {
-      var selector = {};
-      selector[self.type.linkedBy] = self.name;
-      return self.type.versionsCollection.find(selector, {
-        sort : {versionMagnitude : -1}
-      });
-    },false);
-
-    self.nbVersions = $scope.$meteorObject(Counts, self.type.versionsCount, false);
-  }
-
-  function loadVersions(){
-    self.loadingVersions = true;
-    $scope.$meteorSubscribe(self.type.subscribeVersions,self.name).then(function(){
-      self.loadingVersions = false;
-    },function(){
-      self.loadingVersions = false;
+  this.loadVersions = () => {
+    this.loadingVersions = true;
+    this.subscribe(this.type.subscribeVersions,this.name,(err) => {
+      this.loadingVersions = false;
     });
-  }
+  };
 
-  function unpublish(ev){
-    $mdDialog.show(
-      $mdDialog.confirm()
-        .clickOutsideToClose(true)
-        .title('Are you sure?')
-        .content(`Unpublishing will permamently delete this ${self.type.label} and all related versions.`)
-        .ariaLabel('Confirm unpublish')
-        .cancel('Cancel')
-        .ok('Yes, delete!')
-        .targetEvent(ev)
-      )
-        .then(function() {
-          $meteor.call(self.type.unpublish,self.item._id)
-              .then(function(){
-                $mdToast.show($mdToast.simple().content(`Successfully unpublished ${self.type.label}`));
-                $state.go('list',{type:$stateParams.type});
-              },function(err){
-                $mdToast.show($mdToast.simple().content(`Error while unpublishing ${self.type.label}: ${err.msg}`).theme('warn'));
-              });
-        });
-
-  }
-
-  function versionDetails($event,version){
+  this.versionDetails = ($event,version) => {
     console.log(version);
     $mdDialog.show({
       templateUrl: 'stratosphere_frontend_client/details/version.ng.html',
@@ -80,17 +37,51 @@ function stDetailsCtrl($scope,$types,$state,$stateParams,$meteor,$mdDialog,$mdMe
       controller:'stVersionCtrl',
       controllerAs:'vm',
       locals:{
-        type:self.type,
+        type:this.type,
         version:version
       },
       bindToController:true,
       clickOutsideToClose:true,
       disableParentScroll:true
     });
-  }
+  };
+  this.unpublish = ev => {
+    $mdDialog.show(
+      $mdDialog.confirm()
+        .clickOutsideToClose(true)
+        .title('Are you sure?')
+        .content(`Unpublishing will permamently delete this ${this.type.label} and all related versions.`)
+        .ariaLabel('Confirm unpublish')
+        .cancel('Cancel')
+        .ok('Yes, delete!')
+        .targetEvent(ev)
+      )
+      .then(() => {
+        this.call(this.type.unpublish,this.item._id,(err) => {
+          if(err){
+            $mdToast.show($mdToast.simple().content(`Error while unpublishing ${this.type.label}: ${err.msg}`).theme('warn'));
+          }else{
+            $mdToast.show($mdToast.simple().content(`Successfully unpublished ${this.type.label}`));
+            $state.go('list',{type:$stateParams.type});
+          }
+        });
+      });
+  };
 
-  $scope.$on('$destroy', function() {
-    self.type = null;
+  //activate
+
+  const activate = () => {
+    this.subscribe(this.type.subscribeDetails,this.name);
+
+    this.item = this.type.collection.findOne({name:this.name});
+
+    this.nbVersions = Counts.findOne(this.type.versionsCount);
+  }
+  activate();
+
+
+  $scope.$on('$destroy', () => {
+    this.type = null;
   });
 
 

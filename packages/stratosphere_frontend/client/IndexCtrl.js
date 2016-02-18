@@ -1,45 +1,40 @@
 angular
   .module('stratosphere')
-    .controller("IndexCtrl", IndexCtrl);
+  .controller("IndexCtrl", IndexCtrl);
 
 
-IndexCtrl.$inject = ['$scope','$rootScope','$state','$meteor','$mdDialog'];
+IndexCtrl.$inject = ['$scope','$rootScope','$state','$reactive','$mdDialog'];
 
-function IndexCtrl($scope,$rootScope,$state,$meteor,$mdDialog) {
+function IndexCtrl($scope,$rootScope,$state,$reactive,$mdDialog) {
+  $reactive(this).attach($scope);
 
-  var self = this;
-  self.$scope = $scope;
 
-  console.log($rootScope.currentUser);
+  this.loginRequired = Meteor.settings.public.loginRequired;
 
-  self.loginRequired = Meteor.settings.public.loginRequired;
-  self.logout = $meteor.logout;
-  self.login = login;
-
-  self.settings = {
+  this.MDsettings = {
     printLayout: true,
     showRuler: true,
     showSpellingSuggestions: true,
     presentationMode: 'edit'
   };
 
-  self.showInstructions = showInstructions;
-
-  function login(){
+  this.logout = Meteor.logout;
+  this.login = () => {
     //$state.go('login');
-    $meteor.loginWithMeteorDeveloperAccount().then(function(){
-      // $history.previous();
-    }, function(err){
-      console.log('Login error - ', err.msg);
-      $mdToast.show(
+    Meteor.loginWithMeteorDeveloperAccount((err) => {
+      if (err) {
+        $mdToast.show(
           $mdToast.simple()
-              .content("Login error: "+err.msg)
-      );
-      $state.go('forbidden');
+            .textContent(`Login error - ${err.msg}`)
+        );
+        $state.go('forbidden');
+      } else {
+        //$history.previous();
+      }
     });
   }
 
-  function showInstructions($event){
+  this.showInstructions = $event => {
     $mdDialog.show({
       templateUrl: 'stratosphere_frontend_client/instructions.ng.html',
       targetEvent:$event,
@@ -48,6 +43,6 @@ function IndexCtrl($scope,$rootScope,$state,$meteor,$mdDialog) {
       clickOutsideToClose:true,
       disableParentScroll:true
     });
-  }
+  };
 
 };

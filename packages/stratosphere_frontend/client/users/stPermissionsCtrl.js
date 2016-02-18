@@ -2,31 +2,23 @@ angular
     .module('stratosphere.users')
     .controller("stPermissionsCtrl", stPermissionsCtrl);
 
-stPermissionsCtrl.$inject = ['$scope','$meteor','$mdDialog'];
+stPermissionsCtrl.$inject = ['$scope','$reactive','$mdDialog'];
 
-function stPermissionsCtrl($scope,$meteor,$mdDialog) {
-    var self = this;
+function stPermissionsCtrl($scope,$reactive,$mdDialog) {
+    $reactive(this).attach($scope);
 
     //properties
-    self.$scope = $scope;
-
-    self.permissions = ['canPublish','canUnpublish'];
-    self.cancel = cancel;
-    self.setPermission = setPermission;
+    this.permissions = ['canPublish','canUnpublish'];
+    
+    this.cancel = () => {
+        $mdDialog.cancel();
+    };
+    
+    this.setPermission = permission => {
+        this.call('/stratosphere/setUserPermission',this.user._id,permission,this.user.permissions[permission]);
+    };
 
     //activate
+    const activate = () => {}
     activate();
-
-    function activate(){
-        //self.user = $scope.$meteorObject(Meteor.users,self.user._id,true);
-    }
-
-    function setPermission(permission){
-        $meteor.call('/stratosphere/setUserPermission',self.user._id,permission,self.user.permissions[permission]);
-    }
-
-    function cancel(){
-        $mdDialog.cancel();
-    }
-
 };

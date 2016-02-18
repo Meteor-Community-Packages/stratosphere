@@ -2,49 +2,43 @@ angular
   .module('stratosphere.details')
   .controller("stVersionCtrl", stVersionCtrl);
 
-stVersionCtrl.$inject = ['$scope','$types','$meteor','$mdDialog','$mdToast'];
+stVersionCtrl.$inject = ['$scope','$types','$reactive','$mdDialog','$mdToast'];
 
-function stVersionCtrl($scope,$types,$meteor,$mdDialog,$mdToast) {
-  var self = this;
-
-  //properties
-  self.$scope = $scope;
+function stVersionCtrl($scope,$types,$reactive,$mdDialog,$mdToast) {
+  $reactive(this).attach($scope);
 
   //methods
-  self.unpublish = unpublish;
-  self.cancel = cancel;
-
-  //activate
-  activate();
-
-  function activate(){
-    $scope.$meteorSubscribe(self.type.subscribeVersion,self.version._id);
-  }
-
-  function cancel(){
-    $mdDialog.cancel();
-  }
-
-  function unpublish(ev){
+  this.unpublish = (ev) => {
     $mdDialog.show(
       $mdDialog.confirm()
         .clickOutsideToClose(true)
         .title('Are you sure?')
-        .content(`Unpublishing will remove this ${self.type.versionLabel}?`)
+        .content(`Unpublishing will remove this ${this.type.versionLabel}?`)
         .ariaLabel('Confirm unpublish')
         .cancel('Cancel')
         .ok('Yes, delete!')
         .targetEvent(ev)
-    )
-        .then(function() {
-          $meteor.call(self.type.unpublishVersion,self.version._id)
-              .then(function(){
-                $mdToast.show($mdToast.simple().content(`Successfully unpublished ${self.type.versionLabel}`));
-                self.cancel();
-              },function(err){
-                $mdToast.show($mdToast.simple().content(`Error while unpublishing ${self.type.versionLabel}: ${err.msg}`).theme('warn'));
-              });
+      )
+      .then(() => {
+        this.call(this.type.unpublishVersion,this.version._id,err => {
+          if(err){
+            $mdToast.show($mdToast.simple().content(`Error while unpublishing ${this.type.versionLabel}: ${err.msg}`).theme('warn'));
+          }else{
+            $mdToast.show($mdToast.simple().content(`Successfully unpublished ${this.type.versionLabel}`));
+            this.cancel();
+          }
         });
+      });
+  };
+  this.cancel = () => {
+    $mdDialog.cancel();
   }
+
+  //activate
+  const activate = () => {
+    this.subscribe(this.type.subscribeVersion,this.version._id);
+  }
+  activate();
+
 
 };

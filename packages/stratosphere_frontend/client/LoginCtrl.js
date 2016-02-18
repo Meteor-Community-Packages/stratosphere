@@ -3,23 +3,21 @@ angular
     .module('stratosphere')
     .controller('LoginCtrl', LoginCtrl);
 
-LoginCtrl.$inject = ['$scope','$state','$mdToast','$history'];
+LoginCtrl.$inject = ['$state','$mdToast','$history'];
 
-function LoginCtrl($scope,$state,$mdToast,$history) {
-    var self = this;
-    self.$scope = $scope;
-
-    self.triggerLogin = function(){
+function LoginCtrl($state,$mdToast,$history) {
+    this.triggerLogin = function(){
         try{
-            $meteor.loginWithMeteorDeveloperAccount().then(function(){
-               $history.previous();
-            }, function(err){
-                console.log('Login error - ', err.msg);
-                $mdToast.show(
-                    $mdToast.simple()
-                        .content("Login error: "+err.msg)
-                );
-                $state.go('forbidden');
+            Meteor.loginWithMeteorDeveloperAccount((err) => {
+                if(err){
+                    $mdToast.show(
+                      $mdToast.simple()
+                        .textContent(`Login error - ${err.msg}`)
+                    );
+                    $state.go('forbidden');
+                }else{
+                    $history.previous();
+                }
             });
         }catch(e){
             if(e.attemptedUrl){

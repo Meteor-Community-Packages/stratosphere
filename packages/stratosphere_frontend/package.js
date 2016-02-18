@@ -1,29 +1,26 @@
 Package.describe({
     name: "stratosphere:frontend",
     summary: "Stratosphere Frontend",
-    version: "1.0.0-rc1",
+    version: "1.0.0-rc2",
     git: "https://github.com/sebakerckhof/stratosphere.git"
 });
 
 Package.onUse(function (api) {
 
-    api.versionsFrom(['METEOR@1.2.0.2']);
+    api.versionsFrom(['METEOR@1.2.1']);
 
     api.use([
         'static-html',
         'stratosphere:core',
-        'angular:angular@1.4.7',
-        'angular:angular-animate@1.4.7',
-        'angular:angular-aria@1.4.7',
-        'angular:angular-resource@1.4.7',
-        'angular:angular-sanitize@1.4.7',
         'divramod:angular-markdown-directive@0.0.1',
         'angular',
-        'angular:angular-material@0.11.2',
+        'angular-meteor-auth',
+        'angular:angular-sanitize@1.5.0',
+        'angular:angular-material@1.0.5',
         'angularui:angular-ui-router@0.2.15',
         'netanelgilad:ng-infinite-scroll@1.2.0_1',
         'jquery',
-        'fourseven:scss@3.4.0-beta1',
+        'fourseven:scss@3.4.1',
         'fortawesome:fontawesome@4.4.0'
     ]);
 

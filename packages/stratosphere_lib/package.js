@@ -1,13 +1,13 @@
 Package.describe({
   name: "stratosphere:lib",
   summary: "Stratosphere Library package",
-  version: "1.0.0-rc1",
+  version: "1.0.0-rc2",
   git: "https://github.com/sebakerckhof/stratosphere.git"
 });
 
 Package.onUse(function (api) {
 
-  api.versionsFrom(['METEOR@1.2.0.2']);
+  api.versionsFrom(['METEOR@1.2.1']);
 
   var packages = [
     'meteor-base',
@@ -15,17 +15,16 @@ Package.onUse(function (api) {
     'mongo',
     'session',
     'tracker',
-    //'meteortoys:allthings@2.1.0',
     'accounts-password',
-    'ecmascript@0.1.3-rc.1',
+    'ecmascript',
     'package-version-parser',
     'service-configuration',
     'accounts-oauth',
     'accounts-meteor-developer',
-    'aldeed:simple-schema@1.3.3',
-    'meteorhacks:search-source@1.4.0',
+    'aldeed:simple-schema@1.5.3',
+    'meteorhacks:search-source@1.4.2',
     'percolate:find-from-publication@0.1.0',
-    'tmeasday:publish-counts@0.3.9',
+    'tmeasday:publish-counts@0.7.3',
     'mrt:q@1.0.1',
     'meteorhacks:async@1.0.0'
   ];

@@ -14,8 +14,8 @@ function configureRoutes($stateProvider, $locationProvider) {
             controller: 'stUsersCtrl',
             controllerAs: 'vm',
             resolve: {
-                "currentUser": ["$meteor", function($meteor){
-                    return $meteor.requireValidUser(function(user) {
+                "currentUser": ["$auth", function($auth){
+                    return $auth.requireValidUser(function(user) {
                         if (Meteor.settings.public.loginRequired && user.permissions.superUser) {
                             return true;
                         }

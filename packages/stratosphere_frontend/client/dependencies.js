@@ -1,6 +1,7 @@
 angular.module('stratosphere.dependencies',[
   'ui.router',
   'angular-meteor',
+  'angular-meteor.auth',
   'ngSanitize',
   'btford.markdown',
   'ngMaterial',

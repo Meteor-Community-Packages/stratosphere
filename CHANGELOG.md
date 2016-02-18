@@ -1,3 +1,8 @@
+1.0.0-rc2
+
+* Fix minification issues
+* Upgrade to newer angular-meteor version
+
 1.0.0-rc1
 
 * No more need to copy package database if the instructions in the readme are followed

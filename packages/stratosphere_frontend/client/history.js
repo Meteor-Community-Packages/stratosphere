@@ -2,8 +2,8 @@ angular.module('stratosphere')
     .service("$history", historyService)
     .run(addToHistory);
 
-historyService.$inject = ["$state", "$rootScope", "$window"];
-function historyService($state, $rootScope, $window) {
+historyService.$inject = ["$state"];
+function historyService($state) {
     var history = [];
     angular.extend(this, {
         push: function(state, params) {

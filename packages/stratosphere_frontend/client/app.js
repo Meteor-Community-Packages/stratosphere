@@ -60,23 +60,24 @@ function configureRoutes($stateProvider,$urlRouterProvider){
   $urlRouterProvider.otherwise('/package/list/lastUpdated')
 }
 
-handleStateChangeErrors.$inject = ["$rootScope", "$state", "$mdToast", "$meteor"];
-function handleStateChangeErrors($rootScope, $state, $mdToast, $meteor) {
+handleStateChangeErrors.$inject = ["$rootScope", "$state", "$mdToast"];
+function handleStateChangeErrors($rootScope, $state, $mdToast) {
   $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams, error) {
     // We can catch the error thrown when the $meteor.requireUser() promise is rejected
     // or the custom error, and redirect the user back to the login page
     switch(error) {
       case "AUTH_REQUIRED":
         //$state.go('login');
-        $meteor.loginWithMeteorDeveloperAccount().then(function(){
-         // $history.previous();
-        }, function(err){
-          console.log('Login error - ', err.msg);
-          $mdToast.show(
+        Meteor.loginWithMeteorDeveloperAccount((err) => {
+          if(err){
+            $mdToast.show(
               $mdToast.simple()
-                  .content("Login error: "+err.msg)
-          );
-          $state.go('forbidden');
+                .textContent(`Login error - ${err.msg}`)
+            );
+            $state.go('forbidden');
+          }else{
+            //$history.previous();
+          }
         });
         break;
       case "FORBIDDEN":
@@ -86,7 +87,7 @@ function handleStateChangeErrors($rootScope, $state, $mdToast, $meteor) {
         $state.go('forbidden');
         break;
       default:
-        $mdToast.show($mdToast.simple().content('Internal error'));
+        $mdToast.show($mdToast.simple().textContent('Internal error'));
     }
   });
 }

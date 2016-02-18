@@ -33,16 +33,16 @@
                     <button ui-sref="list({type:'track'})">
                         Release Tracks
                     </button>
-                    <button ui-sref="users" ng-if="ctrl.loginRequired && $root.currentUser.permissions.superUser">
+                    <button ui-sref="users" ng-if="ctrl.loginRequired && ctrl.currentUser.permissions.superUser">
                         Users
                     </button>
                     <button ng-click="ctrl.showInstructions($event)">
                         Instructions
                     </button>
-                    <button ng-click="ctrl.login()" ng-if="ctrl.loginRequired && !$root.currentUser">
+                    <button ng-click="ctrl.login()" ng-if="ctrl.loginRequired && !ctrl.currentUser">
                         Login
                     </button>
-                    <button ng-click="ctrl.logout()" ng-if="$root.currentUser">
+                    <button ng-click="ctrl.logout()" ng-if="ctrl.currentUser">
                         Logout
                     </button>
                 </md-menu-bar>

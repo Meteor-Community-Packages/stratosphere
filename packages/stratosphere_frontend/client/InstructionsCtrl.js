@@ -2,11 +2,9 @@ angular
   .module('stratosphere')
   .controller('InstructionsCtrl', InstructionsCtrl);
 
-InstructionsCtrl.$inject = ['$scope','$mdDialog'];
+InstructionsCtrl.$inject = ['$mdDialog'];
 
-function InstructionsCtrl($scope,$mdDialog) {
-  var self = this;
-  self.$scope = $scope;
+function InstructionsCtrl($mdDialog) {
 
   //adapted from meteor tool
   var url = Meteor.settings.public.url;
@@ -15,9 +13,9 @@ function InstructionsCtrl($scope,$mdDialog) {
   url = url.replace(/\/+$/, '');
   url = url.replace(/[^a-zA-Z0-9.-]/g, 'X');
 
-  self.dbName = url+'.data.db';
+  this.dbName = `${url}.data.db`;
 
-  self.cancel = function(){
+  this.cancel = () => {
     $mdDialog.hide();
   }
 };

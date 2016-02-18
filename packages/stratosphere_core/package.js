@@ -1,13 +1,13 @@
 Package.describe({
   name: "stratosphere:core",
   summary: "Stratosphere Main package",
-  version: "1.0.0-rc1",
+  version: "1.0.0-rc2",
   git: "https://github.com/sebakerckhof/stratosphere.git"
 });
 
 Package.onUse(function (api) {
 
-  api.versionsFrom(['METEOR@1.2.0.2']);
+  api.versionsFrom(['METEOR@1.2.1']);
 
   api.use([
     'stratosphere:lib',

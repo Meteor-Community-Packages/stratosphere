@@ -2,38 +2,45 @@ angular
     .module('stratosphere.users')
     .controller("stUsersCtrl", stUsersCtrl);
 
-stUsersCtrl.$inject = ['$scope','$stateParams','$meteor','$mdToast','$mdDialog'];
+stUsersCtrl.$inject = ['$scope','$stateParams','$reactive','$mdToast','$mdDialog'];
 
-function stUsersCtrl($scope,$stateParams,$meteor,$mdToast,$mdDialog) {
-    var self = this;
+function stUsersCtrl($scope,$stateParams,$reactive,$mdToast,$mdDialog) {
+    $reactive(this).attach($scope);
 
     //properties
-    self.$scope = $scope;
-    self.viewMode = 'chips';
-    self.viewModes = ['chips','list'];
-    self.permissions = ['canPublish','canUnpublish'];
-    self.loginRequired = Meteor.settings.public.loginRequired;
+    this.viewMode = 'chips';
+    this.viewModes = ['chips','list'];
+    this.permissions = ['canPublish','canUnpublish'];
+    this.loginRequired = Meteor.settings.public.loginRequired;
 
-    self.addUser = addUser;
-    self.removeUser = removeUser;
-    self.showPermissionsDialog = showPermissionsDialog;
-    self.setPermission = setPermission;
+    this.helpers({
+        users : () => Meteor.users.find({"permissions.superUser":{$ne:true}},{sort:{name:1}}),
+        superUsers : () => Meteor.users.find({"permissions.superUser":true},{sort:{name:1}})
+    });
 
-    //activate
-    activate();
+    this.addUser = name => {
+        return this.call('/stratosphere/addUser',name,(err,user) => {
+              if(err){
+                  $mdToast.show(
+                    $mdToast.simple()
+                      .textContent(`Error while adding user: ${err.message}`)
+                  );
+              }else{
+                  return user;
+              }
+          });
+    };
 
-    function activate(){
-        $scope.$meteorSubscribe('/stratosphere/users',{});
-        self.users = $scope.$meteorCollection(function(){
-            return Meteor.users.find({"permissions.superUser":{$ne:true}},{sort:{name:1}})
-        },false);
+    this.removeUser = user => {
+        this.call('/stratosphere/removeUser',user._id).then(()=>{},err => {
+            $mdToast.show(
+              $mdToast.simple()
+                .textContent(`Error while removing user: ${err.message}`)
+            );
+        });
+    };
 
-        self.superUsers = $scope.$meteorCollection(function(){
-            return Meteor.users.find({"permissions.superUser":true},{sort:{name:1}})
-        },false);
-    }
-
-    function showPermissionsDialog($event,user){
+    this.showPermissionsDialog = ($event,user) => {
         $mdDialog.show({
             templateUrl: 'stratosphere_frontend_client/users/permissions.ng.html',
             targetEvent:$event,
@@ -46,32 +53,16 @@ function stUsersCtrl($scope,$stateParams,$meteor,$mdToast,$mdDialog) {
             clickOutsideToClose:true,
             disableParentScroll:true
         });
+    };
+
+    this.setPermission = (user,permission) => {
+        this.call('/stratosphere/setUserPermission',user._id,permission,user.permissions[permission]);
+    };
+
+    //activate
+    const activate = () => {
+        this.subscribe('/stratosphere/users',{});
     }
-
-    function setPermission(user,permission){
-        $meteor.call('/stratosphere/setUserPermission',user._id,permission,user.permissions[permission]);
-    }
-
-    function addUser(name){
-
-        return $meteor.call('/stratosphere/addUser',name).then(function(user){
-            return user;
-        },function(err){
-            $mdToast.show(
-                $mdToast.simple()
-                    .content("Error while adding user: "+err.message)
-            );
-        });
-    }
-
-    function removeUser(user){
-        $meteor.call('/stratosphere/removeUser',user._id).then(function(){},function(err){
-            $mdToast.show(
-                $mdToast.simple()
-                    .content("Error while removing user: "+err.message)
-            );
-        });
-    }
-
+    activate();
 
 };

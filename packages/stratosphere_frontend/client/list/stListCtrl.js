@@ -2,45 +2,29 @@ angular
   .module('stratosphere.list')
   .controller("stListCtrl", stListCtrl);
 
-stListCtrl.$inject = ['$scope','$types','$stateParams','$meteor'];
+stListCtrl.$inject = ['$scope','$types','$stateParams','$reactive'];
 
-function stListCtrl($scope,$types,$stateParams,$meteor) {
-  var self = this;
+function stListCtrl($scope,$types,$stateParams,$reactive) {
+  $reactive(this).attach($scope);
 
   //properties
-  self.$scope = $scope;
-  self.sortBy = sortBy;
 
-  $scope.page = 1;
-  $scope.perPage = 10;
-  $scope.sort = {};
-  $scope.sort[($stateParams.sort || 'name')] = 1;
 
-  self.type = $types[$stateParams.type];
 
-  //activate
-  activate();
+  this.page = 1;
+  this.perPage = 10;
+  this.sort = {};
+  this.sort[($stateParams.sort || 'name')] = 1;
 
-  function activate(){
-    $scope.$meteorSubscribe(self.type.subscribeList,{});
-    self.items = $scope.$meteorCollection(function() {
-      return self.type.collection.find({}, {
-        sort : $scope.getReactively('sort')
-      });
-    },false);
+  this.type = $types[$stateParams.type];
 
-    self.nbItems = $scope.$meteorObject(Counts ,self.type.count, false);
+  this.helpers({
+    items : () => this.type.collection.find({}, {sort : this.getReactively('sort')}),
+  });
 
-    $meteor.autorun($scope, function() {
-      $scope.$meteorSubscribe(self.type.subscribeList, {
-        limit: parseInt($scope.getReactively('perPage')),
-        skip: (parseInt($scope.getReactively('page')) - 1) * parseInt($scope.getReactively('perPage')),
-        sort: $scope.getReactively('sort')
-      });
-    });
-  }
+  this.nbItems = Counts.findOne(this.type.count);
 
-  function sortBy(key){
+  this.sortBy = key => {
     var sort = {};
     if(key==='name'){
       sort[key] = 1;
@@ -48,8 +32,19 @@ function stListCtrl($scope,$types,$stateParams,$meteor) {
       sort[key] = -1;
     }
 
-    $scope.sortBy = sort;
+    this.sortBy = sort;
+  };
+
+  //activate
+
+  const activate = () => {
+    this.subscribe(this.type.subscribeList,() => [{
+      limit: parseInt(this.getReactively('perPage')),
+      skip: (parseInt(this.getReactively('page')) - 1) * parseInt(this.getReactively('perPage')),
+      sort: this.getReactively('sort')
+    }]);
   }
+  activate();
 
 
 };

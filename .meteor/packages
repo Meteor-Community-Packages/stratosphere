@@ -11,4 +11,4 @@ stratosphere:uploads
 stratosphere:core
 stratosphere:frontend
 standard-minifiers
-fourseven:scss@3.4.0-beta1
+fourseven:scss@3.4.1
