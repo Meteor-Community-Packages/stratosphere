@@ -8,3 +8,6 @@ packages/**/.npm/
 settings.json
 uploads
 tmp
+
+!uploads/.keep
+!tmp/.keep
