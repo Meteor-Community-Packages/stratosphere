@@ -1,7 +1,10 @@
-.idea
-public
-tmp
+**/.idea/
+**/node_modules/
+**/platforms/
+**/plugins/
+**/local/
+packages/**/.npm/
+
 settings.json
-.uploads
-.tmp
-.npm
+uploads
+tmp

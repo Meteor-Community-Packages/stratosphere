@@ -24,7 +24,7 @@ Package.onUse(function (api) {
         'angularui:angular-ui-router@0.2.15',
         'netanelgilad:ng-infinite-scroll@1.2.0_1',
         'jquery',
-        'fourseven:scss@3.4.0-beta1',
+        'fourseven:scss@3.4.1',
         'fortawesome:fontawesome@4.4.0'
     ]);
 
