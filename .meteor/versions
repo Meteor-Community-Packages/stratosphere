@@ -96,6 +96,7 @@ stratosphere:collections@1.0.0-rc1
 stratosphere:core@1.0.0-rc1
 stratosphere:frontend@1.0.0-rc1
 stratosphere:lib@1.0.0-rc1
+stratosphere:s3@1.0.0-rc1
 stratosphere:synchronizer@1.0.0-rc1
 stratosphere:uploads@1.0.0-rc1
 templating@1.1.12

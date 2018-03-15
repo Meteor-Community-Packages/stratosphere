@@ -13,5 +13,11 @@
     "clientId":"",
     "secret":""
   },
-  "superUsers":[]
+  "superUsers":[],
+  "s3Sync": {
+    "region": "CHANGE ME",
+    "bucket": "CHANGE ME",
+    "accessKey": "CHANGE ME",
+    "secretKey": "CHANGE ME"
+  }
 }

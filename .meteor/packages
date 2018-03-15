@@ -10,6 +10,7 @@ stratosphere:synchronizer
 stratosphere:uploads
 stratosphere:core
 stratosphere:frontend
+stratosphere:s3
 fourseven:scss@3.4.1
 standard-minifier-css
 standard-minifier-js
