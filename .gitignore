@@ -6,6 +6,7 @@
 packages/**/.npm/
 
 settings.json
+.deploy/mup.js
 uploads
 tmp
 
