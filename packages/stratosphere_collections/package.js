@@ -28,6 +28,7 @@ Package.onUse(function (api) {
     //Collections
     'server/collections/metadata.js',
     'server/collections/uploadTokens.js',
+    'server/collections/ipWhitelist.js',
 
 
     //schemas
@@ -40,6 +41,7 @@ Package.onUse(function (api) {
     'server/schemas/syncTokens.js',
     'server/schemas/uploadTokens.js',
     'server/schemas/versions.js',
+    'server/schemas/ipWhitelists.js',
 
     'server/startup/fixtures.js'
   ], ['server']);
@@ -51,6 +53,7 @@ Package.onUse(function (api) {
     'ReleaseTracks',
     'ReleaseVersions',
     'Metadata',
-    'UploadTokens'
+    'UploadTokens',
+    'IpWhitelist'
   ]);
 });

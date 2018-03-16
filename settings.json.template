@@ -19,5 +19,7 @@
     "bucket": "CHANGE ME",
     "accessKey": "CHANGE ME",
     "secretKey": "CHANGE ME"
-  }
+  },
+  "ipWhitelistAuthKey": "CHANGE ME",
+  "ipWhitelist": ["127.0.0.1"]
 }

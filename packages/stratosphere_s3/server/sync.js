@@ -20,13 +20,17 @@ Stratosphere.utils.syncFromS3 = function () {
 	})
 };
 
-Stratosphere.utils.syncToS3 = function () {
+Stratosphere.utils.syncToS3 = function (callback) {
 	s3Client.sync(Meteor.settings.directories.uploads, 's3://' + Meteor.settings.s3Sync.bucket, {
 		delete: false
 	})
 	.then(res => {
 		if (res && res.files) {
 			console.log('Synced files to S3: ' + ((res.files.length && res.files) || 'n/a'));
+		}
+
+		if (callback) {
+			callback();
 		}
 	})
 };
