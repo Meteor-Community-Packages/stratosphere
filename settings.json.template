@@ -21,5 +21,5 @@
     "secretKey": "CHANGE ME"
   },
   "ipWhitelistAuthKey": "CHANGE ME",
-  "ipWhitelist": ["127.0.0.1"]
+  "ipWhitelist": ["127.0.0.1", "10.0.0.0/16"]
 }

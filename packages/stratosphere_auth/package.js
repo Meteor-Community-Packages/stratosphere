@@ -16,12 +16,16 @@ Package.onUse(function (api) {
     'routepolicy',
     'simonrycroft:ip-whitelist',
     'stratosphere:collections'
-  ]);
+  ], ['server']);
 
   api.addFiles([
     'server/authServer.js',
     'server/whitelisting.js',
     'server/startup/server.js'
   ], ['server']);
+
+  Npm.depends({
+    'range_check': '1.4.0'
+  });
 
 });
