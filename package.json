@@ -10,7 +10,7 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://bitbucket.org/hikey-resources/time2l-portal.git"
+    "url": "https://github.com/sebakerckhof/stratosphere.git"
   },
   "devDependencies": {
     "deep-equal": "^1.0.1"
