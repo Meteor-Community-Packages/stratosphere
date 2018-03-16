@@ -1,21 +1,16 @@
-Stratosphere = (typeof Stratosphere=== 'undefined') ? { } : Stratosphere;
-Stratosphere.observer = (typeof Stratosphere.observer=== 'undefined') ? { } : Stratosphere.observer;
+Stratosphere = (typeof Stratosphere === 'undefined') ? { } : Stratosphere;
+Stratosphere.observer = (typeof Stratosphere.observer === 'undefined') ? { } : Stratosphere.observer;
 
-var _isInitalized = false;
+hound = require('hound')
 
 Stratosphere.observer.start = function () {
-	Builds.find({ }).observe({
-		added: function (doc) {
-			if (_isInitalized) {
-				Stratosphere.utils.syncToS3();
-			}
-		},
-		removed: function (oldDoc) {
-			if (_isInitalized) {
-				Stratosphere.utils.syncToS3();
-			}
-		}
+	let watcher = hound.watch(Meteor.settings.directories.uploads);
+
+	watcher.on('create', function(file, stats) {
+		Stratosphere.utils.syncToS3();
 	});
 
-	_isInitalized = true;
+	watcher.on('change', function(file, stats) {
+		Stratosphere.utils.syncToS3();
+	});
 };

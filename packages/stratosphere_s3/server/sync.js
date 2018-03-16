@@ -1,8 +1,7 @@
 Stratosphere = (typeof Stratosphere=== 'undefined') ? { } : Stratosphere;
 Stratosphere.utils = (typeof Stratosphere.utils=== 'undefined') ? { } : Stratosphere.utils;
 
-import S3ClientImport from 'aeris-s3-sync';
-const S3Client = require('S3ClientImport');
+import S3Client from 'aeris-s3-sync';
 
 const s3Client = S3Client({
 	accessKeyId: Meteor.settings.s3Sync.accessKey,
@@ -12,24 +11,22 @@ const s3Client = S3Client({
 
 Stratosphere.utils.syncFromS3 = function () {
 	s3Client.sync('s3://' + Meteor.settings.s3Sync.bucket, Meteor.settings.directories.uploads, {
-		delete: true,
-		stdout: process.stdout
+		delete: false
 	})
 	.then(res => {
 		if (res && res.files) {
-			console.log('Synced files from S3: ' + res.files);
+			console.log('Synced files from S3: ' + ((res.files.length && res.files) || 'n/a'));
 		}
 	})
 };
 
 Stratosphere.utils.syncToS3 = function () {
 	s3Client.sync(Meteor.settings.directories.uploads, 's3://' + Meteor.settings.s3Sync.bucket, {
-		delete: false,
-		stdout: process.stdout
+		delete: false
 	})
 	.then(res => {
 		if (res && res.files) {
-			console.log('Synced files to S3: ' + res.files);
+			console.log('Synced files to S3: ' + ((res.files.length && res.files) || 'n/a'));
 		}
 	})
 };
