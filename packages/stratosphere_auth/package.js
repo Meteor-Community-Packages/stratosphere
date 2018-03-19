@@ -20,6 +20,7 @@ Package.onUse(function (api) {
 
   api.addFiles([
     'server/authServer.js',
+    'server/utils.js',
     'server/whitelisting.js',
     'server/startup/server.js'
   ], ['server']);

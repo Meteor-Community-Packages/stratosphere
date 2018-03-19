@@ -17,6 +17,7 @@ Package.onUse(function (api) {
   api.addFiles([
     'server/buildObserver.js',
     'server/sync.js',
+    'server/utils.js',
     'server/startup/server.js'
   ], ['server']);
 
