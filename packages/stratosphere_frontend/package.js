@@ -7,7 +7,7 @@ Package.describe({
 
 Package.onUse(function (api) {
 
-    api.versionsFrom(['METEOR@1.2.0.2']);
+    api.versionsFrom(['METEOR@1.6']);
 
     api.use([
         'static-html',
@@ -24,8 +24,8 @@ Package.onUse(function (api) {
         'angularui:angular-ui-router@0.2.15',
         'netanelgilad:ng-infinite-scroll@1.2.0_1',
         'jquery',
-        'fourseven:scss@3.4.0-beta1',
-        'fortawesome:fontawesome@4.4.0'
+        'fortawesome:fontawesome@4.4.0',
+        'fourseven:scss@4.5.4'
     ]);
 
     api.addFiles([], ['server','client']);

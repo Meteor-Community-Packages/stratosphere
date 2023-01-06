@@ -1,0 +1,21 @@
+{
+  "name": "stratosphere",
+  "version": "1.0.0",
+  "dependencies": {
+    "babel-runtime": "^6.18.0",
+    "bcrypt": "^0.8.7",
+    "fibers": "^1.0.15",
+    "meteor-node-stubs": "^0.3.2"
+  },
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sebakerckhof/stratosphere.git"
+  },
+  "devDependencies": {
+    "deep-equal": "^1.0.1"
+  },
+  "engines": {
+    "node": ">=8.0.0 <9.0.0"
+  }
+}

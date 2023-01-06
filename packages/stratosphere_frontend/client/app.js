@@ -46,6 +46,10 @@ angular.module('stratosphere',[
 configureRoutes.$inject = ['$stateProvider','$urlRouterProvider'];
 function configureRoutes($stateProvider,$urlRouterProvider){
   $stateProvider
+      .state('whitelist', {
+        url: "/whitelist",
+        template: "<h2>whitelist</h2>"
+      })
       .state('forbidden', {
         url: "/forbidden",
         template: '<h2>Forbidden</h2>',
@@ -63,6 +67,13 @@ function configureRoutes($stateProvider,$urlRouterProvider){
 handleStateChangeErrors.$inject = ["$rootScope", "$state", "$mdToast", "$meteor"];
 function handleStateChangeErrors($rootScope, $state, $mdToast, $meteor) {
   $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams, error) {
+    console.log(event)
+    console.log(toState)
+    console.log(toParams)
+    console.log(fromParams)
+    console.log(fromState)
+    console.log(error)
+
     // We can catch the error thrown when the $meteor.requireUser() promise is rejected
     // or the custom error, and redirect the user back to the login page
     switch(error) {
