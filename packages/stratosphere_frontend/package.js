@@ -18,7 +18,7 @@ Package.onUse(function (api) {
         'angular:angular-sanitize@1.5.0',
         'angular:angular-material@1.0.5',
         'ecmascript',
-        'angular:angular-material@0.11.2',
+        'angular:angular-material@1.0.5',
         'angularui:angular-ui-router@0.2.15',
         'netanelgilad:ng-infinite-scroll@1.2.0_1',
         'jquery',
