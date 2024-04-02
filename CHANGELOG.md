@@ -1,3 +1,7 @@
+1.0.0-rc2
+
+* Update to Meteor v1.6.0.1
+
 1.0.0-rc1
 
 * No more need to copy package database if the instructions in the readme are followed
