@@ -1,7 +1,7 @@
 Package.describe({
   name: 'stratosphere:auth',
   summary: 'Stratosphere authorization package',
-  version: '1.0.0-rc1',
+  version: '1.0.0-rc2',
   git: 'https://github.com/sebakerckhof/stratosphere.git'
 });
 

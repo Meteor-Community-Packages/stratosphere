@@ -1,6 +1,6 @@
 var formidable = Npm.require('formidable');
-var http = Npm.require('http');
-var sys = Npm.require('sys');
+// var http = Npm.require('http');
+// var sys = Npm.require('sys');
 //var connect = Npm.require('connect');
 var url = Npm.require('url');
 var path = Npm.require('path');
