@@ -7,7 +7,7 @@ Package.describe({
 
 Package.onUse(function (api) {
 
-    api.versionsFrom(['METEOR@1.2.1']);
+    api.versionsFrom(['METEOR@1.6.0.1']);
 
     api.use([
         'static-html',
@@ -17,11 +17,13 @@ Package.onUse(function (api) {
         'angular-meteor-auth',
         'angular:angular-sanitize@1.5.0',
         'angular:angular-material@1.0.5',
+        'ecmascript',
+        'angular:angular-material@0.11.2',
         'angularui:angular-ui-router@0.2.15',
         'netanelgilad:ng-infinite-scroll@1.2.0_1',
         'jquery',
-        'fourseven:scss@3.4.1',
-        'fortawesome:fontawesome@4.4.0'
+        'fortawesome:fontawesome@4.4.0',
+        'fourseven:scss@4.5.4'
     ]);
 
     api.addFiles([], ['server','client']);

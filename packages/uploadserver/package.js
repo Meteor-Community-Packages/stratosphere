@@ -5,7 +5,7 @@ Package.describe({
 });
 
 Package.onUse(function(api) {
-    api.versionsFrom('METEOR@1.2.1');
+    api.versionsFrom('METEOR@1.6.0.1');
 
     api.use(['webapp', 'routepolicy', 'ecmascript'], 'server');
 

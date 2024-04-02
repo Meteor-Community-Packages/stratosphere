@@ -7,7 +7,7 @@ Package.describe({
 
 Package.onUse(function (api) {
 
-  api.versionsFrom(['METEOR@1.2.1']);
+  api.versionsFrom(['METEOR@1.6.0.1']);
 
   var packages = [
     'meteor-base',
@@ -32,6 +32,7 @@ Package.onUse(function (api) {
   api.imply(packages);
 
   api.use(packages);
+  api.use('ecmascript');
 
   api.export([
     'Stratosphere'

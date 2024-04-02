@@ -1,7 +1,11 @@
+1.0.0-rc3
+
+* Upgrade to newer angular-meteor version
+
 1.0.0-rc2
 
+* Update to Meteor v1.6.0.1
 * Fix minification issues
-* Upgrade to newer angular-meteor version
 
 1.0.0-rc1
 
