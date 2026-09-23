@@ -1,14 +1,12 @@
-**/.idea/
-**/node_modules/
-**/platforms/
-**/plugins/
-**/local/
-packages/**/.npm/
+node_modules/
+.idea/
 
 settings.json
 .deploy/mup.js
-uploads
-tmp
+.uploads
 
-!uploads/.keep
-!tmp/.keep
+# Meteor Modern-Tools build context directories
+_build
+*/build-assets*
+*/build-chunks*
+.rsdoctor

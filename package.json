@@ -1,18 +1,41 @@
 {
   "name": "stratosphere",
-  "version": "1.0.0",
-  "dependencies": {
-    "babel-runtime": "^6.26.0",
-    "bcrypt": "^6.0.0",
-    "fibers": "^1.0.15",
-    "meteor-node-stubs": "^1.2.24"
-  },
+  "version": "2.0.0",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/sebakerckhof/stratosphere.git"
+    "url": "https://github.com/Meteor-Community-Packages/stratosphere.git"
+  },
+  "scripts": {
+    "start": "meteor run --settings settings.json",
+    "test": "node --test tests/*.test.js"
+  },
+  "meteor": {
+    "mainModule": {
+      "client": "client/main.js",
+      "server": "server/main.js"
+    },
+    "modern": true
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.29.7",
+    "@solidjs/router": "^1.0.0",
+    "@swc/helpers": "^0.5.23",
+    "dompurify": "^3.4.15",
+    "marked": "^18.0.14",
+    "meteor-node-stubs": "^1.2.30",
+    "picocolors": "^1.1.1",
+    "range_check": "^4.1.0",
+    "simpl-schema": "^3.4.7",
+    "solid-js": "^1.9.15"
   },
   "devDependencies": {
-    "deep-equal": "^1.0.1"
+    "@meteorjs/rspack": "^2.2.0",
+    "@rsdoctor/rspack-plugin": "^1.5.7",
+    "@rspack/cli": "^1.7.12",
+    "@rspack/core": "^1.7.12",
+    "babel-loader": "^10.0.0",
+    "babel-preset-solid": "^1.9.15",
+    "solid-refresh": "^0.7.5"
   }
 }

@@ -1,0 +1,277 @@
+:root {
+  color-scheme: light dark;
+  --bg: light-dark(#f3f4f6, #111318);
+  --surface: light-dark(#fff, #1b1e25);
+  --text: light-dark(#1f2328, #e6e8eb);
+  --muted: light-dark(#5b6370, #9aa3ae);
+  --border: light-dark(#dde1e6, #2d323c);
+  --accent: light-dark(#3f51b5, #8c9eff);
+  --warn: light-dark(#c62828, #ff8a80);
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+a {
+  color: var(--accent);
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.4em 0.9em;
+  background: var(--surface);
+  color: var(--text);
+}
+
+button:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--surface);
+}
+
+button.warn {
+  color: var(--warn);
+  border-color: var(--warn);
+}
+
+button.link {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  gap: 1em;
+  width: 100%;
+}
+
+button.icon {
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  padding: 0 0.3em;
+}
+
+input:not([type='checkbox']) {
+  font: inherit;
+  padding: 0.4em 0.6em;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5em 2em;
+  padding: 0.75em 1.5em;
+  background: var(--accent);
+  color: var(--surface);
+}
+
+.toolbar h1 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.toolbar nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25em;
+}
+
+.toolbar nav a,
+.toolbar nav button {
+  background: none;
+  border: none;
+  color: inherit;
+  text-decoration: none;
+  padding: 0.4em 0.8em;
+  border-radius: 6px;
+}
+
+.toolbar nav a:hover,
+.toolbar nav button:hover,
+.toolbar nav a.active {
+  background: rgb(255 255 255 / 0.15);
+}
+
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5em;
+}
+
+.card {
+  display: block;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1em 1.25em;
+  margin-bottom: 1em;
+  color: inherit;
+  text-decoration: none;
+}
+
+.card h2,
+.card h3 {
+  margin-top: 0;
+}
+
+.card p {
+  margin: 0.25em 0;
+}
+
+a.card:hover {
+  border-color: var(--accent);
+}
+
+.cards {
+  list-style: none;
+  padding: 0;
+}
+
+small {
+  color: var(--muted);
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1em;
+  align-items: start;
+}
+
+@media (max-width: 800px) {
+  .columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+.readme {
+  overflow-x: auto;
+}
+
+.markdown pre {
+  overflow-x: auto;
+  padding: 0.75em;
+  background: var(--bg);
+  border-radius: 6px;
+}
+
+.versions {
+  list-style: none;
+  padding: 0;
+}
+
+.versions li {
+  padding: 0.5em 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+  list-style: none;
+  padding: 0;
+}
+
+.chips li {
+  padding: 0.2em 0.8em;
+  border-radius: 999px;
+  background: var(--bg);
+}
+
+form.inline {
+  display: flex;
+  gap: 0.5em;
+  margin-bottom: 1em;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.5em;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal {
+  width: min(800px, 90vw);
+  max-height: 85vh;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+.modal::backdrop {
+  background: rgb(0 0 0 / 0.4);
+}
+
+.modal header,
+.modal footer {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.75em 1.25em;
+}
+
+.modal header h2 {
+  margin: 0;
+  flex: 1;
+  font-size: 1.2rem;
+}
+
+.modal-body {
+  padding: 0 1.25em;
+  overflow: auto;
+  max-height: calc(85vh - 8em);
+}
+
+.modal pre {
+  font-size: 0.85em;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.toast {
+  position: fixed;
+  bottom: 1.5em;
+  left: 50%;
+  translate: -50%;
+  padding: 0.75em 1.25em;
+  border-radius: 6px;
+  background: var(--text);
+  color: var(--bg);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.25);
+}
+
+.card > button {
+  margin-top: 0.75em;
+}

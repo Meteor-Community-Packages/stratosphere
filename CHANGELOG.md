@@ -1,3 +1,14 @@
+2.0.0
+
+* Update to Meteor 3.5.2 (async server code, no more fibers), built with Rspack
+* New SolidJS front-end replacing AngularJS / angular-meteor
+* Restructured from local packages into an app with ES modules (`imports/server`, `imports/ui`)
+* Compatible with current meteor-tool: sync responses always include every collection, new version fields (`testOnly`, `devOnly`, `deprecated`, ...) are stored, `web.browser.legacy` dependency references are accepted
+* Uploads are received as raw streams (as meteor-tool sends them); the `directories.tmp` setting is no longer used
+* S3 sync calls the AWS CLI directly (dropped `aeris-s3-sync`), IP whitelisting uses `range_check` directly (dropped `simonrycroft:ip-whitelist`)
+* Fixed: `publishReadme` (`meteor publish --update`), `removeMaintainer`, making a public package private on `createPackageVersion`, unpublishing release versions/tracks, CIDR ranges in the IP whitelist, path traversal in the file server, super users could be removed by other super users
+* S3 sync and IP whitelisting are disabled in the settings template by default
+
 1.0.0-rc2
 
 * Update to Meteor v1.6.0.1

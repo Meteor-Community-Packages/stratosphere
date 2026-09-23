@@ -1,27 +1,25 @@
 {
   "upstreamURL": "https://packages.meteor.com",
-  "directories":
-    {
-      "tmp": ".tmp",
-      "uploads": ".uploads"
-    },
-  "public":{
+  "directories": {
+    "uploads": ".uploads"
+  },
+  "public": {
     "url": "http://localhost:3000",
-    "loginRequired":false
+    "loginRequired": false
   },
-  "meteorDeveloperAccount":{
-    "clientId":"",
-    "secret":""
+  "meteorDeveloperAccount": {
+    "clientId": "",
+    "secret": ""
   },
-  "superUsers":[],
+  "superUsers": [],
+  "enableS3Sync": false,
   "s3Sync": {
     "region": "CHANGE ME",
     "bucket": "CHANGE ME",
     "accessKey": "CHANGE ME",
     "secretKey": "CHANGE ME"
   },
+  "enableIpWhitelisting": false,
   "ipWhitelistAuthKey": "CHANGE ME",
-  "ipWhitelist": ["127.0.0.1", "10.0.0.0/16"],
-  "enableIpWhitelisting": true,
-  "enableS3Sync": true
+  "ipWhitelist": ["127.0.0.1", "10.0.0.0/16"]
 }
